@@ -24,7 +24,7 @@ public class AccessTokenController {
 
     private AccessTokenRepository accessTokenRepository;
     private AuthManager authManager;
-    private final long expirationTime = 24*60*60;
+    private static long expirationTime = 24*60*60;
 
     @Autowired
     public AccessTokenController(AccessTokenRepository accessTokenRepository, AuthManager authManager) {
@@ -36,24 +36,34 @@ public class AccessTokenController {
     public AccessToken getAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String[] values;
         String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Basic")) {
-            String base64Credentials = authorization.substring("Basic".length()).trim();
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-            values = credentials.split(":",2);
-            System.out.println(values[0] + " " + values[1]);
-            if (authManager.areCredentialsCorrect(values[0],values[1])) {
-                AccessToken token = new AccessToken("Bearer", expirationTime);
-                accessTokenRepository.add(token);
-                return token;
-            } else {
-                try {
-                    response.sendError(403, "Incorrect Client Credentials.");
-                } catch (IOException e) {
-                    System.out.println(e);
-                }
-            }
+        try {
+	        if (authorization != null && authorization.startsWith("Basic")) {
+		        String base64Credentials = authorization.substring("Basic".length()).trim();
+		        String credentials = new String(Base64.getDecoder().decode(base64Credentials));
+		        values = credentials.split(":", 2);
+		        System.out.println(values[0] + " " + values[1]);
+		        if (authManager.areCredentialsCorrect(values[0], values[1])) {
+			        AccessToken token = new AccessToken("Bearer", expirationTime);
+			        accessTokenRepository.add(token);
+			        return token;
+		        } else {
+			        response.sendError(403, "Incorrect Client Credentials.");
+		        }
+	        } else {
+		        response.sendError(400, "No Authorization headers.");
+		        return null;
+	        }
+        } catch (IOException e) {
+        	System.out.println(e);
         }
         return null;
     }
 
+	public static long getExpirationTime() {
+		return expirationTime;
+	}
+
+	public static void setExpirationTime(long expirationTime) {
+		AccessTokenController.expirationTime = expirationTime;
+	}
 }

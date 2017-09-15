@@ -1,13 +1,10 @@
 package atmbranchfinderspring.resourceserver;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
-import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
+import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +15,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TPPManagerTests {
 
 	@MockBean
-	EncryptionManager encryptionManager;
+	PEMManager pemManager;
 
 	@Autowired
 	private TPPManager tppManager;
@@ -31,8 +30,6 @@ public class TPPManagerTests {
 	@Autowired
 	private TPPClientRepository tppClientRepository;
 
-	@Autowired
-	private AuthManager authManager;
 
 	@Test
 	public void registerTPPClientTest() {

@@ -2,6 +2,7 @@ package atmbranchfinderspring.resourceserver;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthManager;
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
+import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthManagerTests {
 
 	@MockBean
-	EncryptionManager encryptionManager;
+	PEMManager pemManager;
 
 	@Autowired
 	AuthManager authManager;
@@ -46,18 +47,15 @@ public class AuthManagerTests {
 
 	@Test
 	public void credentialCheckerTest() {
-		try {
-			ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
-			TPPClient tppClient = new TPPClient.TPPClientBuilder()
-					.setClientCredentials(credentials)
-					.setRedirectUri(new URI("http://test.com/redirect"))
-					.setSSA(null).build();
-			tppClientRepository.add(tppClient);
 
-			assertThat(authManager.areCredentialsCorrect(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
+		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		TPPClient tppClient = new TPPClient.TPPClientBuilder()
+				.setClientCredentials(credentials)
+				.setRedirectUri(null)
+				.setSSA(null).build();
+		tppClientRepository.add(tppClient);
 
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+		assertThat(authManager.areCredentialsCorrect(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
+
 	}
 }

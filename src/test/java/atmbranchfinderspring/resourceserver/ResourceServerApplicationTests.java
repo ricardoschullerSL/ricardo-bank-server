@@ -1,6 +1,7 @@
 package atmbranchfinderspring.resourceserver;
 
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
+import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.controllers.TPPController;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +23,7 @@ public class ResourceServerApplicationTests {
 	private int port;
 
 	@MockBean
-	EncryptionManager encryptionManager;
+	PEMManager pemManager;
 
 	@Autowired
 	private TPPController tppController;

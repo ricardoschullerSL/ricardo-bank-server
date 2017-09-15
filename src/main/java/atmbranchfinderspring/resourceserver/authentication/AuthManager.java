@@ -24,7 +24,6 @@ public class AuthManager implements AuthenticationManager {
 
     @Autowired
     public AuthManager(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository, EncryptionManager encryptionManager) {
-
         this.tppClientRepository = tppClientRepository;
         this.accessTokenRepository = accessTokenRepository;
 		this.encryptionManager = encryptionManager;

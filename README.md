@@ -1,4 +1,4 @@
-# Scott Logic Bank Server
+# Ricardo Bank Server
 
 Under construction.
 
