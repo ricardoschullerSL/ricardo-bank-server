@@ -1,8 +1,8 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthManager;
-import atmbranchfinderspring.resourceserver.authentication.ClientCredentials;
-import atmbranchfinderspring.resourceserver.authentication.TPPClient;
+import atmbranchfinderspring.resourceserver.models.ClientCredentials;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -44,12 +44,12 @@ public class TPPController {
     @RequestMapping(value="/register", produces = "application/jwt", method = RequestMethod.POST)
     public void registerTPPClient(@RequestBody String token, HttpServletResponse response) {
         try {
-            DecodedJWT jwt = authManager.getVerifier().verify(token);
+            DecodedJWT jwt = authManager.getJWTVerifier().verify(token);
             String clientId = jwt.getClaim("software_id").asString();
             URI redirectUri = new URI(jwt.getClaim("redirect_uri").asString());
             if (tppManager.isTPPClientRegistered(clientId)) {
                 response.sendError(400, "Client already registered.");
-
+				System.out.println("Incoming request is for client that's already registered.");
             } else {
                 ClientCredentials credentials = new ClientCredentials(clientId, UUID.randomUUID().toString());
                 TPPClient client = new TPPClient(credentials, redirectUri, jwt);

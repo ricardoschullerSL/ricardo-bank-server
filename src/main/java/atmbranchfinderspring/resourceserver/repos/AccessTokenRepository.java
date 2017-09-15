@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.models.AccessToken;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author Ricardo Schuller
@@ -20,27 +21,21 @@ public class AccessTokenRepository implements Repository<AccessToken> {
     }
 
     public synchronized  AccessToken get(String token) {
-        if (accessTokens.containsKey(token)) {
-            return accessTokens.get(token);
-        }
-        return null;
+        return accessTokens.get(token);
     }
 
     public synchronized Boolean contains(String token) {
         return accessTokens.containsKey(token);
     }
 
-    @Override
     public synchronized void add(AccessToken entity) {
         accessTokens.put(entity.getAccessToken(), entity);
     }
 
-    @Override
-    public Collection<AccessToken> getAll() {
-        return null;
+    public Collection<String> getAllIds() {
+        return accessTokens.keySet();
     }
 
-    @Override
     public synchronized void delete(AccessToken entity) {
         accessTokens.remove(entity.getAccessToken());
     }

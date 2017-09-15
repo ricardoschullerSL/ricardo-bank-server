@@ -13,11 +13,8 @@ import java.util.*;
 @org.springframework.stereotype.Repository
 public class AccountRequestRepository implements Repository<AccountRequestResponse>{
 
-    private int lowerLimit = 0;
-    private int upperLimit = Integer.MAX_VALUE;
     private long expirationTime = 31 * 24 * 60 * 60 * 1000;
     private HashMap<String, AccountRequestResponse> accountRequests;
-    private Random random = new Random();
 
     public AccountRequestRepository() {
         accountRequests = new HashMap<>();
@@ -41,26 +38,21 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
         return accountRequests.get(id);
     }
 
-    @Override
     public void add(AccountRequestResponse entity) {
         accountRequests.put(entity.getAccountRequestId(), entity);
     }
 
-    @Override
-    public Collection<AccountRequestResponse> getAll() {
-        return null;
+    public Boolean contains(String id) {
+        return accountRequests.containsKey(id);
     }
 
-
-    public void delete(int id) {
-        accountRequests.remove(id);
+    public Collection<String> getAllIds() {
+        return accountRequests.keySet();
     }
 
-    @Override
     public void delete(AccountRequestResponse entity) {
         accountRequests.remove(entity);
     }
 
-    @Override
     public void delete(String accountRequestId) { accountRequests.remove(accountRequestId); }
 }

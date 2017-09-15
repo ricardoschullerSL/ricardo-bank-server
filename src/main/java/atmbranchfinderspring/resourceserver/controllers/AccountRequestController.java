@@ -40,6 +40,7 @@ public class AccountRequestController {
         String authorization = request.getHeader("Authorization");
         if (authorization != null && authorization.startsWith("Bearer")) {
             token = authorization.substring("Bearer".length()).trim();
+            System.out.println(token);
             if (authManager.isAccessTokenValid(token)) {
                 AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest);
                 return accountRequestResponse;
@@ -55,8 +56,8 @@ public class AccountRequestController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value= "/account-requests")
-    public Collection<? extends ResponseObject> getAllAccountRequests() {
-        Collection<? extends ResponseObject> responseObjects = accountRequestRepository.getAll();
+    public Collection<String> getAllAccountRequests() {
+        Collection<String> responseObjects = accountRequestRepository.getAllIds();
         System.out.println(responseObjects.size());
         return responseObjects;
     }

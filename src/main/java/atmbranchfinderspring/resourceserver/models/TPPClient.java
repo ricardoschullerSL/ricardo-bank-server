@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.authentication;
+package atmbranchfinderspring.resourceserver.models;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 

@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
 import com.auth0.jwt.JWT;
@@ -37,7 +38,7 @@ public class AuthManager {
     private ECPrivateKey privateKey;
     private ECPublicKey publicKey;
     private Algorithm algorithm;
-    private JWTVerifier verifier;
+    private JWTVerifier jwtVerifier;
     private AccessTokenRepository accessTokenRepository;
     private TPPClientRepository tppClientRepository;
 
@@ -59,7 +60,7 @@ public class AuthManager {
 
             algorithm = Algorithm.ECDSA256(publicKey,privateKey);
 
-            verifier = JWT.require(algorithm)
+            jwtVerifier = JWT.require(algorithm)
                     .withIssuer("Open Banking")
                     .build();
 
@@ -106,12 +107,12 @@ public class AuthManager {
         return algorithm;
     }
 
-    public JWTVerifier getVerifier() {
-        return verifier;
+    public JWTVerifier getJWTVerifier() {
+        return jwtVerifier;
     }
 
     public Boolean isAccessTokenValid(String token) {
-        if (accessTokenRepository.getAll().contains(token)) {
+        if (accessTokenRepository.contains(token)) {
             accessTokenRepository.delete(token);
             return true;
         } else {
@@ -120,7 +121,7 @@ public class AuthManager {
     }
 
     public Boolean areCredentialsCorrect(String clientId, String clientSecret) {
-        TPPClient client = tppClientRepository.findByClientId(clientId);
+        TPPClient client = (TPPClient) tppClientRepository.get(clientId);
         return !(client == null) && client.getCredentials().getClientSecret().equals(clientSecret);
     }
 }

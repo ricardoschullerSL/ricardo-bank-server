@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.authentication;
+package atmbranchfinderspring.resourceserver.models;
 
 import atmbranchfinderspring.resourceserver.models.ResponseObject;
 

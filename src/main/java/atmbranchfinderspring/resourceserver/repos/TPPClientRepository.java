@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.repos;
 
-import atmbranchfinderspring.resourceserver.authentication.TPPClient;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,28 +18,25 @@ public class TPPClientRepository implements Repository<TPPClient> {
         this.tppClients = new HashMap<>();
     }
 
-    @Override
     public void add(TPPClient entity) {
         tppClients.put(entity.getCredentials().getClientId(), entity);
     }
 
-    @Override
-    public Collection<TPPClient> getAll() {
-        return null;
+    public Collection<String> getAllIds() {
+        return tppClients.keySet();
     }
 
-    @Override
     public void delete(TPPClient entity) {
         tppClients.remove(entity);
     }
 
-    @Override
     public void delete(String clientId) { tppClients.remove(clientId); }
 
-    public TPPClient findByClientId(String clientId) {
-        if (tppClients.containsKey(clientId)) {
-            return tppClients.get(clientId);
-        }
-        return null;
+    public Boolean contains(String clientId) {
+        return tppClients.get(clientId) != null;
+    }
+
+    public TPPClient get(String clientId) {
+        return tppClients.get(clientId);
     }
 }

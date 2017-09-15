@@ -7,9 +7,11 @@ import java.util.Collection;
  * @since 0.1.0
  */
 public interface Repository<T> {
-    public void add(T entity);
-    public Collection<T> getAll();
-    public void delete(T entity);
-    public void delete(String id);
+    void add(T entity);
+    T get(String id);
+    Collection<String> getAllIds();
+    Boolean contains(String id);
+    void delete(T entity);
+    void delete(String id);
 
 }
