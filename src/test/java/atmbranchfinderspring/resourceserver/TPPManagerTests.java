@@ -39,7 +39,7 @@ public class TPPManagerTests {
 					.setRedirectUri(new URI("http://test.com/redirect"))
 					.setSSA(decodedJWT).build();
 
-			tppManager.registerTPPClient(tppClient);
+			tppManager.registerClient(tppClient);
 			assertThat(tppClientRepository.getAllIds().size()).isEqualTo(1);
 		} catch (URISyntaxException e) {
 			System.out.println(e);

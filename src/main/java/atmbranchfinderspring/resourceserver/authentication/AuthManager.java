@@ -29,7 +29,7 @@ import java.security.interfaces.ECPublicKey;
 
 
 @Component
-public class AuthManager {
+public class AuthManager implements AuthenticationManager {
 
     private PEMParser pemParser;
     private PEMKeyPair pemKeyPair;
@@ -48,7 +48,7 @@ public class AuthManager {
             this.tppClientRepository = tppClientRepository;
             this.accessTokenRepository = accessTokenRepository;
             Security.addProvider(new BouncyCastleProvider());
-            pemParser = new PEMParser(new InputStreamReader(new FileInputStream("C:\\dev\\atm-branch-finder-spring\\resource-server\\src\\main\\resources\\ec256-key-pair.pem")));
+            pemParser = new PEMParser(new InputStreamReader(getClass().getResourceAsStream("/ec256-key-pair.pem")));
             pemKeyPair = (PEMKeyPair) pemParser.readObject();
             converter = new JcaPEMKeyConverter();
             keyPair = converter.getKeyPair(pemKeyPair);

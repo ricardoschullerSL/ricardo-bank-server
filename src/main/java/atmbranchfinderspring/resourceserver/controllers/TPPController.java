@@ -47,13 +47,13 @@ public class TPPController {
             DecodedJWT jwt = authManager.getJWTVerifier().verify(token);
             String clientId = jwt.getClaim("software_id").asString();
             URI redirectUri = new URI(jwt.getClaim("redirect_uri").asString());
-            if (tppManager.isTPPClientRegistered(clientId)) {
+            if (tppManager.isClientRegistered(clientId)) {
+                System.out.println("Incoming request is for client that's already registered.");
                 response.sendError(400, "Client already registered.");
-				System.out.println("Incoming request is for client that's already registered.");
             } else {
                 ClientCredentials credentials = new ClientCredentials(clientId, UUID.randomUUID().toString());
                 TPPClient client = new TPPClient(credentials, redirectUri, jwt);
-                tppManager.registerTPPClient(client);
+                tppManager.registerClient(client);
                 String responseString = mapper.writeValueAsString(credentials);
                 response.getWriter().write(responseString);
             }

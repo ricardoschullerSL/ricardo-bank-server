@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.repos;
 
-import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.models.Client;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,15 +10,16 @@ import java.util.HashMap;
  * @since 0.1.0
  */
 @org.springframework.stereotype.Repository
-public class TPPClientRepository implements Repository<TPPClient> {
+public class TPPClientRepository implements Repository<Client> {
 
-    private HashMap<String, TPPClient> tppClients;
+
+    private HashMap<String, Client> tppClients;
 
     public TPPClientRepository() {
         this.tppClients = new HashMap<>();
     }
 
-    public void add(TPPClient entity) {
+    public void add(Client entity) {
         tppClients.put(entity.getCredentials().getClientId(), entity);
     }
 
@@ -26,7 +27,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
         return tppClients.keySet();
     }
 
-    public void delete(TPPClient entity) {
+    public void delete(Client entity) {
         tppClients.remove(entity);
     }
 
@@ -36,7 +37,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
         return tppClients.get(clientId) != null;
     }
 
-    public TPPClient get(String clientId) {
+    public Client get(String clientId) {
         return tppClients.get(clientId);
     }
 }

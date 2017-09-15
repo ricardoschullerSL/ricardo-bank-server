@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.models.Client;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 0.1.0
  */
 @Component
-public class TPPManager {
+public class TPPManager implements ClientManager{
 
     private TPPClientRepository tppClientRepository;
 
@@ -20,11 +21,11 @@ public class TPPManager {
         this.tppClientRepository = tppClientRepository;
     }
 
-    public void registerTPPClient(TPPClient client) {
+    public void registerClient(Client client) {
         tppClientRepository.add(client);
     }
 
-    public Boolean isTPPClientRegistered(String clientId) {
+    public Boolean isClientRegistered(String clientId) {
         return tppClientRepository.contains(clientId);
     }
 

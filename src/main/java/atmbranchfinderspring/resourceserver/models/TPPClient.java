@@ -10,7 +10,7 @@ import java.net.URI;
  * @since 0.1.0
  */
 
-public class TPPClient {
+public class TPPClient implements Client{
     private ClientCredentials credentials;
     private URI redirectUri;
     private DecodedJWT jwt;
