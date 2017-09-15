@@ -29,9 +29,15 @@ public class EncryptionManager {
 	private Algorithm algorithm;
 	private JWTVerifier jwtVerifier;
 
-	public EncryptionManager() {
 
+
+	public EncryptionManager() {
+		init();
+	}
+
+	public void init() {
 		try {
+
 			Security.addProvider(new BouncyCastleProvider());
 			pemParser = new PEMParser(new InputStreamReader(getClass().getResourceAsStream("/ec256-key-pair.pem")));
 			pemKeyPair = (PEMKeyPair) pemParser.readObject();
