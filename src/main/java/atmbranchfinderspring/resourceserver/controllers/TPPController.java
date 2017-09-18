@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.authentication.AuthManager;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import java.util.UUID;
 
 /**
@@ -38,6 +41,41 @@ public class TPPController {
         this.mapper = new ObjectMapper();
         this.tppManager = tppManager;
         this.authManager = authManager;
+    }
+
+    @RequestMapping(value="/getjwt", method = RequestMethod.GET)
+    public String getJWT(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String[] values;
+            String authorization = request.getHeader("Authorization");
+            if (authorization != null && authorization.startsWith("Basic")) {
+                String base64Credentials = authorization.substring("Basic".length()).trim();
+                String credentials = new String(Base64.getDecoder().decode(base64Credentials));
+                values = credentials.split(":", 2);
+                if (authManager.checkAdminCredentials(values[0], values[1])) {
+                    //TODO: Return valid jwt.
+	                System.out.println("Creating and returning JWT.");
+	                String jwt = JWT.create().withIssuer("Open Banking")
+	                    .withClaim("software_id","Scotty")
+	                    .withClaim("aud","Scott Logic Bank")
+	                    .withClaim("redirect_uri","http://localhost:8081/redirect")
+	                    .withClaim("software_statement","testsoftwarestatement")
+	                    .withJWTId("jwtId")
+	                    .sign(authManager.getEncryptionManager().getPemManager().getAlgorithm());
+
+	                response.setStatus(200);
+	                return jwt;
+                } else {
+                	response.sendError(403, "Incorrect credentials.");
+                }
+            } else {
+                response.sendError(400, "Bad Request");
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
+
     }
 
 
