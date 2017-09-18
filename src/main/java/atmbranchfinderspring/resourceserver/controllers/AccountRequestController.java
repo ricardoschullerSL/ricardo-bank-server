@@ -47,7 +47,7 @@ public class AccountRequestController {
             }
         }
         try {
-            response.sendError(403, "");
+            response.sendError(403);
 
         } catch (IOException e) {
             System.out.println(e);

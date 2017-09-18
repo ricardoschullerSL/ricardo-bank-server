@@ -32,7 +32,7 @@ public class EncryptionManager {
 	}
 
 	public JWTVerifier getJwtVerifier() {
-		return jwtVerifier;
+		return pemManager.getJwtVerifier();
 	}
 
 	public byte[] SHA256(String string) {
