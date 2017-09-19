@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import com.auth0.jwt.JWT;
@@ -17,17 +17,17 @@ import java.util.Map;
 @RestController
 public class AdminController {
 
-	private AuthManager authManager;
+	private AuthenticationManagerImpl authenticationManagerImpl;
 	private TPPManager tppManager;
 	private ObjectMapper mapper;
 	private AdminRepository adminRepository;
 
 
 	@Autowired
-	public AdminController(TPPManager tppManager, AuthManager authManager, AdminRepository adminRepository) {
+	public AdminController(TPPManager tppManager, AuthenticationManagerImpl authenticationManagerImpl, AdminRepository adminRepository) {
 		this.mapper = new ObjectMapper();
 		this.tppManager = tppManager;
-		this.authManager = authManager;
+		this.authenticationManagerImpl = authenticationManagerImpl;
 		this.adminRepository = adminRepository;
 	}
 
@@ -43,7 +43,7 @@ public class AdminController {
 				String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 				values = credentials.split(":", 2);
 				System.out.println(values[0] + " " + values[1]);
-				if (authManager.checkAdminCredentials(values[0], values[1])) {
+				if (authenticationManagerImpl.checkAdminCredentials(values[0], values[1])) {
 					System.out.println("Creating and returning JWT.");
 					String jwt = JWT.create().withIssuer("Open Banking")
 							.withClaim("software_id", body.get("software_id"))
@@ -51,7 +51,7 @@ public class AdminController {
 							.withClaim("redirect_uri","http://localhost:8081/redirect")
 							.withClaim("software_statement","testsoftwarestatement")
 							.withJWTId("jwtId")
-							.sign(authManager.getEncryptionManager().getPemManagerImp().getAlgorithm());
+							.sign(authenticationManagerImpl.getEncryptionManager().getPemManagerImp().getAlgorithm());
 
 					response.setStatus(200);
 					return jwt;
@@ -72,7 +72,7 @@ public class AdminController {
 	public void addAdmin(@RequestBody Map<String, String> body, HttpServletResponse response) {
 		try {
 			System.out.println(body.get("adminId"));
-			authManager.addAdmin(body.get("adminId"), body.get("adminSecret"));
+			authenticationManagerImpl.addAdmin(body.get("adminId"), body.get("adminSecret"));
 			if (adminRepository.persistData()) {
 				response.setStatus(200);
 			} else {

@@ -3,11 +3,6 @@ package atmbranchfinderspring.resourceserver.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
 public class AccessToken implements ResponseObject {
 
     private String accessToken;

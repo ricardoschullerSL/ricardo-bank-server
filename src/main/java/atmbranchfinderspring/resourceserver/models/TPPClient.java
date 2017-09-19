@@ -4,11 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.net.URI;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 
 public class TPPClient implements Client{
     private ClientCredentials credentials;

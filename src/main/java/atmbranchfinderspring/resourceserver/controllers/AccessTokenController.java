@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 
 @RestController
 public class AccessTokenController {
 
     private AccessTokenRepository accessTokenRepository;
-    private AuthManager authManager;
+    private AuthenticationManagerImpl authenticationManagerImpl;
     private static long expirationTime = 24*60*60;
 
     @Autowired
-    public AccessTokenController(AccessTokenRepository accessTokenRepository, AuthManager authManager) {
+    public AccessTokenController(AccessTokenRepository accessTokenRepository, AuthenticationManagerImpl authenticationManagerImpl) {
         this.accessTokenRepository = accessTokenRepository;
-        this.authManager = authManager;
+        this.authenticationManagerImpl = authenticationManagerImpl;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/access-token")
@@ -42,7 +38,7 @@ public class AccessTokenController {
 		        String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 		        values = credentials.split(":", 2);
 		        System.out.println(values[0] + " " + values[1]);
-		        if (authManager.checkClientCredentials(values[0], values[1])) {
+		        if (authenticationManagerImpl.checkClientCredentials(values[0], values[1])) {
 			        AccessToken token = new AccessToken("Bearer", expirationTime);
 			        accessTokenRepository.add(token);
 			        return token;

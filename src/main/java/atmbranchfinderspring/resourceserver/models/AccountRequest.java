@@ -6,11 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountRequest {
     private String id;

@@ -5,11 +5,7 @@ import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 
 import java.util.*;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @org.springframework.stereotype.Repository
 public class AccountRequestRepository implements Repository<AccountRequestResponse>{
 

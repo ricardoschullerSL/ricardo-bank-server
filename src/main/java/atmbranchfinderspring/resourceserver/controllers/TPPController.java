@@ -1,10 +1,9 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -15,33 +14,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Base64;
 import java.util.UUID;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
 
 @RestController
 public class TPPController {
 
-    private AuthManager authManager;
+    private AuthenticationManagerImpl authenticationManagerImpl;
     private TPPManager tppManager;
     private ObjectMapper mapper;
 
 
     @Autowired
-    public TPPController(TPPManager tppManager, AuthManager authManager) {
+    public TPPController(TPPManager tppManager, AuthenticationManagerImpl authenticationManagerImpl) {
         this.mapper = new ObjectMapper();
         this.tppManager = tppManager;
-        this.authManager = authManager;
+        this.authenticationManagerImpl = authenticationManagerImpl;
     }
 
 
@@ -51,7 +43,7 @@ public class TPPController {
     public void registerTPPClient(@RequestBody String token, HttpServletResponse response) {
         try {
 
-	        JWTVerifier verifier = authManager.getJWTVerifier();
+	        JWTVerifier verifier = authenticationManagerImpl.getJWTVerifier();
             DecodedJWT jwt = verifier.verify(token);
             String clientId = jwt.getClaim("software_id").asString();
             URI redirectUri = new URI(jwt.getClaim("redirect_uri").asString());

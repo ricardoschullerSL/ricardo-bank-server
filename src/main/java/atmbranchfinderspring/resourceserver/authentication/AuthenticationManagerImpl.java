@@ -12,15 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.UUID;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
-
 
 @Component
-public class AuthManager implements AuthenticationManager {
+public class AuthenticationManagerImpl implements AuthenticationManager {
 
 
     private AccessTokenRepository accessTokenRepository;
@@ -29,8 +23,8 @@ public class AuthManager implements AuthenticationManager {
     private EncryptionManager encryptionManager;
 
     @Autowired
-    public AuthManager(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository,
-                       AdminRepository adminRepository, EncryptionManager encryptionManager) {
+    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository,
+                                     AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
         this.tppClientRepository = tppClientRepository;
         this.accessTokenRepository = accessTokenRepository;

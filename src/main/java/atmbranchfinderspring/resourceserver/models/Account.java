@@ -7,11 +7,7 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 

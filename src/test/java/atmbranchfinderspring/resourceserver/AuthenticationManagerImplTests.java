@@ -1,9 +1,8 @@
 package atmbranchfinderspring.resourceserver;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
-import atmbranchfinderspring.resourceserver.authentication.PEMManagerImp;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
@@ -23,10 +22,10 @@ import java.security.interfaces.ECPublicKey;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class AuthManagerTests {
+public class AuthenticationManagerImplTests {
 
 	PEMManager pemManager;
-	AuthManager authManager;
+	AuthenticationManagerImpl authenticationManagerImpl;
 	EncryptionManager encryptionManager;
 	AccessTokenRepository accessTokenRepository;
 	AdminRepository adminRepository;
@@ -39,7 +38,7 @@ public class AuthManagerTests {
 		tppClientRepository = new TPPClientRepository();
 		encryptionManager = new EncryptionManager(pemManager);
 		adminRepository = new AdminRepository();
-		authManager = new AuthManager(accessTokenRepository, tppClientRepository, adminRepository, encryptionManager);
+		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, tppClientRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach
@@ -49,20 +48,20 @@ public class AuthManagerTests {
 		tppClientRepository = null;
 		encryptionManager = null;
 		adminRepository = null;
-		authManager = null;
+		authenticationManagerImpl = null;
 	}
 
 
 	@Test
-	@DisplayName("Check if AuthManager validates access token")
+	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	public void accessTokenCheckerTest() {
 		AccessToken testToken = new AccessToken("Bearer", "abc");
 		accessTokenRepository.add(testToken);
-		assertThat(authManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(true);
+		assertThat(authenticationManagerImpl.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
 
 	@Test
-	@DisplayName("Check if AuthManager validates access token")
+	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	public void addAccessTokenToRepositoryTest() {
 		AccessToken testToken = new AccessToken("Bearer", "abc");
 		accessTokenRepository.add(testToken);
@@ -74,12 +73,12 @@ public class AuthManagerTests {
 	public void accessTokenDeletionTest() {
 		AccessToken testToken = new AccessToken("Bearer", "abc");
 		accessTokenRepository.add(testToken);
-		authManager.isAccessTokenValid(testToken.getAccessToken());
+		authenticationManagerImpl.isAccessTokenValid(testToken.getAccessToken());
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);
 	}
 
 	@Test
-	@DisplayName("Check if AuthManager validates tpp client credentials correctly")
+	@DisplayName("Check if AuthenticationManagerImpl validates tpp client credentials correctly")
 	public void credentialCheckerTest() {
 
 		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
@@ -89,12 +88,12 @@ public class AuthManagerTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authManager.checkClientCredentials(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
+		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
 
 	}
 
 	@Test
-	@DisplayName("Check if AuthManager invalidates tpp client if clientId is wrong")
+	@DisplayName("Check if AuthenticationManagerImpl invalidates tpp client if clientId is wrong")
 	void wrongClientIdCredentialCheckerTest() {
 
 		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
@@ -104,11 +103,11 @@ public class AuthManagerTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authManager.checkClientCredentials("wrongId",credentials.getClientSecret())).isEqualTo(false);
+		assertThat(authenticationManagerImpl.checkClientCredentials("wrongId",credentials.getClientSecret())).isEqualTo(false);
 	}
 
 	@Test
-	@DisplayName("Check if AuthManager invalidates tpp client if clientId is wrong")
+	@DisplayName("Check if AuthenticationManagerImpl invalidates tpp client if clientId is wrong")
 	void wrongPasswordCredentialCheckerTest() {
 
 		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
@@ -118,7 +117,7 @@ public class AuthManagerTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authManager.checkClientCredentials(credentials.getClientId(),"wrongPassword")).isEqualTo(false);
+		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getClientId(),"wrongPassword")).isEqualTo(false);
 	}
 
 	private class PEMManagerMock implements PEMManager{

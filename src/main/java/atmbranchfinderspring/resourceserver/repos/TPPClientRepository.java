@@ -4,11 +4,7 @@ import atmbranchfinderspring.resourceserver.models.Client;
 
 import java.util.Collection;
 import java.util.HashMap;
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @org.springframework.stereotype.Repository
 public class TPPClientRepository implements Repository<Client> {
 

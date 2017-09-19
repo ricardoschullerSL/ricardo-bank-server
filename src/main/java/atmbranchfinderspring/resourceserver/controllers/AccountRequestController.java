@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 import atmbranchfinderspring.resourceserver.models.ResponseObject;
@@ -17,21 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @RestController
 public class AccountRequestController {
 
     private AccountRequestRepository accountRequestRepository;
-    private AuthManager authManager;
+    private AuthenticationManagerImpl authenticationManagerImpl;
 
     @Autowired
-    public AccountRequestController(AccountRequestRepository accountRequestRepository, AuthManager authManager) {
+    public AccountRequestController(AccountRequestRepository accountRequestRepository, AuthenticationManagerImpl authenticationManagerImpl) {
         this.accountRequestRepository = accountRequestRepository;
-        this.authManager = authManager;
+        this.authenticationManagerImpl = authenticationManagerImpl;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/account-requests")
@@ -41,7 +37,7 @@ public class AccountRequestController {
         if (authorization != null && authorization.startsWith("Bearer")) {
             token = authorization.substring("Bearer".length()).trim();
             System.out.println(token);
-            if (authManager.isAccessTokenValid(token)) {
+            if (authenticationManagerImpl.isAccessTokenValid(token)) {
                 AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest);
                 return accountRequestResponse;
             }

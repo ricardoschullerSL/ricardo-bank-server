@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver;
 
-import atmbranchfinderspring.resourceserver.authentication.PEMManagerImp;
+import atmbranchfinderspring.resourceserver.authentication.PEMManagerImpl;
 import atmbranchfinderspring.resourceserver.controllers.TPPController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ public class ResourceServerApplicationTests {
 	private int port;
 
 	@MockBean
-	PEMManagerImp pemManagerImp;
+	PEMManagerImpl pemManagerImpl;
 
 	@Autowired
 	private TPPController tppController;

@@ -17,7 +17,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 
 @Component
-public class PEMManagerImp implements PEMManager {
+public class PEMManagerImpl implements PEMManager {
 	private PEMParser pemParser;
 	private PEMKeyPair pemKeyPair;
 	private JcaPEMKeyConverter converter;
@@ -35,7 +35,7 @@ public class PEMManagerImp implements PEMManager {
 		return publicKey;
 	}
 
-	public PEMManagerImp() {
+	public PEMManagerImpl() {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
 			pemParser = new PEMParser(new InputStreamReader(getClass().getResourceAsStream("/ec256-key-pair.pem")));

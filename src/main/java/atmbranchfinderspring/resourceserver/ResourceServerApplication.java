@@ -1,7 +1,5 @@
 package atmbranchfinderspring.resourceserver;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthManager;
-import atmbranchfinderspring.resourceserver.models.Admin;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

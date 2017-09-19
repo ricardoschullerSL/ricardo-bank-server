@@ -6,11 +6,7 @@ import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Ricardo Schuller
- * @version 0.1.0
- * @since 0.1.0
- */
+
 @Component
 public class TPPManager implements ClientManager{
 
