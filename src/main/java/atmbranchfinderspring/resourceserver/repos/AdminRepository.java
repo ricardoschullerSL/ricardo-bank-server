@@ -16,31 +16,36 @@ public class AdminRepository implements Repository<Admin>{
         this.admins = new HashMap<>();
     }
 
-    public void persistData () {
+    public Boolean persistData () {
 
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PATH))){
             os.writeObject(admins);
             os.close();
-
+            return true;
         } catch (IOException e) {
             System.out.println(e);
+            return false;
         }
     }
 
-    public void loadData() {
+    public Boolean loadData() {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(PATH))) {
             admins = null;
             admins = (HashMap<String, Admin>) is.readObject();
             is.close();
+            return true;
 
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e);
+            return false;
         }
     }
 
     @Override
     public void add(Admin entity) {
+    	System.out.println(entity.getAdminId());
         admins.put(entity.getAdminId(), entity);
+        System.out.println(admins.size());
     }
 
     @Override

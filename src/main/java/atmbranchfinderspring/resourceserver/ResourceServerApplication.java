@@ -22,6 +22,6 @@ public class ResourceServerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception{
 		adminRepository.loadData();
-
+		System.out.println(adminRepository.getAllIds().size());
 	}
 }

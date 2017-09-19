@@ -1,35 +1,50 @@
 package atmbranchfinderspring.resourceserver;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthManager;
+import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+
 public class AuthManagerTests {
 
-	@MockBean
 	PEMManager pemManager;
-
-	@Autowired
 	AuthManager authManager;
-	@Autowired
+	EncryptionManager encryptionManager;
 	AccessTokenRepository accessTokenRepository;
-	@Autowired
+	AdminRepository adminRepository;
 	TPPClientRepository tppClientRepository;
+
+	@BeforeEach
+	void setup() {
+		pemManager = new PEMManager();
+		accessTokenRepository = new AccessTokenRepository();
+		tppClientRepository = new TPPClientRepository();
+		encryptionManager = new EncryptionManager(pemManager);
+		adminRepository = new AdminRepository();
+		authManager = new AuthManager(accessTokenRepository, tppClientRepository, adminRepository, encryptionManager);
+	}
+
+	@AfterEach
+	void cleanup() {
+		pemManager = null;
+		accessTokenRepository = null;
+		tppClientRepository = null;
+		encryptionManager = null;
+		adminRepository = null;
+		authManager = null;
+	}
 
 
 	@Test
@@ -58,6 +73,7 @@ public class AuthManagerTests {
 	}
 
 	@Test
+	@DisplayName("Check if AuthManager validates tpp client credentials correctly")
 	public void credentialCheckerTest() {
 
 		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
@@ -71,5 +87,32 @@ public class AuthManagerTests {
 
 	}
 
+	@Test
+	@DisplayName("Check if AuthManager invalidates tpp client if clientId is wrong")
+	void wrongClientIdCredentialCheckerTest() {
+
+		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		TPPClient tppClient = new TPPClient.TPPClientBuilder()
+				.setClientCredentials(credentials)
+				.setRedirectUri(null)
+				.setSSA(null).build();
+		tppClientRepository.add(tppClient);
+
+		assertThat(authManager.checkClientCredentials("wrongId",credentials.getClientSecret())).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if AuthManager invalidates tpp client if clientId is wrong")
+	void wrongPasswordCredentialCheckerTest() {
+
+		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		TPPClient tppClient = new TPPClient.TPPClientBuilder()
+				.setClientCredentials(credentials)
+				.setRedirectUri(null)
+				.setSSA(null).build();
+		tppClientRepository.add(tppClient);
+
+		assertThat(authManager.checkClientCredentials(credentials.getClientId(),"wrongPassword")).isEqualTo(false);
+	}
 
 }

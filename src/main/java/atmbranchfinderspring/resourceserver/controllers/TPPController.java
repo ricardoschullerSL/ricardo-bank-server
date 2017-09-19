@@ -44,39 +44,7 @@ public class TPPController {
         this.authManager = authManager;
     }
 
-    @RequestMapping(value="/getjwt", method = RequestMethod.GET)
-    public String getJWT(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            String[] values;
-            String authorization = request.getHeader("Authorization");
-            if (authorization != null && authorization.startsWith("Basic")) {
-                String base64Credentials = authorization.substring("Basic".length()).trim();
-                String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-                values = credentials.split(":", 2);
-                if (authManager.checkAdminCredentials(values[0], values[1])) {
-	                System.out.println("Creating and returning JWT.");
-	                String jwt = JWT.create().withIssuer("Open Banking")
-	                    .withClaim("software_id","Scotty")
-	                    .withClaim("aud","Scott Logic Bank")
-	                    .withClaim("redirect_uri","http://localhost:8081/redirect")
-	                    .withClaim("software_statement","testsoftwarestatement")
-	                    .withJWTId("jwtId")
-	                    .sign(authManager.getEncryptionManager().getPemManager().getAlgorithm());
 
-	                response.setStatus(200);
-	                return jwt;
-                } else {
-                	response.sendError(403, "Incorrect credentials.");
-                }
-            } else {
-                response.sendError(400, "Bad Request");
-            }
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-
-    }
 
 
     @RequestMapping(value="/register", produces = "application/jwt", method = RequestMethod.POST)
