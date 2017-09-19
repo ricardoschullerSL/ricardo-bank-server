@@ -82,6 +82,11 @@
 			<artifactId>bcpkix-jdk15on</artifactId>
 			<version>1.52</version>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 
 	</dependencies>
 
