@@ -3,16 +3,22 @@ package atmbranchfinderspring.resourceserver;
 import atmbranchfinderspring.resourceserver.authentication.AuthManager;
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
+import atmbranchfinderspring.resourceserver.authentication.PEMManagerImp;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +34,7 @@ public class AuthManagerTests {
 
 	@BeforeEach
 	void setup() {
-		pemManager = new PEMManager();
+		pemManager = new PEMManagerMock();
 		accessTokenRepository = new AccessTokenRepository();
 		tppClientRepository = new TPPClientRepository();
 		encryptionManager = new EncryptionManager(pemManager);
@@ -113,6 +119,28 @@ public class AuthManagerTests {
 		tppClientRepository.add(tppClient);
 
 		assertThat(authManager.checkClientCredentials(credentials.getClientId(),"wrongPassword")).isEqualTo(false);
+	}
+
+	private class PEMManagerMock implements PEMManager{
+		@Override
+		public JWTVerifier getJwtVerifier() {
+			return null;
+		}
+
+		@Override
+		public Algorithm getAlgorithm() {
+			return null;
+		}
+
+		@Override
+		public ECPrivateKey getPrivateKey() {
+			return null;
+		}
+
+		@Override
+		public ECPublicKey getPublicKey() {
+			return null;
+		}
 	}
 
 }

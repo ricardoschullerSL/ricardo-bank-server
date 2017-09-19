@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,26 +12,26 @@ import java.security.MessageDigest;
 public class EncryptionManager {
 
 
-	private PEMManager pemManager;
+	private PEMManager pemManagerImp;
 	private JWTVerifier jwtVerifier;
 
 	@Autowired
-	public EncryptionManager(PEMManager pemManager) {
-		this.pemManager = pemManager;
+	public EncryptionManager(PEMManager pemManagerImp) {
+		this.pemManagerImp = pemManagerImp;
 
 	}
 
 
-	public PEMManager getPemManager() {
-		return pemManager;
+	public PEMManager getPemManagerImp() {
+		return pemManagerImp;
 	}
 
 	public Algorithm getAlgorithm() {
-		return pemManager.getAlgorithm();
+		return pemManagerImp.getAlgorithm();
 	}
 
 	public JWTVerifier getJwtVerifier() {
-		return pemManager.getJwtVerifier();
+		return pemManagerImp.getJwtVerifier();
 	}
 
 	public byte[] SHA256(String string) {
