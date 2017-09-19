@@ -7,6 +7,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +16,7 @@ import java.security.Security;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 
-
+@Component
 public class PEMManager {
 	private PEMParser pemParser;
 	private PEMKeyPair pemKeyPair;
@@ -58,6 +59,13 @@ public class PEMManager {
 		}
 	}
 
+	public Algorithm getAlgorithm() {
+		return algorithm;
+	}
+
+	public JWTVerifier getJwtVerifier() {
+		return jwtVerifier;
+	}
 }
 
 // Use this part to print out an encoded JWT for registering client.

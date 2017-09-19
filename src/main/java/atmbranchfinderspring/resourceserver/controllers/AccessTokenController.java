@@ -42,7 +42,7 @@ public class AccessTokenController {
 		        String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 		        values = credentials.split(":", 2);
 		        System.out.println(values[0] + " " + values[1]);
-		        if (authManager.areCredentialsCorrect(values[0], values[1])) {
+		        if (authManager.checkClientCredentials(values[0], values[1])) {
 			        AccessToken token = new AccessToken("Bearer", expirationTime);
 			        accessTokenRepository.add(token);
 			        return token;

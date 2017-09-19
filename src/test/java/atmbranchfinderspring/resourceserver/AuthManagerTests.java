@@ -1,7 +1,6 @@
 package atmbranchfinderspring.resourceserver;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthManager;
-import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +67,9 @@ public class AuthManagerTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authManager.areCredentialsCorrect(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
+		assertThat(authManager.checkClientCredentials(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
 
 	}
+
+
 }
