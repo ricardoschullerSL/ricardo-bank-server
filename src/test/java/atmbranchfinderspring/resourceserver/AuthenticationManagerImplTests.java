@@ -55,7 +55,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	public void accessTokenCheckerTest() {
-		AccessToken testToken = new AccessToken("Bearer", "abc");
+		AccessToken testToken = new AccessToken("Bearer", "abc", 100L);
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManagerImpl.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
@@ -63,15 +63,15 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	public void addAccessTokenToRepositoryTest() {
-		AccessToken testToken = new AccessToken("Bearer", "abc");
+		AccessToken testToken = new AccessToken("Bearer", "abc", 100L);
 		accessTokenRepository.add(testToken);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(1);
 	}
 
 	@Test
-	@DisplayName("Check if access token repository deletes access token after use")
+	@DisplayName("Check if access token repository deletes access token is expired")
 	public void accessTokenDeletionTest() {
-		AccessToken testToken = new AccessToken("Bearer", "abc");
+		AccessToken testToken = new AccessToken("Bearer", "abc", -100L);
 		accessTokenRepository.add(testToken);
 		authenticationManagerImpl.isAccessTokenValid(testToken.getAccessToken());
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);

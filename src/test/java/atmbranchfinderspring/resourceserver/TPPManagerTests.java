@@ -92,7 +92,7 @@ public class TPPManagerTests {
 	}
 
 	@Test
-	@DisplayName("areCredentialsCorrect returns true when credentials are correct")
+	@DisplayName("areCredentialsCorrect returns false when clientId is wrong")
 	void clientIdIsNotCorrect() {
 		try {
 			ClientCredentials credentials = new ClientCredentials("testClient", "testSecret");
@@ -105,7 +105,7 @@ public class TPPManagerTests {
 	}
 
 	@Test
-	@DisplayName("areCredentialsCorrect returns true when credentials are correct")
+	@DisplayName("areCredentialsCorrect returns false when clientSecret is wrong")
 	void clientSecretIsNotCorrect() {
 		try {
 			ClientCredentials credentials = new ClientCredentials("testClient", "testSecret");

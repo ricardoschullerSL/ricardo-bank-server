@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.Admin;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
@@ -9,6 +10,7 @@ import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -42,11 +44,19 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     public Boolean isAccessTokenValid(String token) {
         if (accessTokenRepository.contains(token)) {
-            accessTokenRepository.delete(token);
-            return true;
+            if (accessTokenIsNotExpired(accessTokenRepository.get(token))) {
+                return true;
+            } else {
+                accessTokenRepository.delete(token);
+                return false;
+            }
         } else {
             return false;
         }
+    }
+
+    public Boolean accessTokenIsNotExpired(AccessToken token) {
+        return token.getExpirationDate().isAfter(LocalDateTime.now());
     }
 
     public Boolean checkClientCredentials(String clientId, String clientSecret) {

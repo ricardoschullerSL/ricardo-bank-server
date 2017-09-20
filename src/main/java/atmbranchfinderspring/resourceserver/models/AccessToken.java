@@ -10,9 +10,10 @@ public class AccessToken implements ResponseObject {
     private LocalDateTime issueDate;
     private LocalDateTime expirationDate;
 
-    public AccessToken(String tokenType, String customToken) {
+    public AccessToken(String tokenType, String customToken, Long expirationTime) {
         this.tokenType = tokenType;
         this.accessToken = customToken;
+        this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
     }
 
     public AccessToken(String tokenType, Long expirationTime) {

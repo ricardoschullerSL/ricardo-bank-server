@@ -1,16 +1,13 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
+import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
-import atmbranchfinderspring.resourceserver.models.ResponseObject;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,44 +20,39 @@ public class AccountRequestController {
 
     private AccountRequestRepository accountRequestRepository;
     private AuthenticationManagerImpl authenticationManagerImpl;
+    private ObjectMapper mapper;
 
     @Autowired
     public AccountRequestController(AccountRequestRepository accountRequestRepository, AuthenticationManagerImpl authenticationManagerImpl) {
         this.accountRequestRepository = accountRequestRepository;
         this.authenticationManagerImpl = authenticationManagerImpl;
+        this.mapper = new ObjectMapper();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/account-requests")
-    public ResponseObject postAccountRequest(@RequestBody AccountRequest accountRequest, HttpServletRequest request, HttpServletResponse response) {
-        String token;
-        String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Bearer")) {
-            token = authorization.substring("Bearer".length()).trim();
-            System.out.println(token);
-            if (authenticationManagerImpl.isAccessTokenValid(token)) {
-                AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest);
-                return accountRequestResponse;
-            }
-        }
-        try {
-            response.sendError(403);
-
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
+    @AccessTokenAuthenticated
+    public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody AccountRequest accountRequest) throws IOException {
+        AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest);
+	    response.setHeader("Content-type", "application/json");
+        mapper.writer().writeValue(response.getWriter(), accountRequestResponse);
+        System.out.println(accountRequestRepository.getAllIds().size());
     }
 
     @RequestMapping(method = RequestMethod.GET, value= "/account-requests")
-    public Collection<String> getAllAccountRequests() {
+    @AccessTokenAuthenticated
+    public void getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Collection<String> responseObjects = accountRequestRepository.getAllIds();
-        System.out.println(responseObjects.size());
-        return responseObjects;
+        response.setHeader("Content-type", "application/json");
+        mapper.writer().writeValue(response.getWriter(), responseObjects);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = "application/json")
-    public ResponseObject getAccountRequest(@Param("accountRequestId") String accountRequestId) {
-        return accountRequestRepository.get(accountRequestId);
+    @AccessTokenAuthenticated
+    public void getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
+        response.setHeader("Content-type", "application/json");
+        System.out.println(accountRequestId);
+        AccountRequestResponse requestResponse = accountRequestRepository.get(accountRequestId);
+    	mapper.writer().writeValue(response.getWriter(), requestResponse);
     }
 
 

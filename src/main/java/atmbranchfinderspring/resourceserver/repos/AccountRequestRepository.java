@@ -22,10 +22,10 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
         Date now = new Date();
         Date expiration = new Date();
         expiration.setTime(now.getTime() + expirationTime);
-        AccountRequestResponse newRequest = new AccountRequestResponse(accountRequest, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
+        AccountRequestResponse response = new AccountRequestResponse(accountRequest, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
                 now, expiration);
-        accountRequests.put(newRequest.getAccountRequestId(), newRequest);
-        return newRequest;
+        accountRequests.put(response.getAccountRequestId(), response);
+        return response;
     }
 
 

@@ -66,14 +66,24 @@ public class PEMManagerImpl implements PEMManager {
 	public JWTVerifier getJwtVerifier() {
 		return jwtVerifier;
 	}
-}
 
-// Use this part to print out an encoded JWT for registering client.
-//            String testJWT = JWT.create().withIssuer("Open Banking")
-//                    .withClaim("software_id","Scotty")
-//                    .withClaim("aud","Scott Logic Bank")
-//                    .withClaim("redirect_uri","http://localhost:8081/redirect")
-//                    .withClaim("software_statement","testsoftwarestatement")
-//                    .withJWTId("jwtId")
-//                    .sign(algorithm);
-//            System.out.println(testJWT);
+	public void setKeyPair(ECPrivateKey privateKey, ECPublicKey publicKey) {
+		this.privateKey = privateKey;
+		this.publicKey = publicKey;
+
+	}
+
+	public void setAlgorithm(Algorithm algorithm) {
+		this.algorithm = algorithm;
+	}
+
+	public void recalculateAlgorithm() {
+		this.algorithm = Algorithm.ECDSA256(this.publicKey, this.privateKey);
+	}
+
+	public void setKeysAndRecalculateAlgorithm(ECPublicKey publicKey, ECPrivateKey privateKey) {
+		this.publicKey = publicKey;
+		this.privateKey = privateKey;
+		this.algorithm = Algorithm.ECDSA256(publicKey, privateKey);
+	}
+}
