@@ -1,5 +1,7 @@
 # Ricardo Bank Server
 
+![Build passing](https://circleci.com/gh/ricardoschullerSL/ricardo-bank-server.svg?style=shield&circle-token=:-circle-token)
+
 Under construction.
 
 Just a hacky implementation of the Open Banking APIs so a phone app can be tested against it.
