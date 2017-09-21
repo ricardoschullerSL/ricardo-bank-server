@@ -1,8 +1,6 @@
 package atmbranchfinderspring.resourceserver.models;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import jdk.internal.org.objectweb.asm.Handle;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
