@@ -3,6 +3,7 @@ package atmbranchfinderspring.resourceserver.repos;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -19,9 +20,8 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
     public AccountRequestResponse createAccountRequestResponse(AccountRequest accountRequest) {
         String randomId = UUID.randomUUID().toString();
         accountRequest.setId(randomId);
-        Date now = new Date();
-        Date expiration = new Date();
-        expiration.setTime(now.getTime() + expirationTime);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiration = now.plusSeconds(expirationTime);
         AccountRequestResponse response = new AccountRequestResponse(accountRequest, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
                 now, expiration);
         accountRequests.put(response.getAccountRequestId(), response);
@@ -47,7 +47,7 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
     }
 
     public void delete(AccountRequestResponse entity) {
-        accountRequests.remove(entity);
+        accountRequests.remove(entity.getAccountRequestId());
     }
 
     public void delete(String accountRequestId) { accountRequests.remove(accountRequestId); }

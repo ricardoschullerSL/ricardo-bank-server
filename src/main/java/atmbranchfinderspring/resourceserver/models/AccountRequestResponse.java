@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -7,11 +8,11 @@ import java.util.List;
 public class AccountRequestResponse implements ResponseObject{
 
     private String accountRequestId;
-    private Date creationDateTime;
-    private Date expirationDateTime;
+    private LocalDateTime creationDateTime;
+    private LocalDateTime expirationDateTime;
     private List<String> permissions;
-    private Date transactionFromDateTime;
-    private Date transactionToDateTime;
+    private LocalDateTime transactionFromDateTime;
+    private LocalDateTime transactionToDateTime;
     private AccountRequestStatus status;
 
     public enum AccountRequestStatus {
@@ -20,8 +21,8 @@ public class AccountRequestResponse implements ResponseObject{
 
     public AccountRequestResponse() {}
 
-    public AccountRequestResponse(String accountRequestId, Date creationDateTime, Date expirationDateTime,
-                                  List<String> permissions, Date transactionFromDateTime, Date transactionToDateTime, AccountRequestStatus status) {
+    public AccountRequestResponse(String accountRequestId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
+                                  List<String> permissions, LocalDateTime transactionFromDateTime, LocalDateTime transactionToDateTime, AccountRequestStatus status) {
         this.accountRequestId = accountRequestId;
         this.creationDateTime = creationDateTime;
         this.expirationDateTime = expirationDateTime;
@@ -31,7 +32,7 @@ public class AccountRequestResponse implements ResponseObject{
         this.status = status;
     }
 
-    public AccountRequestResponse(AccountRequest accountRequest, AccountRequestStatus status, Date creationDateTime, Date expirationDateTime) {
+    public AccountRequestResponse(AccountRequest accountRequest, AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
         this.accountRequestId = accountRequest.getId();
         this.transactionFromDateTime = accountRequest.getTransactionFromDateTime();
         this.transactionToDateTime = accountRequest.getTransactionToDateTime();
@@ -45,11 +46,11 @@ public class AccountRequestResponse implements ResponseObject{
         return accountRequestId;
     }
 
-    public Date getCreationDateTime() {
+    public LocalDateTime getCreationDateTime() {
         return creationDateTime;
     }
 
-    public Date getExpirationDateTime() {
+    public LocalDateTime getExpirationDateTime() {
         return expirationDateTime;
     }
 
@@ -57,11 +58,11 @@ public class AccountRequestResponse implements ResponseObject{
         return permissions;
     }
 
-    public Date getTransactionFromDateTime() {
+    public LocalDateTime getTransactionFromDateTime() {
         return transactionFromDateTime;
     }
 
-    public Date getTransactionToDateTime() {
+    public LocalDateTime getTransactionToDateTime() {
         return transactionToDateTime;
     }
 

@@ -3,6 +3,7 @@ package atmbranchfinderspring.resourceserver.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -11,14 +12,14 @@ import java.util.List;
 public class AccountRequest {
     private String id;
     private List<String> permissions;
-    private Date transactionFromDateTime;
-    private Date transactionToDateTime;
+    private LocalDateTime transactionFromDateTime;
+    private LocalDateTime transactionToDateTime;
 
     public AccountRequest() {
 
     };
 
-    public AccountRequest(String id, List<String> permissions, Date transactionFromDateTime, Date transactionToDateTime) {
+    public AccountRequest(String id, List<String> permissions, LocalDateTime transactionFromDateTime, LocalDateTime transactionToDateTime) {
         this.id = id;
         this.permissions = permissions;
         this.transactionFromDateTime = transactionFromDateTime;
@@ -41,19 +42,19 @@ public class AccountRequest {
         this.permissions = permissions;
     }
 
-    public Date getTransactionFromDateTime() {
+    public LocalDateTime getTransactionFromDateTime() {
         return transactionFromDateTime;
     }
 
-    public void setTransactionFromDateTime(Date transactionFromDateTime) {
+    public void setTransactionFromDateTime(LocalDateTime transactionFromDateTime) {
         this.transactionFromDateTime = transactionFromDateTime;
     }
 
-    public Date getTransactionToDateTime() {
+    public LocalDateTime getTransactionToDateTime() {
         return transactionToDateTime;
     }
 
-    public void setTransactionToDateTime(Date transactionToDateTime) {
+    public void setTransactionToDateTime(LocalDateTime transactionToDateTime) {
         this.transactionToDateTime = transactionToDateTime;
     }
 }

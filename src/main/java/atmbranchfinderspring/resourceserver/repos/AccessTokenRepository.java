@@ -28,7 +28,7 @@ public class AccessTokenRepository implements Repository<AccessToken> {
         accessTokens.put(entity.getAccessToken(), entity);
     }
 
-    public Collection<String> getAllIds() {
+    public synchronized Collection<String> getAllIds() {
         return accessTokens.keySet();
     }
 

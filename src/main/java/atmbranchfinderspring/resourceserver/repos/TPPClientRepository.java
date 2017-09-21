@@ -24,7 +24,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
 	}
 
 	public void delete(TPPClient entity) {
-		tppClients.remove(entity);
+		tppClients.remove(entity.getCredentials().getClientId());
 	}
 
 	public void delete(String clientId) {
