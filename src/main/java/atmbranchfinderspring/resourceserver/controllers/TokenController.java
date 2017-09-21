@@ -13,27 +13,28 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Base64;
 
 
 @RestController
 public class TokenController {
 
     private AccessTokenRepository accessTokenRepository;
-    private AuthenticationManagerImpl authenticationManagerImpl;
     private static long expirationTime = 60*60;
     private ObjectMapper mapper;
 
     @Autowired
-    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManagerImpl authenticationManagerImpl) {
+    public TokenController(AccessTokenRepository accessTokenRepository) {
         this.accessTokenRepository = accessTokenRepository;
-        this.authenticationManagerImpl = authenticationManagerImpl;
         mapper = new ObjectMapper();
     }
 
-	@BasicAuthenticated
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = "application/json")
+    @BasicAuthenticated
     public void getAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	AccessToken token = new AccessToken("Bearer", expirationTime);
+    	String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
+    	String clientId = new String(Base64.getDecoder().decode(credentials)).split(":")[0];
+    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime);
 	    accessTokenRepository.add(token);
 	    response.setStatus(201);
 	    response.setHeader("Content-type","application/json");

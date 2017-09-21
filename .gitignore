@@ -1,5 +1,6 @@
 target/
-src/main/resources/
+src/main/resources/*.pem
+src/main/resources/admins.txt
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
@@ -23,4 +24,4 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-/src/main/resources/
+

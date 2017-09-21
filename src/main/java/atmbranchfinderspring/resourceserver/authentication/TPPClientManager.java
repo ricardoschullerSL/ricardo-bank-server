@@ -1,10 +1,11 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.models.Client;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
 
-public interface ClientManager {
+public interface TPPClientManager {
 
-	void registerClient(Client client);
+	void registerClient(TPPClient client);
 	Boolean isClientRegistered(String clientId);
 
 }

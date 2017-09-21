@@ -5,34 +5,43 @@ import java.util.UUID;
 
 public class AccessToken implements ResponseObject {
 
-    private String accessToken;
-    private String tokenType;
-    private LocalDateTime issueDate;
-    private LocalDateTime expirationDate;
+	/**
+	 * Access token is used to authenticate software clients.
+	 * Highly advisable that these are immutable.
+	 */
 
-    public AccessToken(String tokenType, String customToken, Long expirationTime) {
-        this.tokenType = tokenType;
-        this.accessToken = customToken;
-        this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
-    }
+	private final String accessToken;
+	private final String tokenType;
+	private final LocalDateTime issueDate;
+	private final LocalDateTime expirationDate;
+	private final String clientId;
 
-    public AccessToken(String tokenType, Long expirationTime) {
-        this.tokenType = tokenType;
-        this.accessToken = UUID.randomUUID().toString();
-        this.issueDate = LocalDateTime.now();
-        this.expirationDate = issueDate.plusSeconds(expirationTime);
-    }
+	public AccessToken(String clientId, String tokenType, String customToken, Long expirationTime) {
+		this.tokenType = tokenType;
+		this.accessToken = customToken;
+		this.clientId = clientId;
+		this.issueDate = LocalDateTime.now();
+		this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
+	}
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-    public String getTokenType() { return tokenType; }
+	public AccessToken(String clientId, String tokenType, Long expirationTime) {
+		this.clientId = clientId;
+		this.tokenType = tokenType;
+		this.accessToken = UUID.randomUUID().toString();
+		this.issueDate = LocalDateTime.now();
+		this.expirationDate = issueDate.plusSeconds(expirationTime);
+	}
 
-    public LocalDateTime getIssueDate() {
-        return issueDate;
-    }
+	public String getClientId() {return clientId;}
+	public String getAccessToken() {
+		return accessToken;
+	}
+	public String getTokenType() { return tokenType; }
+	public LocalDateTime getIssueDate() {
+		return issueDate;
+	}
 
-    public LocalDateTime getExpirationDate() {
-        return expirationDate;
-    }
+	public LocalDateTime getExpirationDate() {
+		return expirationDate;
+	}
 }

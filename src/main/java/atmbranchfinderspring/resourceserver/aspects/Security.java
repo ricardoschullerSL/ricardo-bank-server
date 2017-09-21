@@ -2,15 +2,9 @@ package atmbranchfinderspring.resourceserver.aspects;
 
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
-import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
-import atmbranchfinderspring.resourceserver.models.AccessToken;
-import atmbranchfinderspring.resourceserver.models.AccountRequest;
-import atmbranchfinderspring.resourceserver.models.ResponseObject;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +28,7 @@ public class Security {
 
 
     @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.BasicAuthenticated)")
-    public void doBasicAuthentication(ProceedingJoinPoint joinPoint) {
+    public void doBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -57,11 +51,12 @@ public class Security {
 		    }
 	    } catch (Throwable e) {
 		    System.out.println(e);
+		    response.sendError(500);
 	    }
     }
 
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
-	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) {
+	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -80,6 +75,7 @@ public class Security {
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
+			response.sendError(500);
 		}
 	}
 

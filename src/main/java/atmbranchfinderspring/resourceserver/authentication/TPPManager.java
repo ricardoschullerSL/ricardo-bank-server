@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.Client;
+import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class TPPManager implements ClientManager{
+public class TPPManager implements TPPClientManager{
 
     private TPPClientRepository tppClientRepository;
 
@@ -17,7 +17,7 @@ public class TPPManager implements ClientManager{
         this.tppClientRepository = tppClientRepository;
     }
 
-    public void registerClient(Client client) {
+    public void registerClient(TPPClient client) {
         tppClientRepository.add(client);
     }
 
@@ -26,7 +26,16 @@ public class TPPManager implements ClientManager{
     }
 
     public Boolean areCredentialsCorrect(String clientId, String clientSecret) {
-        TPPClient client = (TPPClient) tppClientRepository.get(clientId);
+        TPPClient client = tppClientRepository.get(clientId);
         return !(client == null) && client.getCredentials().getClientSecret().equals(clientSecret);
+    }
+
+    public void addAccountRequestToClient(String clientId, AccountRequestResponse accountRequestResponse) {
+        TPPClient client = tppClientRepository.get(clientId);
+        client.addAccountRequestResponse(accountRequestResponse);
+    }
+
+    public TPPClient getTPPClient(String clientId) {
+    	return tppClientRepository.get(clientId);
     }
 }
