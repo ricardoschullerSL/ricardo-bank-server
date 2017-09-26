@@ -3,9 +3,11 @@ package atmbranchfinderspring.resourceserver.authentication;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.Admin;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
+import atmbranchfinderspring.resourceserver.repos.UserRepository;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,14 +23,16 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     private AccessTokenRepository accessTokenRepository;
     private TPPClientRepository tppClientRepository;
+    private UserRepository userRepository;
     private AdminRepository adminRepository;
     private EncryptionManager encryptionManager;
 
     @Autowired
-    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository,
+    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository, UserRepository userRepository,
                                      AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
         this.tppClientRepository = tppClientRepository;
+        this.userRepository = userRepository;
         this.accessTokenRepository = accessTokenRepository;
 		this.encryptionManager = encryptionManager;
     }
@@ -83,4 +87,16 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         adminRepository.add(admin);
     }
 
+    public Boolean checkUserCredentials(String userId, String userSecret) {
+        //TODO : Fix this;
+	    User user = userRepository.findOne(1L);
+	    if (user != null) {
+	    	System.out.println("Checking hashed secret for " + user.getUserName());
+	    	String saltedSecret = userSecret + user.getSalt();
+	    	byte[] hashedSecret = encryptionManager.SHA256(saltedSecret);
+	    	return Arrays.equals(hashedSecret, user.getHashedSecret());
+	    } else {
+	    	return false;
+	    }
+    }
 }

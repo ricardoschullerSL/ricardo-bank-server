@@ -14,13 +14,13 @@ import java.util.Base64;
 
 
 @Aspect
-public class Security {
+public class SecurityAspect {
 
 
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	public Security(AuthenticationManager authenticationManager) {
+	public SecurityAspect(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}
 
@@ -34,7 +34,7 @@ public class Security {
 		HttpServletResponse response = (HttpServletResponse) args[1];
 	    String[] values;
 	    String authorization = request.getHeader("Authorization");
-	    System.out.println("Security aspect started.");
+	    System.out.println("SecurityAspect aspect started.");
 	    try {
 		    if (authorization != null && authorization.startsWith("Basic")) {
 			    String base64Credentials = authorization.substring("Basic".length()).trim();

@@ -51,7 +51,7 @@ public class AdminController {
 							.withClaim("redirect_uri","http://localhost:8081/redirect")
 							.withClaim("software_statement","testsoftwarestatement")
 							.withJWTId("jwtId")
-							.sign(authenticationManagerImpl.getEncryptionManager().getPemManagerImp().getAlgorithm());
+							.sign(authenticationManagerImpl.getEncryptionManager().getPemManagerImpl().getAlgorithm());
 
 					response.setStatus(200);
 					return jwt;

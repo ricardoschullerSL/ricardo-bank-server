@@ -12,26 +12,25 @@ import java.security.MessageDigest;
 public class EncryptionManager {
 
 
-	private PEMManager pemManagerImp;
+	private PEMManager pemManagerImpl;
 	private JWTVerifier jwtVerifier;
 
 	@Autowired
-	public EncryptionManager(PEMManager pemManagerImp) {
-		this.pemManagerImp = pemManagerImp;
-
+	public EncryptionManager(PEMManager pemManagerImpl) {
+		this.pemManagerImpl = pemManagerImpl;
 	}
 
 
-	public PEMManager getPemManagerImp() {
-		return pemManagerImp;
+	public PEMManager getPemManagerImpl() {
+		return pemManagerImpl;
 	}
 
 	public Algorithm getAlgorithm() {
-		return pemManagerImp.getAlgorithm();
+		return pemManagerImpl.getAlgorithm();
 	}
 
 	public JWTVerifier getJwtVerifier() {
-		return pemManagerImp.getJwtVerifier();
+		return pemManagerImpl.getJwtVerifier();
 	}
 
 	public byte[] SHA256(String string) {

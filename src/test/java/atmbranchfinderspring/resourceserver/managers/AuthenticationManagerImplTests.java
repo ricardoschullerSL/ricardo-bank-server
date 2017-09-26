@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver;
+package atmbranchfinderspring.resourceserver.managers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
@@ -9,6 +9,7 @@ import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
+import atmbranchfinderspring.resourceserver.repos.UserRepository;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +30,7 @@ public class AuthenticationManagerImplTests {
 	EncryptionManager encryptionManager;
 	AccessTokenRepository accessTokenRepository;
 	AdminRepository adminRepository;
+	UserRepository userRepository;
 	TPPClientRepository tppClientRepository;
 
 	@BeforeEach
@@ -38,7 +40,8 @@ public class AuthenticationManagerImplTests {
 		tppClientRepository = new TPPClientRepository();
 		encryptionManager = new EncryptionManager(pemManager);
 		adminRepository = new AdminRepository();
-		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, tppClientRepository, adminRepository, encryptionManager);
+		userRepository = null;
+		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach

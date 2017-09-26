@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver;
+package atmbranchfinderspring.resourceserver.managers;
 
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.ClientCredentials;
@@ -29,7 +29,7 @@ public class TPPManagerTests {
 	@AfterEach
 	void cleanup() {
 		tppClientRepository = null;
-		tppClientRepository = null;
+		tppManager = null;
 	}
 
 

@@ -15,18 +15,18 @@ public class Account {
     private String id;
     private String accountId;
     private String accountType;
-    private List<Transaction> receivedTransactions;
-    private List<Transaction> sentTransactions;
-    private Double balance;
+    private List<CurrencyTransaction> receivedCurrencyTransactions;
+    private List<CurrencyTransaction> sentCurrencyTransactions;
+    private double balance;
 
 
     public Account() {}
 
-    public Account(String accountId, Double balance) {
+    public Account(String accountId, double balance) {
         this.accountId = accountId;
         this.balance = balance;
-        this.receivedTransactions = new ArrayList<>();
-        this.sentTransactions = new ArrayList<>();
+        this.receivedCurrencyTransactions = new ArrayList<>();
+        this.sentCurrencyTransactions = new ArrayList<>();
     }
 
     public String getId() {
@@ -53,27 +53,27 @@ public class Account {
         this.accountType = accountType;
     }
 
-    public List<Transaction> getReceivedTransactions() {
-        return receivedTransactions;
+    public List<CurrencyTransaction> getReceivedCurrencyTransactions() {
+        return receivedCurrencyTransactions;
     }
 
-    public void setReceivedTransactions(ArrayList<Transaction> receivedTransactions) {
-        this.receivedTransactions = receivedTransactions;
+    public void setReceivedCurrencyTransactions(ArrayList<CurrencyTransaction> receivedCurrencyTransactions) {
+        this.receivedCurrencyTransactions = receivedCurrencyTransactions;
     }
 
-    public List<Transaction> getSentTransactions() {
-        return sentTransactions;
+    public List<CurrencyTransaction> getSentCurrencyTransactions() {
+        return sentCurrencyTransactions;
     }
 
-    public void setSentTransactions(ArrayList<Transaction> sentTransactions) {
-        this.sentTransactions = sentTransactions;
+    public void setSentCurrencyTransactions(ArrayList<CurrencyTransaction> sentCurrencyTransactions) {
+        this.sentCurrencyTransactions = sentCurrencyTransactions;
     }
 
-    public Double getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 }
