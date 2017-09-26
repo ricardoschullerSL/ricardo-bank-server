@@ -1,7 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.annotations.BasicAuthenticated;
-import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
+import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,25 +11,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Properties;
 
 
 @RestController
+@RequestMapping("/token")
 public class TokenController {
 
     private AccessTokenRepository accessTokenRepository;
-    private static long expirationTime = 60*60;
+    private static long expirationTime;
     private ObjectMapper mapper;
 
     @Autowired
     public TokenController(AccessTokenRepository accessTokenRepository) {
         this.accessTokenRepository = accessTokenRepository;
-        mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper();
+        try {
+        	Properties props = new Properties();
+        	props.load(new FileInputStream("src\\main\\resources\\application.properties"));
+        	this.expirationTime = Long.parseLong(props.getProperty("accesstoken.expirationtime"));
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = "application/json")
-    @BasicAuthenticated
+    @TPPBasicAuthenticated
     public void getAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
     	String clientId = new String(Base64.getDecoder().decode(credentials)).split(":")[0];

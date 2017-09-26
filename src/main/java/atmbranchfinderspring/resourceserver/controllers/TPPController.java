@@ -22,6 +22,7 @@ import java.util.UUID;
 
 
 @RestController
+@RequestMapping("/tpp")
 public class TPPController {
 
     private AuthenticationManagerImpl authenticationManagerImpl;

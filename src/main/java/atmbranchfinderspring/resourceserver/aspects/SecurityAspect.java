@@ -27,8 +27,8 @@ public class SecurityAspect {
 
 
 
-    @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.BasicAuthenticated)")
-    public void doBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+    @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
+    public void doTPPBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];

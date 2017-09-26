@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Component
 @Target(value= {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface BasicAuthenticated {
+public @interface TPPBasicAuthenticated {
 }

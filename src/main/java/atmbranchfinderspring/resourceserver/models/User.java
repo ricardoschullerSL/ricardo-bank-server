@@ -11,13 +11,13 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name="USERNAME")
+	@Column(name="USERNAME", unique = true)
 	private String userName;
 	@Column(name="HASHEDSECRET")
 	private byte[] hashedSecret;
 	@Column(name="SALT")
 	private String salt;
-	@Column(name="ACCOUNTID")
+	@Column(name="ACCOUNTID", unique = true)
 	private long accountId;
 
 	public User() {
