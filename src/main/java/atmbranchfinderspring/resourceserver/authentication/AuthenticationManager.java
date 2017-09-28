@@ -7,6 +7,7 @@ public interface AuthenticationManager {
 	JWTVerifier getJWTVerifier();
 	Boolean isAccessTokenValid(String token);
 	Boolean checkClientCredentials(String clientId, String clientSecret);
-
+	Boolean checkAdminCredentials(String adminId, String adminSecret);
+	Boolean checkUserCredentials(String userId, String userSecret);
 }
 

@@ -55,6 +55,34 @@ public class SecurityAspect {
 	    }
     }
 
+	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
+	public void doAdminBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+		Object[] args = joinPoint.getArgs();
+		HttpServletRequest request = (HttpServletRequest) args[0];
+		HttpServletResponse response = (HttpServletResponse) args[1];
+		String[] values;
+		String authorization = request.getHeader("Authorization");
+		System.out.println("SecurityAspect aspect started.");
+		try {
+			if (authorization != null && authorization.startsWith("Basic")) {
+				String base64Credentials = authorization.substring("Basic".length()).trim();
+				String credentials = new String(Base64.getDecoder().decode(base64Credentials));
+				values = credentials.split(":", 2);
+				System.out.println("Authenticating " + values[0]);
+				if (authenticationManager.checkAdminCredentials(values[0], values[1])) {
+					joinPoint.proceed();
+				} else {
+					response.sendError(403, "Incorrect Client Credentials.");
+				}
+			} else {
+				response.sendError(400, "No Authorization headers.");
+			}
+		} catch (Throwable e) {
+			System.out.println(e);
+			response.sendError(500);
+		}
+	}
+
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
 	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();

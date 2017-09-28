@@ -87,13 +87,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         adminRepository.add(admin);
     }
 
-    public Boolean checkUserCredentials(String userId, String userSecret) {
-        //TODO : Fix this;
-	    User user = userRepository.findOne(1L);
+    public Boolean checkUserCredentials(String username, String userSecret) {
+	    User user = userRepository.findByUserName(username);
 	    if (user != null) {
-	    	System.out.println("Checking hashed secret for " + user.getUserName());
-	    	String saltedSecret = userSecret + user.getSalt();
-	    	byte[] hashedSecret = encryptionManager.SHA256(saltedSecret);
+            System.out.println("Checking hashed secret for " + user.getUserName());
+            String saltedSecret = userSecret + user.getSalt();
+            byte[] hashedSecret = encryptionManager.SHA256(saltedSecret);
 	    	return Arrays.equals(hashedSecret, user.getHashedSecret());
 	    } else {
 	    	return false;

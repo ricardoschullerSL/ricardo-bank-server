@@ -4,10 +4,13 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Controller
 public class TemplateController {
@@ -29,10 +32,28 @@ public class TemplateController {
 		return "Authorize";
 	}
 
-	@RequestMapping("/authenticate")
-	public void authenticate(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping("/authenticate/{accountRequestId}")
+	public void authenticate(HttpServletRequest request, HttpServletResponse response, @PathVariable String accountRequestId) throws IOException {
 		String username = request.getParameter("_username_");
 		String password = request.getParameter("_password_");
-		System.out.println(username + " " + password);
+
+		System.out.println("Validating account request id: " + accountRequestId + " for " + username + " " + password);
+
+		try {
+			if (username != null && accountRequestId != null) {
+
+				if (authenticationManager.checkUserCredentials(username, password)) {
+					System.out.println("User authenticated yeah boiii");
+				} else {
+					response.sendError(403, "Incorrect credentials");
+				}
+			} else {
+				response.sendError(400, "No username found");
+			}
+		} catch (Throwable e) {
+			System.out.println(e);
+			response.sendError(500);
+		}
+
 	}
 }

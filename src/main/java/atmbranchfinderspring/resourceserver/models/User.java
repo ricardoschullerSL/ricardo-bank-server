@@ -1,41 +1,41 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name="USER")
+@Table(name="users")
 public class User {
 
 	@Id
-	@Column(name="ID")
+	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-
-	@Column(name="USERNAME", unique = true)
+	private long id;
+	@Column(name="username", unique = true)
 	private String userName;
-	@Column(name="HASHEDSECRET")
+	@Column(name="hashed_secret")
 	private byte[] hashedSecret;
-	@Column(name="SALT")
+	@Column(name="salt")
 	private String salt;
-	@Column(name="ACCOUNTID", unique = true)
-	private long accountId;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false, targetEntity = Account.class)
+	@JoinColumn(name= "accountId", unique = true, nullable = false)
+	@JsonManagedReference
+	private Account account;
 
 	public User() {
 
 	}
 
-	public User(String userName, byte[] hashedSecret, String salt, long accountId) {
-		this.userName = userName;
-		this.hashedSecret = hashedSecret;
-		this.salt = salt;
-		this.accountId = accountId;
+	public User(long accountId) {
+		this.account = new Account(accountId);
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -63,12 +63,12 @@ public class User {
 		this.salt = salt;
 	}
 
-	public long getAccountId() {
-		return accountId;
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setAccountId(long accountId) {
-		this.accountId = accountId;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	@Override

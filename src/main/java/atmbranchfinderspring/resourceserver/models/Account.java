@@ -1,47 +1,53 @@
 package atmbranchfinderspring.resourceserver.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name = "accounts")
 public class Account {
 
-    @Id
-    private String id;
-    private String accountId;
-    private String accountType;
-    private List<CurrencyTransaction> receivedCurrencyTransactions;
-    private List<CurrencyTransaction> sentCurrencyTransactions;
-    private double balance;
+	@Id
+	@Column(name = "accountId")
+    private long accountId;
+
+	@Column(name="account_type")
+    private String accountType = "Basic Current Account";
+
+	@OneToMany
+	@JoinColumn(name="currency_transactions")
+    private List<CurrencyTransaction> CurrencyTransactions;
+
+	private long balanceInCents;
+
+	@OneToOne(mappedBy = "account", optional = false)
+	@JsonBackReference
+	private User user;
 
 
     public Account() {}
 
-    public Account(String accountId, double balance) {
+    public Account(long accountId) {
+    	this.accountId = accountId;
+    }
+
+    public Account(long accountId,String accountType, long balanceInCents) {
         this.accountId = accountId;
-        this.balance = balance;
-        this.receivedCurrencyTransactions = new ArrayList<>();
-        this.sentCurrencyTransactions = new ArrayList<>();
+        this.accountType = accountType;
+        this.balanceInCents = balanceInCents;
+        this.CurrencyTransactions = new ArrayList<>();
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getAccountId() {
+    public long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(String accountId) {
+    public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
 
@@ -53,27 +59,28 @@ public class Account {
         this.accountType = accountType;
     }
 
-    public List<CurrencyTransaction> getReceivedCurrencyTransactions() {
-        return receivedCurrencyTransactions;
+    public List<CurrencyTransaction> getCurrencyTransactions() {
+        return CurrencyTransactions;
     }
 
-    public void setReceivedCurrencyTransactions(ArrayList<CurrencyTransaction> receivedCurrencyTransactions) {
-        this.receivedCurrencyTransactions = receivedCurrencyTransactions;
+    public void setCurrencyTransactions(List<CurrencyTransaction> currencyTransactions) {
+        this.CurrencyTransactions = currencyTransactions;
     }
 
-    public List<CurrencyTransaction> getSentCurrencyTransactions() {
-        return sentCurrencyTransactions;
+	public long getBalanceInCents() {
+        return balanceInCents;
     }
 
-    public void setSentCurrencyTransactions(ArrayList<CurrencyTransaction> sentCurrencyTransactions) {
-        this.sentCurrencyTransactions = sentCurrencyTransactions;
+    public void setBalanceInCents(long balanceInCents) {
+        this.balanceInCents = balanceInCents;
     }
 
-    public double getBalance() {
-        return balance;
-    }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
+	public User getUser() {
+		return user;
+	}
+
+	public void setUsername(User user) {
+		this.user = user;
+	}
 }
