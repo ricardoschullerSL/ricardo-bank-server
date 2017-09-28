@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,7 @@ public class TemplateController {
 	}
 
 	@RequestMapping("/authenticate/{accountRequestId}")
-	public void authenticate(HttpServletRequest request, HttpServletResponse response, @PathVariable String accountRequestId) throws IOException {
+	public @ResponseBody String authenticate(HttpServletRequest request, HttpServletResponse response, @PathVariable String accountRequestId) throws IOException {
 		String username = request.getParameter("_username_");
 		String password = request.getParameter("_password_");
 
@@ -44,15 +45,19 @@ public class TemplateController {
 
 				if (authenticationManager.checkUserCredentials(username, password)) {
 					System.out.println("User authenticated yeah boiii");
+					return "Yeah boiii";
 				} else {
 					response.sendError(403, "Incorrect credentials");
+					return "Wrong password boiii";
 				}
 			} else {
 				response.sendError(400, "No username found");
+				return "No username boiii";
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
 			response.sendError(500);
+			return "Sad boiii";
 		}
 
 	}

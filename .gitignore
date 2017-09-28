@@ -2,6 +2,7 @@ target/
 src/main/resources/*.pem
 src/main/resources/admins.txt
 src/main/resources/keystore.p12
+src/main/resources/application.properties
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
