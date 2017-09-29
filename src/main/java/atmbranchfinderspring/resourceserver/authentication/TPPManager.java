@@ -27,7 +27,7 @@ public class TPPManager implements TPPClientManager{
 
     public Boolean areCredentialsCorrect(String clientId, String clientSecret) {
         TPPClient client = tppClientRepository.get(clientId);
-        return !(client == null) && client.getCredentials().getClientSecret().equals(clientSecret);
+        return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }
 
     public void addAccountRequestToClient(String clientId, AccountRequestResponse accountRequestResponse) {

@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 import com.auth0.jwt.JWTVerifier;
 
 public interface AuthenticationManager {
@@ -9,5 +10,6 @@ public interface AuthenticationManager {
 	Boolean checkClientCredentials(String clientId, String clientSecret);
 	Boolean checkAdminCredentials(String adminId, String adminSecret);
 	Boolean checkUserCredentials(String userId, String userSecret);
+	AccountRequestResponse getAccountRequest(String accountRequestId);
 }
 

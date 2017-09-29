@@ -2,12 +2,12 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
+import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
+import atmbranchfinderspring.resourceserver.models.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,42 +23,48 @@ public class TemplateController {
 		this.authenticationManager = authenticationManager;
 	}
 
-	@RequestMapping("/login")
-	public String login() {
+	@RequestMapping("/login/{accountRequestId}")
+	public String login(@PathVariable String accountRequestId, Model model, @ModelAttribute Credentials credentials) {
+		model.addAttribute("accountRequestId",accountRequestId);
+		model.addAttribute("credentials",credentials);
 		return "LogInPage";
 	}
 
-	@RequestMapping("/authorizeApp")
-	public String authorize() {
+	@RequestMapping("/authorizeApp/{accountRequestId}")
+	public String authorize(@PathVariable String accountRequestId) {
+		System.out.println(accountRequestId);
 		return "Authorize";
 	}
 
 	@RequestMapping("/authenticate/{accountRequestId}")
-	public @ResponseBody String authenticate(HttpServletRequest request, HttpServletResponse response, @PathVariable String accountRequestId) throws IOException {
-		String username = request.getParameter("_username_");
-		String password = request.getParameter("_password_");
+	public void authenticate(HttpServletRequest request, HttpServletResponse response,
+	                                         @ModelAttribute(value="credentials") Credentials credentials, @PathVariable String accountRequestId) throws IOException {
+		String username = credentials.getId();
+		String password = credentials.getSecret();
 
 		System.out.println("Validating account request id: " + accountRequestId + " for " + username + " " + password);
 
 		try {
-			if (username != null && accountRequestId != null) {
+			if (isNotNull(username) && isNotNull(accountRequestId)) {
 
 				if (authenticationManager.checkUserCredentials(username, password)) {
+					AccountRequestResponse accountRequestResponse = authenticationManager.getAccountRequest(accountRequestId);
 					System.out.println("User authenticated yeah boiii");
-					return "Yeah boiii";
+					response.sendRedirect("/authorizeApp/" + accountRequestId);
 				} else {
-					response.sendError(403, "Incorrect credentials");
-					return "Wrong password boiii";
+					response.sendError(403, "Incorrect credentials boiii");
 				}
 			} else {
-				response.sendError(400, "No username found");
-				return "No username boiii";
+				response.sendError(400, "No username found boiii");
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
-			response.sendError(500);
-			return "Sad boiii";
+			response.sendError(500, "sad boiii");
 		}
 
+	}
+
+	private Boolean isNotNull(Object o) {
+		return o != null;
 	}
 }

@@ -15,11 +15,11 @@
 
 <p>Please log in.</p>
 
-<form action="/authenticate" method="POST">
+<form action="#" th:action="'/authenticate/' + ${accountRequestId}" th:object="${credentials}" method="POST">
     <label for="user">Username</label>
-    <input id="user" name="_username_" type="text"/>
+    <input id="user" th:field="*{id}" name="username" type="text" />
     <label for="pass">Password</label>
-    <input id="pass" name="_password_" type="password"/>
+    <input id="pass" th:field="*{secret}" name="password" type="password"/>
     <button type="submit">Login</button>
 </form>
 

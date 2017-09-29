@@ -4,12 +4,9 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
-import atmbranchfinderspring.resourceserver.models.ClientCredentials;
+import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
-import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
-import atmbranchfinderspring.resourceserver.repos.AdminRepository;
-import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
-import atmbranchfinderspring.resourceserver.repos.UserRepository;
+import atmbranchfinderspring.resourceserver.repos.*;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.junit.jupiter.api.AfterEach;
@@ -32,6 +29,7 @@ public class AuthenticationManagerImplTests {
 	AdminRepository adminRepository;
 	UserRepository userRepository;
 	TPPClientRepository tppClientRepository;
+	AccountRequestRepository accountRequestRepository;
 
 	@BeforeEach
 	void setup() {
@@ -41,7 +39,8 @@ public class AuthenticationManagerImplTests {
 		encryptionManager = new EncryptionManager(pemManager);
 		adminRepository = new AdminRepository();
 		userRepository = null;
-		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
+		accountRequestRepository = new AccountRequestRepository();
+		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, accountRequestRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach
@@ -84,14 +83,14 @@ public class AuthenticationManagerImplTests {
 	@DisplayName("Check if AuthenticationManagerImpl validates tpp client credentials correctly")
 	public void credentialCheckerTest() {
 
-		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		Credentials credentials = new Credentials("clientId", "clientSecret");
 		TPPClient tppClient = new TPPClient.TPPClientBuilder()
 				.setClientCredentials(credentials)
 				.setRedirectUri(null)
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getClientId(),credentials.getClientSecret())).isEqualTo(true);
+		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getId(),credentials.getSecret())).isEqualTo(true);
 
 	}
 
@@ -99,28 +98,28 @@ public class AuthenticationManagerImplTests {
 	@DisplayName("Check if AuthenticationManagerImpl invalidates tpp client if clientId is wrong")
 	void wrongClientIdCredentialCheckerTest() {
 
-		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		Credentials credentials = new Credentials("clientId", "clientSecret");
 		TPPClient tppClient = new TPPClient.TPPClientBuilder()
 				.setClientCredentials(credentials)
 				.setRedirectUri(null)
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManagerImpl.checkClientCredentials("wrongId",credentials.getClientSecret())).isEqualTo(false);
+		assertThat(authenticationManagerImpl.checkClientCredentials("wrongId",credentials.getSecret())).isEqualTo(false);
 	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl invalidates tpp client if clientId is wrong")
 	void wrongPasswordCredentialCheckerTest() {
 
-		ClientCredentials credentials = new ClientCredentials("clientId", "clientSecret");
+		Credentials credentials = new Credentials("clientId", "clientSecret");
 		TPPClient tppClient = new TPPClient.TPPClientBuilder()
 				.setClientCredentials(credentials)
 				.setRedirectUri(null)
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getClientId(),"wrongPassword")).isEqualTo(false);
+		assertThat(authenticationManagerImpl.checkClientCredentials(credentials.getId(),"wrongPassword")).isEqualTo(false);
 	}
 
 	private class PEMManagerMock implements PEMManager{

@@ -16,7 +16,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
 	}
 
 	public void add(TPPClient entity) {
-		tppClients.put(entity.getCredentials().getClientId(), entity);
+		tppClients.put(entity.getCredentials().getId(), entity);
 	}
 
 	public Collection<String> getAllIds() {
@@ -24,7 +24,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
 	}
 
 	public void delete(TPPClient entity) {
-		tppClients.remove(entity.getCredentials().getClientId());
+		tppClients.remove(entity.getCredentials().getId());
 	}
 
 	public void delete(String clientId) {

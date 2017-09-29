@@ -8,19 +8,19 @@ import java.util.HashMap;
 
 public class TPPClient implements Client{
 
-    private ClientCredentials credentials;
+    private Credentials credentials;
     private URI redirectUri;
     private DecodedJWT jwt;
     private HashMap<String, AccountRequestResponse> accountRequestResponses;
 
-    public TPPClient(ClientCredentials credentials, URI redirectUri, DecodedJWT jwt) {
+    public TPPClient(Credentials credentials, URI redirectUri, DecodedJWT jwt) {
         this.credentials = credentials;
         this.redirectUri = redirectUri;
         this.jwt = jwt;
         this.accountRequestResponses = new HashMap<>();
     }
 
-    public ClientCredentials getCredentials() {
+    public Credentials getCredentials() {
         return credentials;
     }
 
@@ -43,7 +43,7 @@ public class TPPClient implements Client{
 
     public static class TPPClientBuilder {
 
-        private ClientCredentials credentials;
+        private Credentials credentials;
         private URI redirectUri;
         private DecodedJWT jwt1;
 
@@ -52,7 +52,7 @@ public class TPPClient implements Client{
         }
 
 
-        public TPPClientBuilder setClientCredentials(ClientCredentials credentials) {
+        public TPPClientBuilder setClientCredentials(Credentials credentials) {
             this.credentials = credentials;
             return this;
         }

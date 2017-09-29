@@ -1,13 +1,7 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
-import atmbranchfinderspring.resourceserver.models.Admin;
-import atmbranchfinderspring.resourceserver.models.TPPClient;
-import atmbranchfinderspring.resourceserver.models.User;
-import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
-import atmbranchfinderspring.resourceserver.repos.AdminRepository;
-import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
-import atmbranchfinderspring.resourceserver.repos.UserRepository;
+import atmbranchfinderspring.resourceserver.models.*;
+import atmbranchfinderspring.resourceserver.repos.*;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,15 +16,18 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
 
     private AccessTokenRepository accessTokenRepository;
+    private AccountRequestRepository accountRequestRepository;
     private TPPClientRepository tppClientRepository;
     private UserRepository userRepository;
     private AdminRepository adminRepository;
     private EncryptionManager encryptionManager;
 
     @Autowired
-    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, TPPClientRepository tppClientRepository, UserRepository userRepository,
+    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, AccountRequestRepository accountRequestRepository,
+                                     TPPClientRepository tppClientRepository, UserRepository userRepository,
                                      AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
+        this.accountRequestRepository = accountRequestRepository;
         this.tppClientRepository = tppClientRepository;
         this.userRepository = userRepository;
         this.accessTokenRepository = accessTokenRepository;
@@ -65,7 +62,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     public Boolean checkClientCredentials(String clientId, String clientSecret) {
         TPPClient client = (TPPClient) tppClientRepository.get(clientId);
-        return !(client == null) && client.getCredentials().getClientSecret().equals(clientSecret);
+        return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }
 
     public Boolean checkAdminCredentials(String adminId, String adminSecret) {
@@ -97,5 +94,9 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    } else {
 	    	return false;
 	    }
+    }
+
+    public AccountRequestResponse getAccountRequest(String accountRequestId) {
+    	return accountRequestRepository.get(accountRequestId);
     }
 }

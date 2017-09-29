@@ -1,7 +1,7 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
-import atmbranchfinderspring.resourceserver.models.ClientCredentials;
+import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import com.auth0.jwt.JWTVerifier;
@@ -52,7 +52,7 @@ public class TPPController {
                 System.out.println("Incoming request is for client that's already registered.");
                 response.sendError(400, "Client already registered.");
             } else {
-                ClientCredentials credentials = new ClientCredentials(clientId, UUID.randomUUID().toString());
+                Credentials credentials = new Credentials(clientId, UUID.randomUUID().toString());
                 TPPClient client = new TPPClient(credentials, redirectUri, jwt);
                 tppManager.registerClient(client);
                 String responseString = mapper.writeValueAsString(credentials);

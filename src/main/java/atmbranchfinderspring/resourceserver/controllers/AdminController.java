@@ -48,7 +48,7 @@ public class AdminController {
 					String jwt = JWT.create().withIssuer("Open Banking")
 							.withClaim("software_id", body.get("software_id"))
 							.withClaim("aud","Ricardo Bank")
-							.withClaim("redirect_uri","http://localhost:8081/redirect")
+							.withClaim("redirect_uri", body.get("redirect_uri"))
 							.withClaim("software_statement","testsoftwarestatement")
 							.withJWTId("jwtId")
 							.sign(authenticationManagerImpl.getEncryptionManager().getPemManagerImpl().getAlgorithm());

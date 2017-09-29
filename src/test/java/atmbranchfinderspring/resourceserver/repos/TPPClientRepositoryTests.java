@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.repos;
 
-import atmbranchfinderspring.resourceserver.models.ClientCredentials;
+import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +20,7 @@ public class TPPClientRepositoryTests {
 	void setup() throws URISyntaxException {
 		tppClientRepository = new TPPClientRepository();
 		DecodedJWT jwt = null;
-		tppClientRepository.add(new TPPClient(new ClientCredentials("testClientId","testClientSecret"), new URI("http://localhost:8080/testURI"), jwt ));
+		tppClientRepository.add(new TPPClient(new Credentials("testClientId","testClientSecret"), new URI("http://localhost:8080/testURI"), jwt ));
 	}
 
 	@AfterEach
@@ -31,7 +31,7 @@ public class TPPClientRepositoryTests {
 	@Test
 	void getGetsToken() {
 		TPPClient client = tppClientRepository.get("testClientId");
-		assertThat(client.getCredentials().getClientSecret()).isEqualTo("testClientSecret");
+		assertThat(client.getCredentials().getSecret()).isEqualTo("testClientSecret");
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class TPPClientRepositoryTests {
 	@Test
 	void addAddsToken() throws URISyntaxException {
 		int size = tppClientRepository.getAllIds().size();
-		TPPClient client = new TPPClient(new ClientCredentials("testClientId2", "testClientSecret2"),new URI("http://localhost:8080/secondURI"),null);
+		TPPClient client = new TPPClient(new Credentials("testClientId2", "testClientSecret2"),new URI("http://localhost:8080/secondURI"),null);
 		tppClientRepository.add(client);
 		assertThat(tppClientRepository.getAllIds().size()).isEqualTo(size + 1);
 	}
