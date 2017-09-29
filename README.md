@@ -20,7 +20,7 @@ spring.jpa.hibernate.dll=create
 spring.datasource.url=jdbc:{mySQL data url}
 spring.datasource.username={mySQL username}
 spring.datasource.password={mySQL password}
-accesstoken.expirationtime=3600 ## in seconds
+accesstoken.expirationtime=3600
 
 server.port=8443
 server.ssl.key-store=classpath:keystore.p12
