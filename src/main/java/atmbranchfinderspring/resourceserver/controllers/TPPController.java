@@ -47,7 +47,7 @@ public class TPPController {
 	        JWTVerifier verifier = authenticationManagerImpl.getJWTVerifier();
             DecodedJWT jwt = verifier.verify(token);
             String clientId = jwt.getClaim("software_id").asString();
-            URI redirectUri = new URI(jwt.getClaim("redirect_uri").asString());
+            String redirectUri = jwt.getClaim("redirect_uri").asString();
             if (tppManager.isClientRegistered(clientId)) {
                 System.out.println("Incoming request is for client that's already registered.");
                 response.sendError(400, "Client already registered.");
@@ -68,7 +68,7 @@ public class TPPController {
             } catch (IOException ioe) {
                 System.out.println(ioe);
             }
-        } catch (IOException | URISyntaxException e )  {
+        } catch (IOException e )  {
             //Response error handler.
             System.out.println(e);
         }

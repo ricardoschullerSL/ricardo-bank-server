@@ -19,7 +19,11 @@
 </table>
 Do you want to authorize Plutus to access your account?
 
-<button>Yes</button>
-<button>No</button>
+<form action="#" th:action="'/authorizeApp/' + ${accountRequestId} + '/1'">
+    <button >Yes</button>
+</form>
+<form action="#" th:action="'/authorizeApp/' + ${accountRequestId} + '/0'">
+    <button >No</button>
+</form>
 </body>
 </html>

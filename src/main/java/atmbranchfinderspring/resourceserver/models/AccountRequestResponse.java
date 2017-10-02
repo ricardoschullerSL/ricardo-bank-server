@@ -7,6 +7,7 @@ import java.util.List;
 public class AccountRequestResponse implements ResponseObject{
 
     private String accountRequestId;
+    private String clientId;
     private LocalDateTime creationDateTime;
     private LocalDateTime expirationDateTime;
     private List<Permission> permissions;
@@ -14,14 +15,15 @@ public class AccountRequestResponse implements ResponseObject{
     private LocalDateTime transactionToDateTime;
     private AccountRequestStatus status;
 
-    public enum AccountRequestStatus {
+	public enum AccountRequestStatus {
         AUTHORIZED, AWAITINGAUTHORIZATION, REJECTED, REVOKED
     }
 
     public AccountRequestResponse() {}
 
     public AccountRequestResponse(String accountRequestId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
-                                  List<Permission> permissions, LocalDateTime transactionFromDateTime, LocalDateTime transactionToDateTime, AccountRequestStatus status) {
+                                  List<Permission> permissions, LocalDateTime transactionFromDateTime,
+                                  LocalDateTime transactionToDateTime, AccountRequestStatus status) {
         this.accountRequestId = accountRequestId;
         this.creationDateTime = creationDateTime;
         this.expirationDateTime = expirationDateTime;
@@ -31,11 +33,12 @@ public class AccountRequestResponse implements ResponseObject{
         this.status = status;
     }
 
-    public AccountRequestResponse(AccountRequest accountRequest, List<Permission> permissions, AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
+    public AccountRequestResponse(AccountRequest accountRequest, List<Permission> permissions, String clientId, AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
         this.accountRequestId = accountRequest.getId();
         this.transactionFromDateTime = accountRequest.getTransactionFromDateTime();
         this.transactionToDateTime = accountRequest.getTransactionToDateTime();
         this.permissions = permissions;
+        this.clientId = clientId;
         this.status = status;
         this.creationDateTime = creationDateTime;
         this.expirationDateTime = expirationDateTime;
@@ -68,4 +71,16 @@ public class AccountRequestResponse implements ResponseObject{
     public AccountRequestStatus getStatus() {
         return status;
     }
+
+    public void setStatus(AccountRequestStatus status) {
+    	this.status = status;
+    }
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
 }

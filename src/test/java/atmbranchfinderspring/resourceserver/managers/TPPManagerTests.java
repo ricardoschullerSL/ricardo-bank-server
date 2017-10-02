@@ -36,85 +36,68 @@ public class TPPManagerTests {
 	@Test
 	@DisplayName("registerClient adds TPPClient to repository")
 	void registerTPPClientTest() {
-		try {
-			Credentials credentials = new Credentials("clientId", "clientSecret");
-			TPPClient tppClient = new TPPClient.TPPClientBuilder()
-					.setClientCredentials(credentials)
-					.setRedirectUri(new URI("http://test.com/redirect"))
-					.setSSA(null).build();
 
-			tppManager.registerClient(tppClient);
-			assertThat(tppClientRepository.getAllIds().size()).isEqualTo(1);
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+		Credentials credentials = new Credentials("clientId", "clientSecret");
+		TPPClient tppClient = new TPPClient.TPPClientBuilder()
+				.setClientCredentials(credentials)
+				.setRedirectUri("http://test.com/redirect")
+				.setSSA(null).build();
+
+		tppManager.registerClient(tppClient);
+		assertThat(tppClientRepository.getAllIds().size()).isEqualTo(1);
 	}
 
 	@Test
 	@DisplayName("Check if tppManager returns true if client is registered.")
 	void clientIsRegisteredTest() {
-		try {
-			Credentials credentials = new Credentials("testClient", "testSecret");
-			TPPClient client = new TPPClient(credentials, new URI("https://testuri.com/redirect"), null);
-			tppClientRepository.add(client);
-			assertThat(tppManager.isClientRegistered("testClient")).isEqualTo(true);
 
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+		Credentials credentials = new Credentials("testClient", "testSecret");
+		TPPClient client = new TPPClient(credentials, "https://testuri.com/redirect", null);
+		tppClientRepository.add(client);
+		assertThat(tppManager.isClientRegistered("testClient")).isEqualTo(true);
 	}
 
 	@Test
 	@DisplayName("Check if tppManager returns false if client is not registered")
 	void clientIsNotRegisteredTest() {
-		try {
-			Credentials credentials = new Credentials("testClient", "testSecret");
-			TPPClient client = new TPPClient(credentials, new URI("https://testuri.com/redirect"), null);
-			tppClientRepository.add(client);
-			assertThat(tppManager.isClientRegistered("wrongClient")).isEqualTo(false);
 
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+		Credentials credentials = new Credentials("testClient", "testSecret");
+		TPPClient client = new TPPClient(credentials, "https://testuri.com/redirect", null);
+		tppClientRepository.add(client);
+		assertThat(tppManager.isClientRegistered("wrongClient")).isEqualTo(false);
 	}
 
 	@Test
 	@DisplayName("areCredentialsCorrect returns true when credentials are correct")
 	void credentialsAreCorrect() {
-		try {
-			Credentials credentials = new Credentials("testClient", "testSecret");
-			TPPClient client = new TPPClient(credentials, new URI("https://testuri.com/redirect"), null);
-			tppClientRepository.add(client);
-			assertThat(tppManager.areCredentialsCorrect(credentials.getId(), credentials.getSecret())).isEqualTo(true);
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+
+		Credentials credentials = new Credentials("testClient", "testSecret");
+		TPPClient client = new TPPClient(credentials,"https://testuri.com/redirect", null);
+		tppClientRepository.add(client);
+		assertThat(tppManager.areCredentialsCorrect(credentials.getId(), credentials.getSecret())).isEqualTo(true);
+
 	}
 
 	@Test
 	@DisplayName("areCredentialsCorrect returns false when clientId is wrong")
 	void clientIdIsNotCorrect() {
-		try {
-			Credentials credentials = new Credentials("testClient", "testSecret");
-			TPPClient client = new TPPClient(credentials, new URI("https://testuri.com/redirect"), null);
-			tppClientRepository.add(client);
-			assertThat(tppManager.areCredentialsCorrect("wrongClientId", credentials.getSecret())).isEqualTo(false);
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+
+		Credentials credentials = new Credentials("testClient", "testSecret");
+		TPPClient client = new TPPClient(credentials,"https://testuri.com/redirect", null);
+		tppClientRepository.add(client);
+		assertThat(tppManager.areCredentialsCorrect("wrongClientId", credentials.getSecret())).isEqualTo(false);
+
 	}
 
 	@Test
 	@DisplayName("areCredentialsCorrect returns false when clientSecret is wrong")
 	void clientSecretIsNotCorrect() {
-		try {
-			Credentials credentials = new Credentials("testClient", "testSecret");
-			TPPClient client = new TPPClient(credentials, new URI("https://testuri.com/redirect"), null);
-			tppClientRepository.add(client);
-			assertThat(tppManager.areCredentialsCorrect(credentials.getId(), "wrongSecret")).isEqualTo(false);
-		} catch (URISyntaxException e) {
-			System.out.println(e);
-		}
+
+		Credentials credentials = new Credentials("testClient", "testSecret");
+		TPPClient client = new TPPClient(credentials, "https://testuri.com/redirect", null);
+		tppClientRepository.add(client);
+		assertThat(tppManager.areCredentialsCorrect(credentials.getId(), "wrongSecret")).isEqualTo(false);
+
 	}
 
 }

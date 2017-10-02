@@ -18,12 +18,12 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
         accountRequests = new HashMap<>();
     }
 
-    public AccountRequestResponse createAccountRequestResponse(AccountRequest accountRequest, List<Permission> permissions) {
+    public AccountRequestResponse createAccountRequestResponse(AccountRequest accountRequest, List<Permission> permissions, String clientId) {
         String randomId = UUID.randomUUID().toString();
         accountRequest.setId(randomId);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusSeconds(expirationTime);
-        AccountRequestResponse response = new AccountRequestResponse(accountRequest, permissions, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
+        AccountRequestResponse response = new AccountRequestResponse(accountRequest, permissions, clientId, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
                 now, expiration);
         accountRequests.put(response.getAccountRequestId(), response);
         return response;

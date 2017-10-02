@@ -6,6 +6,6 @@ import java.net.URI;
 
 public interface Client {
 	Credentials getCredentials();
-	URI getRedirectUri();
+	String getRedirectUri();
 	DecodedJWT getJwt();
 }

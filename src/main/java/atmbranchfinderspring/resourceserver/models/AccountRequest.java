@@ -1,7 +1,6 @@
 package atmbranchfinderspring.resourceserver.models;
 
 
-import atmbranchfinderspring.resourceserver.authentication.AccountRequestValidator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public class AccountRequest {
     private LocalDateTime transactionFromDateTime;
     private LocalDateTime transactionToDateTime;
 
-    public AccountRequest() {
+	public AccountRequest() {
 
     };
 
@@ -57,4 +56,5 @@ public class AccountRequest {
     public void setTransactionToDateTime(LocalDateTime transactionToDateTime) {
         this.transactionToDateTime = transactionToDateTime;
     }
+
 }

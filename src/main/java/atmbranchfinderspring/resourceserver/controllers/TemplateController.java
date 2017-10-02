@@ -6,6 +6,7 @@ import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.Permission;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
+import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,18 +15,24 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class TemplateController {
 
 	private AuthenticationManager authenticationManager;
 	private AccountRequestRepository accountRequestRepository;
+	private AuthorizationCodeRepository authorizationCodeRepository;
 
 	@Autowired
-	public TemplateController(AuthenticationManagerImpl authenticationManager, AccountRequestRepository accountRequestRepository) {
+	public TemplateController(AuthenticationManagerImpl authenticationManager, AccountRequestRepository accountRequestRepository,
+	                          AuthorizationCodeRepository authorizationCodeRepository) {
 		this.authenticationManager = authenticationManager;
 		this.accountRequestRepository = accountRequestRepository;
+		this.authorizationCodeRepository = authorizationCodeRepository;
 	}
 
 	@RequestMapping("/login/{accountRequestId}")
@@ -40,7 +47,23 @@ public class TemplateController {
 		AccountRequestResponse accountRequestResponse = accountRequestRepository.get(accountRequestId);
 		List<Permission> permissions = accountRequestResponse.getPermissions();
 		model.addAttribute("permissions", permissions);
+		model.addAttribute("accountRequestId", accountRequestId);
 		return "Authorize";
+	}
+
+	@RequestMapping("/authorizeApp/{accountRequestId}/{authorization}")
+	public void commitAuthorization(HttpServletRequest request, HttpServletResponse response,
+	                                @PathVariable String accountRequestId, @PathVariable int authorization) throws IOException, URISyntaxException {
+		AccountRequestResponse accountRequestResponse = accountRequestRepository.get(accountRequestId);
+		if ( authorization == 1) {
+			accountRequestResponse.setStatus(AccountRequestResponse.AccountRequestStatus.AUTHORIZED);
+			String authorization_code = UUID.randomUUID().toString();
+			authorizationCodeRepository.add(authorization_code);
+			response.sendRedirect( authenticationManager.getTPPClient(accountRequestResponse.getClientId()).getRedirectUri() + "/" + authorization_code);
+		} else {
+			accountRequestResponse.setStatus(AccountRequestResponse.AccountRequestStatus.REJECTED);
+			response.sendRedirect(authenticationManager.getTPPClient(accountRequestResponse.getClientId()).getRedirectUri());
+		}
 	}
 
 	@RequestMapping("/authenticate/{accountRequestId}")

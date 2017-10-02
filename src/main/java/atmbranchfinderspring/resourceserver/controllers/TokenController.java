@@ -50,6 +50,7 @@ public class TokenController {
 	    mapper.writer().writeValue(response.getWriter(), token);
     }
 
+
 	public static long getExpirationTime() {
 		return expirationTime;
 	}

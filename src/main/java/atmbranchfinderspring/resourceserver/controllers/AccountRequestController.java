@@ -46,7 +46,7 @@ public class AccountRequestController {
 			List<Permission> permissions = accountRequestValidator.convertPermissions(accountRequest.getPermissions());
 			String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 			String clientId = accessTokenRepository.get(token).getClientId();
-			AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest, permissions);
+			AccountRequestResponse accountRequestResponse = accountRequestRepository.createAccountRequestResponse(accountRequest, permissions, clientId);
 			tppManager.addAccountRequestToClient(clientId, accountRequestResponse);
 			response.setHeader("Content-type", "application/json");
 			mapper.writer().writeValue(response.getWriter(), accountRequestResponse);

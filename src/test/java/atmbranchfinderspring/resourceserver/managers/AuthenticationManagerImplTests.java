@@ -30,6 +30,7 @@ public class AuthenticationManagerImplTests {
 	UserRepository userRepository;
 	TPPClientRepository tppClientRepository;
 	AccountRequestRepository accountRequestRepository;
+	AuthorizationCodeRepository authorizationCodeRepository;
 
 	@BeforeEach
 	void setup() {
@@ -40,7 +41,8 @@ public class AuthenticationManagerImplTests {
 		adminRepository = new AdminRepository();
 		userRepository = null;
 		accountRequestRepository = new AccountRequestRepository();
-		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, accountRequestRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
+		authorizationCodeRepository = new AuthorizationCodeRepository();
+		authenticationManagerImpl = new AuthenticationManagerImpl(accessTokenRepository, accountRequestRepository, authorizationCodeRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach

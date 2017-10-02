@@ -17,6 +17,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     private AccessTokenRepository accessTokenRepository;
     private AccountRequestRepository accountRequestRepository;
+    private AuthorizationCodeRepository authorizationCodeRepository;
     private TPPClientRepository tppClientRepository;
     private UserRepository userRepository;
     private AdminRepository adminRepository;
@@ -24,10 +25,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     @Autowired
     public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, AccountRequestRepository accountRequestRepository,
+                                     AuthorizationCodeRepository authorizationCodeRepository,
                                      TPPClientRepository tppClientRepository, UserRepository userRepository,
                                      AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
         this.accountRequestRepository = accountRequestRepository;
+        this.authorizationCodeRepository = authorizationCodeRepository;
         this.tppClientRepository = tppClientRepository;
         this.userRepository = userRepository;
         this.accessTokenRepository = accessTokenRepository;
@@ -96,7 +99,21 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    }
     }
 
+    public Boolean checkAuthorizationCode(String authorizationCode) {
+    	if (authorizationCodeRepository.contains(authorizationCode)) {
+    		authorizationCodeRepository.delete(authorizationCode);
+    		return true;
+	    } else {
+    		return false;
+	    }
+    }
+
     public AccountRequestResponse getAccountRequest(String accountRequestId) {
     	return accountRequestRepository.get(accountRequestId);
+    }
+
+    @Override
+    public TPPClient getTPPClient(String clientId) {
+        return tppClientRepository.get(clientId);
     }
 }

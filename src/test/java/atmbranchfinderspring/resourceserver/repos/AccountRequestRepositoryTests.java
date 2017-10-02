@@ -31,8 +31,8 @@ public class AccountRequestRepositoryTests {
 		AccountRequest accountRequest2 = new AccountRequest(null, new ArrayList<>(Arrays.asList("ReadBalances", "ReadTransactionsBasic")), LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L));
 		List<Permission> permissions1 = accountRequestValidator.convertPermissions(accountRequest1.getPermissions());
 		List<Permission> permissions2 = accountRequestValidator.convertPermissions(accountRequest2.getPermissions());
-		response1 = accountRequestRepository.createAccountRequestResponse(accountRequest1, permissions1);
-		response2 = accountRequestRepository.createAccountRequestResponse(accountRequest2, permissions2);
+		response1 = accountRequestRepository.createAccountRequestResponse(accountRequest1, permissions1, "testClient1");
+		response2 = accountRequestRepository.createAccountRequestResponse(accountRequest2, permissions2, "testClient2");
 	}
 
 	@AfterEach
@@ -67,7 +67,7 @@ public class AccountRequestRepositoryTests {
 		int size = accountRequestRepository.getAllIds().size();
 		AccountRequest accountRequest = new AccountRequest(null,new ArrayList<>(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail")), LocalDateTime.now(), LocalDateTime.now().plusSeconds(10L));
 		List<Permission> permissions = accountRequestValidator.convertPermissions(accountRequest.getPermissions());
-		accountRequestRepository.createAccountRequestResponse(accountRequest, permissions);
+		accountRequestRepository.createAccountRequestResponse(accountRequest, permissions, "testClient");
 		assertThat(accountRequestRepository.getAllIds().size()).isEqualTo(size + 1);
 	}
 
