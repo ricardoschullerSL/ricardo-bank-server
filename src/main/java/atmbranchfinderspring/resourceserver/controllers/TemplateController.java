@@ -4,6 +4,8 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
 import atmbranchfinderspring.resourceserver.models.Credentials;
+import atmbranchfinderspring.resourceserver.models.Permission;
+import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +14,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class TemplateController {
 
 	private AuthenticationManager authenticationManager;
+	private AccountRequestRepository accountRequestRepository;
 
 	@Autowired
-	public TemplateController(AuthenticationManagerImpl authenticationManager) {
+	public TemplateController(AuthenticationManagerImpl authenticationManager, AccountRequestRepository accountRequestRepository) {
 		this.authenticationManager = authenticationManager;
+		this.accountRequestRepository = accountRequestRepository;
 	}
 
 	@RequestMapping("/login/{accountRequestId}")
@@ -31,8 +36,10 @@ public class TemplateController {
 	}
 
 	@RequestMapping("/authorizeApp/{accountRequestId}")
-	public String authorize(@PathVariable String accountRequestId) {
-		System.out.println(accountRequestId);
+	public String authorize(@PathVariable String accountRequestId, Model model) {
+		AccountRequestResponse accountRequestResponse = accountRequestRepository.get(accountRequestId);
+		List<Permission> permissions = accountRequestResponse.getPermissions();
+		model.addAttribute("permissions", permissions);
 		return "Authorize";
 	}
 

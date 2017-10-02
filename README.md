@@ -15,7 +15,7 @@ The `ec256-key-pair.pem` is used to sign and encrypt/decrypt JWTs.
 
 In `application.properties` add these lines:
 
-```properties
+```
 spring.jpa.hibernate.dll=create
 spring.datasource.url=jdbc:{mySQL data url}
 spring.datasource.username={mySQL username}

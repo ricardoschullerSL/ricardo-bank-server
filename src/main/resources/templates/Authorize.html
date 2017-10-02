@@ -9,8 +9,14 @@
 
 <h2>Plutus wants to access your account.</h2>
 
-** List of details **<br/>
-
+** List of permissions **<br/>
+<table>
+    <th:block th:each="permission: ${permissions}">
+        <tr>
+            <td th:text="${permission}">Permission</td>
+        </tr>
+    </th:block>
+</table>
 Do you want to authorize Plutus to access your account?
 
 <button>Yes</button>

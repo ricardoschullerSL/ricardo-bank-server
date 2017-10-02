@@ -2,6 +2,7 @@ package atmbranchfinderspring.resourceserver.repos;
 
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
+import atmbranchfinderspring.resourceserver.models.Permission;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -17,12 +18,12 @@ public class AccountRequestRepository implements Repository<AccountRequestRespon
         accountRequests = new HashMap<>();
     }
 
-    public AccountRequestResponse createAccountRequestResponse(AccountRequest accountRequest) {
+    public AccountRequestResponse createAccountRequestResponse(AccountRequest accountRequest, List<Permission> permissions) {
         String randomId = UUID.randomUUID().toString();
         accountRequest.setId(randomId);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusSeconds(expirationTime);
-        AccountRequestResponse response = new AccountRequestResponse(accountRequest, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
+        AccountRequestResponse response = new AccountRequestResponse(accountRequest, permissions, AccountRequestResponse.AccountRequestStatus.AWAITINGAUTHORIZATION,
                 now, expiration);
         accountRequests.put(response.getAccountRequestId(), response);
         return response;
