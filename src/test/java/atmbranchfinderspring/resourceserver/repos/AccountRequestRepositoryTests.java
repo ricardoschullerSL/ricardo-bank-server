@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AccountRequestRepositoryTests {
 
 	private AccountRequestRepository accountRequestRepository;
-	private AccountRequestValidator accountRequestValidator;
+	private AccountRequestValidator accountRequestValidator = new AccountRequestValidator();
 	private AccountRequestResponse response1;
 	private AccountRequestResponse response2;
 
