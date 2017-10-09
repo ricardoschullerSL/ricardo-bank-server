@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.Permission;
 import org.springframework.stereotype.Component;
 

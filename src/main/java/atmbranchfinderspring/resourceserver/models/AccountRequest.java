@@ -1,60 +1,122 @@
 package atmbranchfinderspring.resourceserver.models;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "account-requests")
+public class AccountRequest implements ResponseObject{
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountRequest {
-    private String id;
-    private List<String> permissions;
+	@Id
+	@JoinColumn(name="accountRequestId")
+    private String accountRequestId;
+    @Column(nullable = false)
+	private String clientId;
+    @Column(nullable = false)
+    private LocalDateTime creationDateTime;
+    @Column(nullable = false)
+    private LocalDateTime expirationDateTime;
+    @Column(nullable = false)
+    @ElementCollection(targetClass = Permission.class)
+    private List<Permission> permissions;
+    @Column
     private LocalDateTime transactionFromDateTime;
+    @Column
     private LocalDateTime transactionToDateTime;
+    @Column(nullable = false)
+    private AccountRequestStatus status;
 
-	public AccountRequest() {
+	public enum AccountRequestStatus {
+        AUTHORIZED, AWAITINGAUTHORIZATION, REJECTED, REVOKED
+    }
 
-    };
+    public AccountRequest() {}
 
-    public AccountRequest(String id, List<String> permissions, LocalDateTime transactionFromDateTime, LocalDateTime transactionToDateTime) {
-        this.id = id;
+    public AccountRequest(String accountRequestId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
+                          List<Permission> permissions, LocalDateTime transactionFromDateTime,
+                          LocalDateTime transactionToDateTime, AccountRequestStatus status) {
+        this.accountRequestId = accountRequestId;
+        this.creationDateTime = creationDateTime;
+        this.expirationDateTime = expirationDateTime;
         this.permissions = permissions;
         this.transactionFromDateTime = transactionFromDateTime;
         this.transactionToDateTime = transactionToDateTime;
+        this.status = status;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<String> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(List<String> permissions) {
+    public AccountRequest(IncomingAccountRequest incomingAccountRequest, List<Permission> permissions, String clientId, AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
+        this.accountRequestId = incomingAccountRequest.getId();
+        this.transactionFromDateTime = incomingAccountRequest.getTransactionFromDateTime();
+        this.transactionToDateTime = incomingAccountRequest.getTransactionToDateTime();
         this.permissions = permissions;
+        this.clientId = clientId;
+        this.status = status;
+        this.creationDateTime = creationDateTime;
+        this.expirationDateTime = expirationDateTime;
+    }
+
+    public String getAccountRequestId() {
+        return accountRequestId;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public LocalDateTime getExpirationDateTime() {
+        return expirationDateTime;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
     }
 
     public LocalDateTime getTransactionFromDateTime() {
         return transactionFromDateTime;
     }
 
-    public void setTransactionFromDateTime(LocalDateTime transactionFromDateTime) {
-        this.transactionFromDateTime = transactionFromDateTime;
-    }
-
     public LocalDateTime getTransactionToDateTime() {
         return transactionToDateTime;
     }
 
-    public void setTransactionToDateTime(LocalDateTime transactionToDateTime) {
-        this.transactionToDateTime = transactionToDateTime;
+    public AccountRequestStatus getStatus() {
+        return status;
     }
 
+    public void setStatus(AccountRequestStatus status) {
+    	this.status = status;
+    }
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public void setAccountRequestId(String accountRequestId) {
+		this.accountRequestId = accountRequestId;
+	}
+
+	public void setCreationDateTime(LocalDateTime creationDateTime) {
+		this.creationDateTime = creationDateTime;
+	}
+
+	public void setExpirationDateTime(LocalDateTime expirationDateTime) {
+		this.expirationDateTime = expirationDateTime;
+	}
+
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
+	public void setTransactionFromDateTime(LocalDateTime transactionFromDateTime) {
+		this.transactionFromDateTime = transactionFromDateTime;
+	}
+
+	public void setTransactionToDateTime(LocalDateTime transactionToDateTime) {
+		this.transactionToDateTime = transactionToDateTime;
+	}
 }

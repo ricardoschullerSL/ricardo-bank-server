@@ -57,10 +57,10 @@ public class SecurityAspect {
 
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
 	public void doAdminBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+		String[] values;
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
-		String[] values;
 		String authorization = request.getHeader("Authorization");
 		System.out.println("SecurityAspect aspect started.");
 		try {
@@ -83,6 +83,30 @@ public class SecurityAspect {
 		}
 	}
 
+	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
+	public void RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+		Object[] args = joinPoint.getArgs();
+		HttpServletRequest request = (HttpServletRequest) args[0];
+		HttpServletResponse response = (HttpServletResponse) args[1];
+		String authorization = request.getHeader("Authorization");
+		try {
+			if (authorization != null && authorization.startsWith("Bearer")) {
+				String token = authorization.substring("Bearer".length()).trim();
+				System.out.println("Checking access token");
+				if (authenticationManager.isRequestTokenValid(token)) {
+					joinPoint.proceed();
+				} else {
+					response.sendError(403, "Access token not valid.");
+				}
+			} else {
+				response.sendError(400, "No Authorization headers.");
+			}
+		} catch (Throwable e) {
+			System.out.println(e);
+			response.sendError(500);
+		}
+	}
+
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
 	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
@@ -93,7 +117,7 @@ public class SecurityAspect {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
-				if (authenticationManager.isAccessTokenValid(token)) {
+				if (authenticationManager.isRequestTokenValid(token)) {
 					joinPoint.proceed();
 				} else {
 					response.sendError(403, "Access token not valid.");

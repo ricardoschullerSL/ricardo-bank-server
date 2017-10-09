@@ -1,7 +1,7 @@
 package atmbranchfinderspring.resourceserver.models;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import java.net.URI;
+
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ public class TPPClient implements Client{
     private Credentials credentials;
     private String redirectUri;
     private DecodedJWT jwt;
-    private HashMap<String, AccountRequestResponse> accountRequestResponses;
+    private HashMap<String, AccountRequest> accountRequestResponses;
 
     public TPPClient(Credentials credentials, String redirectUri, DecodedJWT jwt) {
         this.credentials = credentials;
@@ -32,8 +32,8 @@ public class TPPClient implements Client{
         return jwt;
     }
 
-    public void addAccountRequestResponse(AccountRequestResponse accountRequestResponse) {
-    	accountRequestResponses.put(accountRequestResponse.getAccountRequestId(), accountRequestResponse);
+    public void addAccountRequestResponse(AccountRequest accountRequest) {
+    	accountRequestResponses.put(accountRequest.getAccountRequestId(), accountRequest);
     }
 
     public Collection<String> getAllAccountRequestIds() {

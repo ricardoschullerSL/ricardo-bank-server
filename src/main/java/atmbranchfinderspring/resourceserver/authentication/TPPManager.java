@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
+import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.TPPClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,9 @@ public class TPPManager implements TPPClientManager{
         return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }
 
-    public void addAccountRequestToClient(String clientId, AccountRequestResponse accountRequestResponse) {
+    public void addAccountRequestToClient(String clientId, AccountRequest accountRequest) {
         TPPClient client = tppClientRepository.get(clientId);
-        client.addAccountRequestResponse(accountRequestResponse);
+        client.addAccountRequestResponse(accountRequest);
     }
 
     public TPPClient getTPPClient(String clientId) {

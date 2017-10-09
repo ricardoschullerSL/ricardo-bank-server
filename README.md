@@ -6,7 +6,7 @@ Under construction.
 
 Just a hacky implementation of the Open Banking APIs so a phone app can be tested against it.
 
-It saves users to a mySQL database. Third Party Providers (TPPs) can then dynamically register by presenting a correct software statement.
+It saves users to a MySQL database. Third Party Providers (TPPs) can then dynamically register by presenting a correct software statement.
 This will return client credentials that can be used to retrieve access/refresh tokens.
 
 To get it working you need a `resources` folder in `main` with `application.properties` , `ec256-key-pair.pem`, and `keystore.p12`.
@@ -17,9 +17,9 @@ In `application.properties` add these lines:
 
 ```
 spring.jpa.hibernate.dll=create
-spring.datasource.url=jdbc:{mySQL data url}
-spring.datasource.username={mySQL username}
-spring.datasource.password={mySQL password}
+spring.datasource.url=jdbc:{MySQL data url}
+spring.datasource.username={MySQL username}
+spring.datasource.password={MySQL password}
 accesstoken.expirationtime=3600
 
 server.port=8443

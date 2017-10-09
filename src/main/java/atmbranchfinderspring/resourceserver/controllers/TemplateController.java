@@ -2,7 +2,7 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
-import atmbranchfinderspring.resourceserver.models.AccountRequestResponse;
+import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.Permission;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
@@ -44,8 +43,8 @@ public class TemplateController {
 
 	@RequestMapping("/authorizeApp/{accountRequestId}")
 	public String authorize(@PathVariable String accountRequestId, Model model) {
-		AccountRequestResponse accountRequestResponse = accountRequestRepository.get(accountRequestId);
-		List<Permission> permissions = accountRequestResponse.getPermissions();
+		AccountRequest accountRequest = accountRequestRepository.get(accountRequestId);
+		List<Permission> permissions = accountRequest.getPermissions();
 		model.addAttribute("permissions", permissions);
 		model.addAttribute("accountRequestId", accountRequestId);
 		return "Authorize";
@@ -54,15 +53,15 @@ public class TemplateController {
 	@RequestMapping("/authorizeApp/{accountRequestId}/{authorization}")
 	public void commitAuthorization(HttpServletRequest request, HttpServletResponse response,
 	                                @PathVariable String accountRequestId, @PathVariable int authorization) throws IOException, URISyntaxException {
-		AccountRequestResponse accountRequestResponse = accountRequestRepository.get(accountRequestId);
+		AccountRequest accountRequest = accountRequestRepository.get(accountRequestId);
 		if ( authorization == 1) {
-			accountRequestResponse.setStatus(AccountRequestResponse.AccountRequestStatus.AUTHORIZED);
+			accountRequest.setStatus(AccountRequest.AccountRequestStatus.AUTHORIZED);
 			String authorization_code = UUID.randomUUID().toString();
 			authorizationCodeRepository.add(authorization_code);
-			response.sendRedirect( authenticationManager.getTPPClient(accountRequestResponse.getClientId()).getRedirectUri() + "/" + authorization_code);
+			response.sendRedirect( authenticationManager.getTPPClient(accountRequest.getClientId()).getRedirectUri() + "/" + authorization_code);
 		} else {
-			accountRequestResponse.setStatus(AccountRequestResponse.AccountRequestStatus.REJECTED);
-			response.sendRedirect(authenticationManager.getTPPClient(accountRequestResponse.getClientId()).getRedirectUri());
+			accountRequest.setStatus(AccountRequest.AccountRequestStatus.REJECTED);
+			response.sendRedirect(authenticationManager.getTPPClient(accountRequest.getClientId()).getRedirectUri());
 		}
 	}
 
@@ -78,7 +77,7 @@ public class TemplateController {
 			if (isNotNull(username) && isNotNull(accountRequestId)) {
 
 				if (authenticationManager.checkUserCredentials(username, password)) {
-					AccountRequestResponse accountRequestResponse = authenticationManager.getAccountRequest(accountRequestId);
+					AccountRequest accountRequest = authenticationManager.getAccountRequest(accountRequestId);
 					System.out.println("User authenticated yeah boiii");
 					response.sendRedirect("/authorizeApp/" + accountRequestId);
 				} else {

@@ -14,12 +14,13 @@ public class Account {
 
 	@Id
 	@Column(name = "accountId")
-    private long accountId;
+    private int accountId;
 
 	@Column(name="account_type")
     private String accountType = "Basic Current Account";
 
 	@OneToMany
+	@ElementCollection
 	@JoinColumn(name="currency_transactions")
     private List<CurrencyTransaction> CurrencyTransactions;
 
@@ -32,11 +33,11 @@ public class Account {
 
     public Account() {}
 
-    public Account(long accountId) {
+    public Account(int accountId) {
     	this.accountId = accountId;
     }
 
-    public Account(long accountId,String accountType, long balanceInCents) {
+    public Account(int accountId,String accountType, long balanceInCents) {
         this.accountId = accountId;
         this.accountType = accountType;
         this.balanceInCents = balanceInCents;
@@ -47,7 +48,7 @@ public class Account {
         return accountId;
     }
 
-    public void setAccountId(long accountId) {
+    public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
 

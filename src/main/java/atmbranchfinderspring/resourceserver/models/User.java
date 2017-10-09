@@ -1,8 +1,11 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -19,15 +22,20 @@ public class User {
 	@Column(name="salt")
 	private String salt;
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false, targetEntity = Account.class)
-	@JoinColumn(name= "accountId", unique = true, nullable = false)
+	@JoinColumn(name= "account", unique = true, nullable = false)
 	@JsonManagedReference
 	private Account account;
 
-	public User() {
+	@JsonIgnore
+	@OneToMany(targetEntity = AccountRequest.class)
+	@JoinColumn(name = "accountRequests")
+	private List<AccountRequest> accountRequests;
 
+	public User() {
+		this.accountRequests = new ArrayList<>();
 	}
 
-	public User(long accountId) {
+	public User(int accountId) {
 		this.account = new Account(accountId);
 	}
 
@@ -69,6 +77,18 @@ public class User {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public List<AccountRequest> getAccountRequests() {
+		return accountRequests;
+	}
+
+	public void setAccountRequests(List<AccountRequest> accountRequests) {
+		this.accountRequests = accountRequests;
+	}
+
+	public void addAccountRequest(AccountRequest accountRequest) {
+		this.accountRequests.add(accountRequest);
 	}
 
 	@Override

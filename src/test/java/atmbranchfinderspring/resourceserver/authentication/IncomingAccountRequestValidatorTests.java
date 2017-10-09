@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AccountRequestValidatorTests {
+public class IncomingAccountRequestValidatorTests {
 
 	private AccountRequestValidator accountRequestValidator;
 

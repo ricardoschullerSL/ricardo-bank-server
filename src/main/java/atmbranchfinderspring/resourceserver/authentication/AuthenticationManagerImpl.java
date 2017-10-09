@@ -46,7 +46,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         return encryptionManager;
     }
 
-    public Boolean isAccessTokenValid(String token) {
+    public Boolean isRequestTokenValid(String token) {
         if (accessTokenRepository.contains(token)) {
             if (accessTokenIsNotExpired(accessTokenRepository.get(token))) {
                 return true;
@@ -108,7 +108,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    }
     }
 
-    public AccountRequestResponse getAccountRequest(String accountRequestId) {
+    public AccountRequest getAccountRequest(String accountRequestId) {
     	return accountRequestRepository.get(accountRequestId);
     }
 

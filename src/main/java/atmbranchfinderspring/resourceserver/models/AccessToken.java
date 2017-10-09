@@ -1,6 +1,10 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class AccessToken implements ResponseObject {
@@ -10,11 +14,24 @@ public class AccessToken implements ResponseObject {
 	 * Highly advisable that these are immutable.
 	 */
 
+	public enum Grant {
+		CLIENT_CREDENTIALS, AUTHORIZATION_CODE
+	}
+
+	public enum Scope {
+		ACCOUNTS
+	}
+
 	private final String accessToken;
 	private final String tokenType;
 	private final LocalDateTime issueDate;
 	private final LocalDateTime expirationDate;
 	private final String clientId;
+	@JsonIgnore
+	private Grant grant;
+	private List<Scope> scopes;
+
+
 
 	public AccessToken(String clientId, String tokenType, String customToken, Long expirationTime) {
 		this.tokenType = tokenType;
@@ -24,12 +41,14 @@ public class AccessToken implements ResponseObject {
 		this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
 	}
 
-	public AccessToken(String clientId, String tokenType, Long expirationTime) {
+	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, List<Scope> scopes) {
 		this.clientId = clientId;
 		this.tokenType = tokenType;
 		this.accessToken = UUID.randomUUID().toString();
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = issueDate.plusSeconds(expirationTime);
+		this.grant = grant;
+		this.scopes = scopes;
 	}
 
 	public String getClientId() {return clientId;}
@@ -43,5 +62,13 @@ public class AccessToken implements ResponseObject {
 
 	public LocalDateTime getExpirationDate() {
 		return expirationDate;
+	}
+
+	public Grant getGrant() {
+		return grant;
+	}
+
+	public List<Scope> getScopes() {
+		return scopes;
 	}
 }
