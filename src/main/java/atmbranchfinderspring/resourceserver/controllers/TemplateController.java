@@ -19,6 +19,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * TemplateController returns the Login and Authentication page. It uses Thymeleaf as template-engine.
+ */
+
 @Controller
 public class TemplateController {
 

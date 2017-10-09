@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * AccountRequestController is the API endpoint where TPPs can POST new account-requests, and GET existing ones.
+ */
 
 @RestController
 public class AccountRequestController {
@@ -42,7 +45,7 @@ public class AccountRequestController {
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests")
 	@RequestTokenAuthenticated
 	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingAccountRequest incomingAccountRequest) throws IOException {
-		if(accountRequestValidator.checkPermissionArray(incomingAccountRequest.getPermissions())) {
+		if(accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			List<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
 			String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 			String clientId = accessTokenRepository.get(token).getClientId();

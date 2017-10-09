@@ -20,6 +20,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
+/**
+ * TPPController exposes an endpoint where Trusted Third Party clients can register with their signed JWTs.
+ * This will return the client-credentials that can be used for the OAuth2 protocol.
+ */
 
 @RestController
 @RequestMapping("/tpp")

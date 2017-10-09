@@ -38,9 +38,9 @@ public class IncomingAccountRequestValidatorTests {
 	@DisplayName("checkPermissions checks if all values in String list are valid Permissions")
 	void checkPermissionArrayTest() {
 		List<String> permissionArray = new ArrayList<String>(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
-		assertThat(accountRequestValidator.checkPermissionArray(permissionArray)).isEqualTo(true);
+		assertThat(accountRequestValidator.checkPermissionList(permissionArray)).isEqualTo(true);
 		List<String> wrongPermissionArray = new ArrayList<String>(Arrays.asList("ReadAccountsBasic", "WrongPermission"));
-		assertThat(accountRequestValidator.checkPermissionArray(wrongPermissionArray)).isEqualTo(false);
+		assertThat(accountRequestValidator.checkPermissionList(wrongPermissionArray)).isEqualTo(false);
 	}
 
 	@Test

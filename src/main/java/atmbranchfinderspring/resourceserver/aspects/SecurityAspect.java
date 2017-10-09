@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
 
+/**
+ * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the
+ * (Rest)Controller method.
+ */
 
 @Aspect
 public class SecurityAspect {
@@ -117,7 +121,7 @@ public class SecurityAspect {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
-				if (authenticationManager.isRequestTokenValid(token)) {
+				if (authenticationManager.isAccessTokenValid(token)) {
 					joinPoint.proceed();
 				} else {
 					response.sendError(403, "Access token not valid.");

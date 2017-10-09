@@ -6,12 +6,17 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AccountRequestValidator is a helper object used to check if the permission scopes requested by the incoming account-request
+ * are valid.
+ */
+
 @Component
 public class AccountRequestValidator {
 
 	private static final Permission[] allPermissions = Permission.values();
 
-	public Boolean checkPermissionArray(List<String> permissionArray) {
+	public Boolean checkPermissionList(List<String> permissionArray) {
 		for(String permission: permissionArray) {
 			if (checkPermission(permission) == false) {
 				return false;

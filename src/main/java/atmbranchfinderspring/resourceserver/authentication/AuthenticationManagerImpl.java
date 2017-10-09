@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
+/**
+ * Default implementation of the AuthenticationManager interface
+ */
 
 @Component
 public class AuthenticationManagerImpl implements AuthenticationManager {
@@ -47,23 +50,44 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     public Boolean isRequestTokenValid(String token) {
+
         if (accessTokenRepository.contains(token)) {
-            if (accessTokenIsNotExpired(accessTokenRepository.get(token))) {
-                return true;
-            } else {
-                accessTokenRepository.delete(token);
-                return false;
-            }
-        } else {
-            return false;
+	        if (accessTokenIsNotExpired(accessTokenRepository.get(token))) {
+		        return true;
+	        } else {
+		        accessTokenRepository.delete(token);
+	        }
         }
+	    return false;
     }
+
+	public Boolean isAccessTokenValid(String token) {
+		if (accessTokenRepository.contains(token)) {
+			AccessToken accessToken = accessTokenRepository.get(token);
+			if (accessTokenIsNotExpired(accessToken)) {
+				if (accessTokenHasAuthorizationGrant(accessToken)) {
+					return true;
+				}
+			} else {
+				accessTokenRepository.delete(token);
+			}
+		}
+		return false;
+	}
 
     public Boolean accessTokenIsNotExpired(AccessToken token) {
         return token.getExpirationDate().isAfter(LocalDateTime.now());
     }
 
-    public Boolean checkClientCredentials(String clientId, String clientSecret) {
+    public Boolean accessTokenHasAuthorizationGrant(AccessToken token) {
+    	return token.getGrant().equals(AccessToken.Grant.AUTHORIZATION_CODE);
+    }
+
+	public Boolean tokenHasCorrectScope(AccessToken token, AccessToken.Scope requiredScope) {
+		return token.getScopes().contains(requiredScope);
+	}
+
+	public Boolean checkClientCredentials(String clientId, String clientSecret) {
         TPPClient client = (TPPClient) tppClientRepository.get(clientId);
         return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }

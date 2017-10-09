@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * AccountsController is the main entry point for TPPs to access protected resources.
+ */
+
 @Controller
 @RequestMapping("/accounts")
 public class AccountsController {

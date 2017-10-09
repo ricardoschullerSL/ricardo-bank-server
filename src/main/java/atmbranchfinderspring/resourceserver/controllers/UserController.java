@@ -17,20 +17,23 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * UsersController endpoint is an endpoint where admins can add and view 'bank clients'. These are users with a bank
+ * account attached.
+ */
+
 @RestController
 @RequestMapping(path ="/users")
 public class UserController {
 
 	private EncryptionManager encryptionManager;
 	private UserRepository userRepository;
-	private SessionFactory sessionFactory;
 	private ObjectMapper mapper;
 
 	@Autowired
 	public UserController(EncryptionManager encryptionManager, UserRepository userRepository, SessionFactory sessionFactory) {
 		this.encryptionManager = encryptionManager;
 		this.userRepository = userRepository;
-		this.sessionFactory = sessionFactory;
 		this.mapper = new ObjectMapper();
 	}
 
