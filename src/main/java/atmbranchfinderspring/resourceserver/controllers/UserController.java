@@ -29,12 +29,14 @@ public class UserController {
 	private EncryptionManager encryptionManager;
 	private UserRepository userRepository;
 	private ObjectMapper mapper;
+	private ResponseBodyWriter responseBodyWriter;
 
 	@Autowired
-	public UserController(EncryptionManager encryptionManager, UserRepository userRepository, SessionFactory sessionFactory) {
+	public UserController(EncryptionManager encryptionManager, UserRepository userRepository, ResponseBodyWriter responseBodyWriter) {
 		this.encryptionManager = encryptionManager;
 		this.userRepository = userRepository;
 		this.mapper = new ObjectMapper();
+		this.responseBodyWriter = responseBodyWriter;
 	}
 
 
@@ -58,7 +60,8 @@ public class UserController {
 	@AdminBasicAuthenticated
 	public void getAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println(userRepository.findAll().size());
-		mapper.writer().writeValue(response.getWriter(), userRepository.findAll());
+//		mapper.writer().writeValue(response.getWriter(), userRepository.findAll());
+		responseBodyWriter.writeResponse(response, userRepository.findAll());
 	}
 
 	@PostMapping(path="/update")

@@ -9,10 +9,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,7 +40,7 @@ public class TPPController {
 
 
 
-
+	@CrossOrigin(origins = "http://localhost:8081")
     @RequestMapping(value="/register", produces = "application/jwt", method = RequestMethod.POST)
     public void registerTPPClient(@RequestBody String token, HttpServletResponse response) {
         try {
@@ -54,14 +51,15 @@ public class TPPController {
             String redirectUri = jwt.getClaim("redirect_uri").asString();
             if (tppManager.isClientRegistered(clientId)) {
                 System.out.println("Incoming request is for client that's already registered.");
-                response.sendError(400, "Client already registered.");
-            } else {
-                Credentials credentials = new Credentials(clientId, UUID.randomUUID().toString());
-                TPPClient client = new TPPClient(credentials, redirectUri, jwt);
-                tppManager.registerClient(client);
-                String responseString = mapper.writeValueAsString(credentials);
-                response.getWriter().write(responseString);
+//                response.sendError(400, "Client already registered.");
             }
+
+            Credentials credentials = new Credentials(clientId, UUID.randomUUID().toString());
+            TPPClient client = new TPPClient(credentials, redirectUri, jwt);
+            tppManager.registerClient(client);
+            String responseString = mapper.writeValueAsString(credentials);
+            response.getWriter().write(responseString);
+
 
         } catch (JWTVerificationException e) {
             // Invalid token.

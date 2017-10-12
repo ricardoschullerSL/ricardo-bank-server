@@ -19,13 +19,11 @@ public class AdminController {
 
 	private AuthenticationManagerImpl authenticationManagerImpl;
 	private TPPManager tppManager;
-	private ObjectMapper mapper;
 	private AdminRepository adminRepository;
 
 
 	@Autowired
 	public AdminController(TPPManager tppManager, AuthenticationManagerImpl authenticationManagerImpl, AdminRepository adminRepository) {
-		this.mapper = new ObjectMapper();
 		this.tppManager = tppManager;
 		this.authenticationManagerImpl = authenticationManagerImpl;
 		this.adminRepository = adminRepository;
@@ -34,7 +32,7 @@ public class AdminController {
 
 
 	@RequestMapping(value="/getjwt", method = RequestMethod.POST)
-	public String getJWT(@RequestBody Map<String, String> body, HttpServletRequest request, HttpServletResponse response) {
+	public String getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) {
 		try {
 			String[] values;
 			String authorization = request.getHeader("Authorization");

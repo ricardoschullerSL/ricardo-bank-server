@@ -7,10 +7,7 @@ import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ShellProperties;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +42,7 @@ public class TokenController {
         }
     }
 
+	@CrossOrigin(origins = "http://localhost:8081")
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = "application/json")
     @TPPBasicAuthenticated
     public void getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,6 +55,7 @@ public class TokenController {
 	    mapper.writer().writeValue(response.getWriter(), token);
     }
 
+	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/access-token/{authorizationCode}", produces = "application/json")
 	@TPPBasicAuthenticated
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {

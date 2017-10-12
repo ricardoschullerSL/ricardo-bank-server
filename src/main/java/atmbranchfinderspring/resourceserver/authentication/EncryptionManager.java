@@ -13,7 +13,6 @@ public class EncryptionManager {
 
 
 	private PEMManager pemManagerImpl;
-	private JWTVerifier jwtVerifier;
 
 	@Autowired
 	public EncryptionManager(PEMManager pemManagerImpl) {

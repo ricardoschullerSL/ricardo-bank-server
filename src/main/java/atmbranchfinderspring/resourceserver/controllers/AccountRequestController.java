@@ -42,6 +42,7 @@ public class AccountRequestController {
 		this.mapper = new ObjectMapper();
 	}
 
+	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests")
 	@RequestTokenAuthenticated
 	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingAccountRequest incomingAccountRequest) throws IOException {

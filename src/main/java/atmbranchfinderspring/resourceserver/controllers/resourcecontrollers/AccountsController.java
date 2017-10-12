@@ -1,9 +1,9 @@
 package atmbranchfinderspring.resourceserver.controllers.resourcecontrollers;
 
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
+import atmbranchfinderspring.resourceserver.controllers.ResponseBodyWriter;
 import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +21,11 @@ import java.io.IOException;
 public class AccountsController {
 
 	private UserRepository userRepository;
-	private ObjectMapper mapper;
+	private ResponseBodyWriter responseBodyWriter;
 
-	public AccountsController(UserRepository userRepository) {
+	public AccountsController(UserRepository userRepository, ResponseBodyWriter responseBodyWriter) {
 		this.userRepository = userRepository;
-		this.mapper = new ObjectMapper();
+		this.responseBodyWriter = responseBodyWriter;
 	}
 
 	@RequestMapping("/{accountId}")
@@ -33,23 +33,21 @@ public class AccountsController {
 	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null) {
-			mapper.writer().writeValue(response.getWriter(), user.getAccount());
+			responseBodyWriter.writeResponse(response, user.getAccount());
 		} else {
 			response.sendError(400);
 		}
 	}
 
-	@RequestMapping("/{accountId/transactions}")
+	@RequestMapping("/{accountId}/transactions}")
 	@AccessTokenAuthenticated
 	public void getAccountTransactions(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
-		if (user != null) {
-			mapper.writer().writeValue(response.getWriter(), user.getAccount().getCurrencyTransactions());
+		if (user != null && user.getAccount() != null) {
+			responseBodyWriter.writeResponse(response, user.getAccount().getCurrencyTransactions());
 		} else {
 			response.sendError(400);
 		}
 	}
-
-
 
 }
