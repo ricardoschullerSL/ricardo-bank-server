@@ -41,6 +41,11 @@ jobs:
       - run: mvn integration-test
 
 
+      script: "mvn cobertura:cobertura"
+
+      after_success:
+      - bash <(curl -s https://codecov.io/bash)
+
 #      # save test results
 #      - run:
 #                name: Save test results
@@ -52,7 +57,3 @@ jobs:
 #                path: ~/junit
 #            - store_artifacts:
 #                path: ~/junit
-
-script: mvn cobertura:cobertura
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
