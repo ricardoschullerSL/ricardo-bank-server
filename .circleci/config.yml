@@ -52,3 +52,7 @@ jobs:
 #            - store_artifacts:
 #                path: ~/junit
 
+test:
+  post:
+    - bash <(curl -s https://codecov.io/bash)
+
