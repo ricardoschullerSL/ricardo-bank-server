@@ -20,7 +20,7 @@ public class AccessTokenRepository implements Repository<AccessToken> {
         return accessTokens.get(token);
     }
 
-    public synchronized Boolean contains(String token) {
+    public synchronized boolean contains(String token) {
         return accessTokens.containsKey(token);
     }
 

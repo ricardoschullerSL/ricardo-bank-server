@@ -1,6 +1,8 @@
 package atmbranchfinderspring.resourceserver.managers;
 
 import atmbranchfinderspring.resourceserver.authentication.*;
+import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.AccessTokenValidator;
+import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.AccessTokenValidatorImpl;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 
@@ -23,6 +26,7 @@ public class AuthenticationManagerImplTests {
 	AuthenticationManagerImpl authenticationManager;
 	EncryptionManager encryptionManager;
 	AccessTokenRepository accessTokenRepository;
+	AccessTokenValidator accessTokenValidator;
 	AdminRepository adminRepository;
 	UserRepository userRepository;
 	TPPClientRepository tppClientRepository;
@@ -32,13 +36,14 @@ public class AuthenticationManagerImplTests {
 	@BeforeEach
 	void setup() {
 		accessTokenRepository = new AccessTokenRepository();
+		accessTokenValidator = new AccessTokenValidatorImpl(accessTokenRepository);
 		tppClientRepository = new TPPClientRepository();
 		encryptionManager = mock(EncryptionManager.class);
 		adminRepository = mock(AdminRepository.class);
 		userRepository = mock(UserRepository.class);
 		accountRequestRepository = new AccountRequestRepository();
 		authorizationCodeRepository = new AuthorizationCodeRepository();
-		authenticationManager = new AuthenticationManagerImpl(accessTokenRepository, accountRequestRepository, authorizationCodeRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
+		authenticationManager = new AuthenticationManagerImpl(accessTokenRepository, accessTokenValidator, accountRequestRepository, authorizationCodeRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach
@@ -66,8 +71,8 @@ public class AuthenticationManagerImplTests {
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
-	public void requestTokenCheckerTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer","test", 100L);
+	void requestTokenCheckerTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS , Arrays.asList(AccessToken.Scope.ACCOUNTS));
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
@@ -75,24 +80,31 @@ public class AuthenticationManagerImplTests {
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
-	public void addRequestTokenToRepositoryTest() {
+	void addRequestTokenToRepositoryTest() {
 		AccessToken testToken = new AccessToken("testClient", "Bearer", "test",100L );
 		accessTokenRepository.add(testToken);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(1);
 	}
 
+	// DON'T IMMEDIATELY DELETE IMPROPER ACCESS TOKENS, LET TOKEN COLLECTOR TAKE CARE OF IT.
+//	@Test
+//	@DisplayName("Check if access token repository deletes access token is expired")
+//	void requestTokenDeletionTest() {
+//		AccessToken testToken = new AccessToken("testClient", "Bearer", "test", -100L );
+//		accessTokenRepository.add(testToken);
+//		authenticationManager.isRequestTokenValid(testToken.getAccessToken());
+//		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);
+//	}
+
 	@Test
-	@DisplayName("Check if access token repository deletes access token is expired")
-	public void requestTokenDeletionTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", "test", -100L );
-		accessTokenRepository.add(testToken);
-		authenticationManager.isRequestTokenValid(testToken.getAccessToken());
-		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);
+	@DisplayName("Check if isAccessTokenValid validates a token")
+	void isAccessTokenValidTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", "test",100L );
 	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates tpp client credentials correctly")
-	public void credentialCheckerTest() {
+	void credentialCheckerTest() {
 
 		Credentials credentials = new Credentials("clientId", "clientSecret");
 		TPPClient tppClient = new TPPClient.TPPClientBuilder()

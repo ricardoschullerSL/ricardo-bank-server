@@ -30,7 +30,7 @@ public class AuthorizationCodeRepository implements Repository<String>{
 	}
 
 	@Override
-	public Boolean contains(String id) {
+	public boolean contains(String id) {
 		return authorizationCodes.contains(id);
 	}
 

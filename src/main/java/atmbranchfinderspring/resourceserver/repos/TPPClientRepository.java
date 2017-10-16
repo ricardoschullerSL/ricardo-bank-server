@@ -31,7 +31,7 @@ public class TPPClientRepository implements Repository<TPPClient> {
 		tppClients.remove(clientId);
 	}
 
-	public Boolean contains(String clientId) {
+	public boolean contains(String clientId) {
 		return tppClients.get(clientId) != null;
 	}
 

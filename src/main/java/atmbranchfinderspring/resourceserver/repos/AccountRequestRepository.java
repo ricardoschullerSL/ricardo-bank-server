@@ -39,7 +39,7 @@ public class AccountRequestRepository implements Repository<AccountRequest>{
         accountRequests.put(entity.getAccountRequestId(), entity);
     }
 
-    public Boolean contains(String id) {
+    public boolean contains(String id) {
         return accountRequests.containsKey(id);
     }
 

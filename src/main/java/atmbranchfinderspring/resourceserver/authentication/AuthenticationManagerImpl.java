@@ -1,13 +1,14 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.*;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,6 +20,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
 
     private AccessTokenRepository accessTokenRepository;
+    private AccessTokenValidator accessTokenValidator;
     private AccountRequestRepository accountRequestRepository;
     private AuthorizationCodeRepository authorizationCodeRepository;
     private TPPClientRepository tppClientRepository;
@@ -27,12 +29,14 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     private EncryptionManager encryptionManager;
 
     @Autowired
-    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, AccountRequestRepository accountRequestRepository,
+    public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, AccessTokenValidator accessTokenValidator,
+                                     AccountRequestRepository accountRequestRepository,
                                      AuthorizationCodeRepository authorizationCodeRepository,
                                      TPPClientRepository tppClientRepository, UserRepository userRepository,
                                      AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
         this.accountRequestRepository = accountRequestRepository;
+        this.accessTokenValidator = accessTokenValidator;
         this.authorizationCodeRepository = authorizationCodeRepository;
         this.tppClientRepository = tppClientRepository;
         this.userRepository = userRepository;
@@ -49,50 +53,23 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         return encryptionManager;
     }
 
-    public Boolean isRequestTokenValid(String token) {
-
-        if (accessTokenRepository.contains(token)) {
-	        if (accessTokenIsNotExpired(accessTokenRepository.get(token))) {
-		        return true;
-	        } else {
-		        accessTokenRepository.delete(token);
-	        }
-        }
-	    return false;
+    public boolean isRequestTokenValid(String token) {
+	    List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.CLIENT_CREDENTIALS));
+	    return accessTokenValidator.accessTokenIsValid(token, validatorList);
     }
 
-	public Boolean isAccessTokenValid(String token) {
-		if (accessTokenRepository.contains(token)) {
-			AccessToken accessToken = accessTokenRepository.get(token);
-			if (accessTokenIsNotExpired(accessToken)) {
-				if (accessTokenHasAuthorizationGrant(accessToken)) {
-					return true;
-				}
-			} else {
-				accessTokenRepository.delete(token);
-			}
-		}
-		return false;
+	public boolean isAccessTokenValid(String token) {
+		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.AUTHORIZATION_CODE), new ScopeValidator(AccessToken.Scope.ACCOUNTS));
+		return accessTokenValidator.accessTokenIsValid(token, validatorList);
 	}
 
-    public Boolean accessTokenIsNotExpired(AccessToken token) {
-        return token.getExpirationDate().isAfter(LocalDateTime.now());
-    }
 
-    public Boolean accessTokenHasAuthorizationGrant(AccessToken token) {
-    	return token.getGrant().equals(AccessToken.Grant.AUTHORIZATION_CODE);
-    }
-
-	public Boolean tokenHasCorrectScope(AccessToken token, AccessToken.Scope requiredScope) {
-		return token.getScopes().contains(requiredScope);
-	}
-
-	public Boolean checkClientCredentials(String clientId, String clientSecret) {
+	public boolean checkClientCredentials(String clientId, String clientSecret) {
         TPPClient client = (TPPClient) tppClientRepository.get(clientId);
         return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }
 
-    public Boolean checkAdminCredentials(String adminId, String adminSecret) {
+    public boolean checkAdminCredentials(String adminId, String adminSecret) {
         Admin admin = adminRepository.get(adminId);
         if (admin != null) {
         	System.out.println("Checking hashed secret for " + admin.getAdminId());
@@ -111,7 +88,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         adminRepository.add(admin);
     }
 
-    public Boolean checkUserCredentials(String username, String userSecret) {
+    public boolean checkUserCredentials(String username, String userSecret) {
 	    User user = userRepository.findByUserName(username);
 	    if (user != null) {
             System.out.println("Checking hashed secret for " + user.getUserName());
@@ -123,7 +100,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    }
     }
 
-    public Boolean checkAuthorizationCode(String authorizationCode) {
+    public boolean checkAuthorizationCode(String authorizationCode) {
     	if (authorizationCodeRepository.contains(authorizationCode)) {
     		authorizationCodeRepository.delete(authorizationCode);
     		return true;

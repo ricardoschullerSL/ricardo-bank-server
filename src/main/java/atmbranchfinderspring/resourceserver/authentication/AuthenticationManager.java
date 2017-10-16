@@ -14,13 +14,12 @@ import com.auth0.jwt.JWTVerifier;
 public interface AuthenticationManager {
 
 	JWTVerifier getJWTVerifier();
-	Boolean isRequestTokenValid(String token);
-	Boolean isAccessTokenValid(String token);
-	Boolean tokenHasCorrectScope(AccessToken token, AccessToken.Scope requiredScope);
-	Boolean checkClientCredentials(String clientId, String clientSecret);
-	Boolean checkAdminCredentials(String adminId, String adminSecret);
-	Boolean checkUserCredentials(String userId, String userSecret);
-	Boolean checkAuthorizationCode(String authorizationCode);
+	boolean isRequestTokenValid(String token);
+	boolean isAccessTokenValid(String token);
+	boolean checkClientCredentials(String clientId, String clientSecret);
+	boolean checkAdminCredentials(String adminId, String adminSecret);
+	boolean checkUserCredentials(String userId, String userSecret);
+	boolean checkAuthorizationCode(String authorizationCode);
 	AccountRequest getAccountRequest(String accountRequestId);
 	TPPClient getTPPClient(String clientId);
 }

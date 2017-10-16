@@ -59,7 +59,7 @@ public class AdminRepository implements Repository<Admin>{
     }
 
     @Override
-    public Boolean contains(String id) {
+    public boolean contains(String id) {
         return admins.containsKey(id);
     }
 
