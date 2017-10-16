@@ -40,20 +40,16 @@ jobs:
       # run tests!
       - run: mvn integration-test
 
-      # save test results
-      - run:
-                name: Save test results
-                command: |
-                  mkdir -p ~/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
-                when: always
-            - store_test_results:
-                path: ~/junit
-            - store_artifacts:
-                path: ~/junit
+#      # save test results
+#      - run:
+#                name: Save test results
+#                command: |
+#                  mkdir -p ~/junit/
+#                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+#                when: always
+#            - store_test_results:
+#                path: ~/junit
+#            - store_artifacts:
+#                path: ~/junit
 
-
-      - run: mvn cobertura:cobertura
-
-      after_success:
-      - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
