@@ -1,6 +1,7 @@
 # Ricardo Bank Server
 
 ![Build passing](https://circleci.com/gh/ricardoschullerSL/ricardo-bank-server.svg?style=shield&circle-token=:-circle-token)
+[![codecov](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server/branch/master/graph/badge.svg)](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server)
 
 Under construction.
 
