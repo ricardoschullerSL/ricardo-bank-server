@@ -26,8 +26,7 @@ jobs:
       - run: mvn integration-test
 
       - run:
-       command: |
-          bash <(curl -s https://codecov.io/bash)
+        command: bash <(curl -s https://codecov.io/bash)
 
       - store_test_results:
           path: ./surefire-reports
