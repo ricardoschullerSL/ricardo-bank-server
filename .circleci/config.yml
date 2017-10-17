@@ -52,7 +52,8 @@ jobs:
       - store_artifacts:
           path: target/demo-java-spring-0.0.1-SNAPSHOT.jar
 
-after_success:
-- bash <(curl -s https://codecov.io/bash)
+test:
+  post:
+    - bash <(curl -s https://codecov.io/bash)
 
 
