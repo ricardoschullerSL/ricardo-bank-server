@@ -27,7 +27,9 @@ jobs:
 
       - run: mvn cobertura:cobertura
 
-
+      - run:
+       command: |
+          bash <(curl -s https://codecov.io/bash)
 
       - store_test_results:
           path: ./surefire-reports
@@ -35,6 +37,3 @@ jobs:
       - store_artifacts:
           path: ./demo-java-spring-0.0.1-SNAPSHOT.jar
 
-      - run:
-       command: |
-          bash <(curl -s https://codecov.io/bash)
