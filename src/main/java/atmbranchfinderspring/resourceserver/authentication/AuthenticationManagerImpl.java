@@ -23,6 +23,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     private AccessTokenValidator accessTokenValidator;
     private AccountRequestRepository accountRequestRepository;
     private AuthorizationCodeRepository authorizationCodeRepository;
+    private ExpiredTokenCollector expiredTokenCollector;
     private TPPClientRepository tppClientRepository;
     private UserRepository userRepository;
     private AdminRepository adminRepository;
@@ -30,14 +31,15 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
     @Autowired
     public AuthenticationManagerImpl(AccessTokenRepository accessTokenRepository, AccessTokenValidator accessTokenValidator,
-                                     AccountRequestRepository accountRequestRepository,
-                                     AuthorizationCodeRepository authorizationCodeRepository,
+                                     AccountRequestRepository accountRequestRepository, AuthorizationCodeRepository authorizationCodeRepository,
+                                     ExpiredTokenCollector expiredTokenCollector,
                                      TPPClientRepository tppClientRepository, UserRepository userRepository,
                                      AdminRepository adminRepository, EncryptionManager encryptionManager) {
         this.adminRepository = adminRepository;
         this.accountRequestRepository = accountRequestRepository;
         this.accessTokenValidator = accessTokenValidator;
         this.authorizationCodeRepository = authorizationCodeRepository;
+        this.expiredTokenCollector = expiredTokenCollector;
         this.tppClientRepository = tppClientRepository;
         this.userRepository = userRepository;
         this.accessTokenRepository = accessTokenRepository;

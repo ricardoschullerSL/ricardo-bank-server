@@ -28,9 +28,6 @@ public class SecurityAspect {
 		this.authenticationManager = authenticationManager;
 	}
 
-
-
-
     @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
     public void doTPPBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();

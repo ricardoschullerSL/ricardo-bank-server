@@ -46,8 +46,7 @@ public class TokenController {
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = "application/json")
     @TPPBasicAuthenticated
     public void getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
-    	String clientId = new String(Base64.getDecoder().decode(credentials)).split(":")[0];
+		String clientId = getClientIdFromAuthorizationHeader(request);
     	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, new ArrayList<AccessToken.Scope>());
 	    accessTokenRepository.add(token);
 	    response.setStatus(201);
@@ -59,8 +58,7 @@ public class TokenController {
 	@RequestMapping(method = RequestMethod.POST, value = "/access-token/{authorizationCode}", produces = "application/json")
 	@TPPBasicAuthenticated
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
-		String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
-		String clientId = new String(Base64.getDecoder().decode(credentials)).split(":")[0];
+		String clientId = getClientIdFromAuthorizationHeader(request);
 		if (authenticationManager.checkAuthorizationCode(authorizationCode)) {
 			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, new ArrayList<AccessToken.Scope>());
 			accessTokenRepository.add(token);
@@ -73,6 +71,10 @@ public class TokenController {
 
 	}
 
+	private String getClientIdFromAuthorizationHeader(HttpServletRequest request) {
+		String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
+		return new String(Base64.getDecoder().decode(credentials)).split(":")[0];
+	}
 
 	public static long getExpirationTime() {
 		return expirationTime;

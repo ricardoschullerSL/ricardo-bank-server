@@ -43,7 +43,7 @@ public class AuthenticationManagerImplTests {
 		userRepository = mock(UserRepository.class);
 		accountRequestRepository = new AccountRequestRepository();
 		authorizationCodeRepository = new AuthorizationCodeRepository();
-		authenticationManager = new AuthenticationManagerImpl(accessTokenRepository, accessTokenValidator, accountRequestRepository, authorizationCodeRepository, tppClientRepository, userRepository, adminRepository, encryptionManager);
+		authenticationManager = new AuthenticationManagerImpl(accessTokenRepository, accessTokenValidator, accountRequestRepository, authorizationCodeRepository, null, tppClientRepository, userRepository, adminRepository, encryptionManager);
 	}
 
 	@AfterEach

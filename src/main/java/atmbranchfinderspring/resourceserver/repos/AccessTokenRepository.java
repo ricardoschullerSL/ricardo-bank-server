@@ -5,36 +5,37 @@ import atmbranchfinderspring.resourceserver.models.AccessToken;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @org.springframework.stereotype.Repository
 public class AccessTokenRepository implements Repository<AccessToken> {
 
-    private HashMap<String, AccessToken> accessTokens;
+    private ConcurrentHashMap<String, AccessToken> accessTokens;
 
     public AccessTokenRepository() {
-        this.accessTokens = new HashMap<>();
+        this.accessTokens = new ConcurrentHashMap<>();
     }
 
-    public synchronized  AccessToken get(String token) {
+    public AccessToken get(String token) {
         return accessTokens.get(token);
     }
 
-    public synchronized boolean contains(String token) {
+    public boolean contains(String token) {
         return accessTokens.containsKey(token);
     }
 
-    public synchronized void add(AccessToken entity) {
+    public void add(AccessToken entity) {
         accessTokens.put(entity.getAccessToken(), entity);
     }
 
-    public synchronized Collection<String> getAllIds() {
+    public Collection<String> getAllIds() {
         return accessTokens.keySet();
     }
 
-    public synchronized void delete(AccessToken entity) {
+    public void delete(AccessToken entity) {
         accessTokens.remove(entity.getAccessToken());
     }
 
-    public synchronized void delete(String token) { accessTokens.remove(token); }
+    public void delete(String token) { accessTokens.remove(token); }
 }
