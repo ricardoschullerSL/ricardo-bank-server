@@ -12,9 +12,11 @@ import org.junit.jupiter.api.DisplayName;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -70,20 +72,11 @@ public class AuthenticationManagerImplTests {
 	}
 
 	@Test
-	@DisplayName("Check if AuthenticationManagerImpl validates access token")
+	@DisplayName("Check if AuthenticationManagerImpl validates request token")
 	void requestTokenCheckerTest() {
 		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS , Arrays.asList(AccessToken.Scope.ACCOUNTS));
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
-	}
-
-
-	@Test
-	@DisplayName("Check if AuthenticationManagerImpl validates access token")
-	void addRequestTokenToRepositoryTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", "test",100L );
-		accessTokenRepository.add(testToken);
-		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(1);
 	}
 
 	// DON'T IMMEDIATELY DELETE IMPROPER ACCESS TOKENS, LET TOKEN COLLECTOR TAKE CARE OF IT.
@@ -97,9 +90,11 @@ public class AuthenticationManagerImplTests {
 //	}
 
 	@Test
-	@DisplayName("Check if isAccessTokenValid validates a token")
-	void isAccessTokenValidTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", "test",100L );
+	@DisplayName("Check if AuthenticationManagerImpl validates access token")
+	void validateAccessTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken()));
 	}
 
 	@Test
@@ -158,6 +153,55 @@ public class AuthenticationManagerImplTests {
 
 		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "testSecret")).isEqualTo(true);
 		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "wrongSecret")).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if AuthenticationManagerImple validates AdminCredentials when admin is null")
+	void nullAdminCredentialCheckerTest() {
+
+		when(adminRepository.get("testAdmin")).thenReturn(null);
+		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "testSecret")).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if checkUserCredentials returns false when user can't be found.")
+	void nullUserCredentialCheckerTest() {
+		when(userRepository.findByUserName("user")).thenReturn(null);
+		assertThat(authenticationManager.checkUserCredentials("user","wrongsecret")).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if addAdmin adds an admin")
+	void addAdminTest() {
+		authenticationManager.addAdmin("testAdmin", "testSecret");
+
+		try {
+			String salt = UUID.randomUUID().toString();
+			String secret = "testsecret";
+			byte[] hashedSecret = MessageDigest.getInstance("SHA-256").digest((secret + salt).getBytes(StandardCharsets.UTF_8));
+			verify(adminRepository, times(1)).add(new Admin("testAdmin",hashedSecret, salt));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Check if AuthenticationManagerImpl validates user credentials correctly")
+	void userCredentialCheckerTest() {
+		try {
+		String salt = UUID.randomUUID().toString();
+		String secret = "testsecret";
+		byte[] hashedSecret = MessageDigest.getInstance("SHA-256").digest((secret + salt).getBytes(StandardCharsets.UTF_8));
+
+		User user = User.builder(101,"user", hashedSecret, salt);
+		when(userRepository.findByUserName("user")).thenReturn(user);
+		when(encryptionManager.SHA256((secret + salt))).thenCallRealMethod();
+
+		assertThat(authenticationManager.checkUserCredentials("user","testsecret")).isEqualTo(true);
+		assertThat(authenticationManager.checkUserCredentials("user","wrongsecret")).isEqualTo(false);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test

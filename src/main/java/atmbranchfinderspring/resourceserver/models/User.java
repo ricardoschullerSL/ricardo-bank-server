@@ -95,4 +95,12 @@ public class User {
 	public String toString() {
 		return "username: " + userName + ", id: " + id;
 	}
+
+	public static User builder(int accountId, String userName, byte[] hashedSecret, String salt) {
+		User user = new User(accountId);
+		user.setUserName(userName);
+		user.setHashedSecret(hashedSecret);
+		user.setSalt(salt);
+		return user;
+	}
 }
