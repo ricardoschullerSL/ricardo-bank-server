@@ -24,7 +24,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<junit.version>4.12</junit.version>
-		<junit.jupiter.version>5.0.0</junit.jupiter.version>
+		<junit.jupiter.version>5.0.0-M4</junit.jupiter.version>
 
 	</properties>
 	<dependencies>
@@ -114,21 +114,13 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.platform</groupId>
-						<artifactId>junit-platform-surefire-provider</artifactId>
-						<version>1.0.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.junit.jupiter</groupId>
-						<artifactId>junit-jupiter-api</artifactId>
-						<version>5.0.0</version>
-						<scope>test</scope>
-					</dependency>
-				</dependencies>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.19.1</version>
+
+
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
