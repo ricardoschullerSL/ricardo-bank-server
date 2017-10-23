@@ -94,9 +94,7 @@ public class TemplateController {
 			System.out.println(e);
 			response.sendError(500, "sad boiii");
 		}
-
 	}
-
 	private Boolean isNotNull(Object o) {
 		return o != null;
 	}
