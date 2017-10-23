@@ -66,12 +66,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	}
 
 
-	public boolean checkClientCredentials(String clientId, String clientSecret) {
+	public boolean areClientCredentialsValid(String clientId, String clientSecret) {
         TPPClient client = (TPPClient) tppClientRepository.get(clientId);
         return !(client == null) && client.getCredentials().getSecret().equals(clientSecret);
     }
 
-    public boolean checkAdminCredentials(String adminId, String adminSecret) {
+    public boolean areAdminCredentialsValid(String adminId, String adminSecret) {
         Admin admin = adminRepository.get(adminId);
         if (admin != null) {
         	System.out.println("Checking hashed secret for " + admin.getAdminId());
@@ -90,7 +90,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         adminRepository.add(admin);
     }
 
-    public boolean checkUserCredentials(String username, String userSecret) {
+    public boolean areUserCredentialsValid(String username, String userSecret) {
 	    User user = userRepository.findByUserName(username);
 	    if (user != null) {
             System.out.println("Checking hashed secret for " + user.getUserName());
@@ -102,7 +102,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    }
     }
 
-    public boolean checkAuthorizationCode(String authorizationCode) {
+    public boolean isAuthorizationCodeValid(String authorizationCode) {
     	if (authorizationCodeRepository.contains(authorizationCode)) {
     		authorizationCodeRepository.delete(authorizationCode);
     		return true;

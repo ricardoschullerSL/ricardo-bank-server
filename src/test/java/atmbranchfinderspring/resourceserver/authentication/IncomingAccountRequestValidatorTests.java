@@ -16,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class IncomingAccountRequestValidatorTests {
 
 	private AccountRequestValidator accountRequestValidator;
+	private final String CORRECT_PERMISSION1 = "ReadAccountsBasic";
+	private final String CORRECT_PERMISSION2 = "ReadAccountsDetail";
 
 	@BeforeEach
 	void setup() {
@@ -30,16 +32,16 @@ public class IncomingAccountRequestValidatorTests {
 	@Test
 	@DisplayName("checkPermission checks if String permission is a valid Permission")
 	void checkPermissionTest() {
-		assertThat(accountRequestValidator.checkPermission("ReadAccountsBasic")).isEqualTo(true);
+		assertThat(accountRequestValidator.checkPermission(CORRECT_PERMISSION1)).isEqualTo(true);
 		assertThat(accountRequestValidator.checkPermission("WrongPermission")).isEqualTo(false);
 	}
 
 	@Test
 	@DisplayName("checkPermissions checks if all values in String list are valid Permissions")
 	void checkPermissionArrayTest() {
-		List<String> permissionArray = new ArrayList<String>(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
+		List<String> permissionArray = new ArrayList<String>(Arrays.asList(CORRECT_PERMISSION1, CORRECT_PERMISSION2));
 		assertThat(accountRequestValidator.checkPermissionList(permissionArray)).isEqualTo(true);
-		List<String> wrongPermissionArray = new ArrayList<String>(Arrays.asList("ReadAccountsBasic", "WrongPermission"));
+		List<String> wrongPermissionArray = new ArrayList<String>(Arrays.asList(CORRECT_PERMISSION1, "WrongPermission"));
 		assertThat(accountRequestValidator.checkPermissionList(wrongPermissionArray)).isEqualTo(false);
 	}
 

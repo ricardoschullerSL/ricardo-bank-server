@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.mockito.Mockito;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -108,7 +109,7 @@ public class AuthenticationManagerImplTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManager.checkClientCredentials(credentials.getId(),credentials.getSecret())).isEqualTo(true);
+		assertThat(authenticationManager.areClientCredentialsValid(credentials.getId(),credentials.getSecret())).isEqualTo(true);
 
 	}
 
@@ -123,7 +124,7 @@ public class AuthenticationManagerImplTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManager.checkClientCredentials("wrongId",credentials.getSecret())).isEqualTo(false);
+		assertThat(authenticationManager.areClientCredentialsValid("wrongId",credentials.getSecret())).isEqualTo(false);
 	}
 
 	@Test
@@ -137,7 +138,7 @@ public class AuthenticationManagerImplTests {
 				.setSSA(null).build();
 		tppClientRepository.add(tppClient);
 
-		assertThat(authenticationManager.checkClientCredentials(credentials.getId(),"wrongPassword")).isEqualTo(false);
+		assertThat(authenticationManager.areClientCredentialsValid(credentials.getId(),"wrongPassword")).isEqualTo(false);
 	}
 
 	@Test
@@ -151,8 +152,8 @@ public class AuthenticationManagerImplTests {
 		when(adminRepository.get("testAdmin")).thenReturn(mockAdmin);
 		when(encryptionManager.SHA256((secret + salt))).thenReturn(mockHash);
 
-		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "testSecret")).isEqualTo(true);
-		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "wrongSecret")).isEqualTo(false);
+		assertThat(authenticationManager.areAdminCredentialsValid("testAdmin", "testSecret")).isEqualTo(true);
+		assertThat(authenticationManager.areAdminCredentialsValid("testAdmin", "wrongSecret")).isEqualTo(false);
 	}
 
 	@Test
@@ -160,31 +161,31 @@ public class AuthenticationManagerImplTests {
 	void nullAdminCredentialCheckerTest() {
 
 		when(adminRepository.get("testAdmin")).thenReturn(null);
-		assertThat(authenticationManager.checkAdminCredentials("testAdmin", "testSecret")).isEqualTo(false);
+		assertThat(authenticationManager.areAdminCredentialsValid("testAdmin", "testSecret")).isEqualTo(false);
 	}
 
 	@Test
-	@DisplayName("Check if checkUserCredentials returns false when user can't be found.")
+	@DisplayName("Check if areUserCredentialsValid returns false when user can't be found.")
 	void nullUserCredentialCheckerTest() {
 		when(userRepository.findByUserName("user")).thenReturn(null);
-		assertThat(authenticationManager.checkUserCredentials("user","wrongsecret")).isEqualTo(false);
+		assertThat(authenticationManager.areUserCredentialsValid("user","wrongsecret")).isEqualTo(false);
 	}
 
-	// TODO: Fix this failing test. Need to be able to spy on .add method.
-//	@Test
-//	@DisplayName("Check if addAdmin adds an admin")
-//	void addAdminTest() {
-//		authenticationManager.addAdmin("testAdmin", "testSecret");
-//
-//		try {
-//			String salt = UUID.randomUUID().toString();
-//			String secret = "testsecret";
-//			byte[] hashedSecret = MessageDigest.getInstance("SHA-256").digest((secret + salt).getBytes(StandardCharsets.UTF_8));
-//			verify(adminRepository, times(1)).add(new Admin("testAdmin",hashedSecret, salt));
-//		} catch (NoSuchAlgorithmException e) {
-//			e.printStackTrace();
-//		}
-//	}
+
+	@Test
+	@DisplayName("Check if addAdmin adds an admin")
+	void addAdminTest() {
+		authenticationManager.addAdmin("testAdmin", "testSecret");
+
+		try {
+			String salt = UUID.randomUUID().toString();
+			String secret = "testsecret";
+			byte[] hashedSecret = MessageDigest.getInstance("SHA-256").digest((secret + salt).getBytes(StandardCharsets.UTF_8));
+			verify(adminRepository, times(1)).add(Mockito.any());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates user credentials correctly")
@@ -198,21 +199,21 @@ public class AuthenticationManagerImplTests {
 		when(userRepository.findByUserName("user")).thenReturn(user);
 		when(encryptionManager.SHA256((secret + salt))).thenCallRealMethod();
 
-		assertThat(authenticationManager.checkUserCredentials("user","testsecret")).isEqualTo(true);
-		assertThat(authenticationManager.checkUserCredentials("user","wrongsecret")).isEqualTo(false);
+		assertThat(authenticationManager.areUserCredentialsValid("user","testsecret")).isEqualTo(true);
+		assertThat(authenticationManager.areUserCredentialsValid("user","wrongsecret")).isEqualTo(false);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Test
-	@DisplayName("Check if checkAuthorizationCode checks if repo contains the string and deletes it")
+	@DisplayName("Check if isAuthorizationCodeValid checks if repo contains the string and deletes it")
 	void checkAuthorizationCodeTest() {
 		authorizationCodeRepository.add("testAuthCode");
 
-		assertThat(authenticationManager.checkAuthorizationCode("testAuthCode")).isEqualTo(true);
+		assertThat(authenticationManager.isAuthorizationCodeValid("testAuthCode")).isEqualTo(true);
 		assertThat(authorizationCodeRepository.getAllIds().size()).isEqualTo(0);
-		assertThat(authenticationManager.checkAuthorizationCode("testAuthCode")).isEqualTo(false);
+		assertThat(authenticationManager.isAuthorizationCodeValid("testAuthCode")).isEqualTo(false);
 	}
 
 	@Test
@@ -221,6 +222,20 @@ public class AuthenticationManagerImplTests {
 		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new ArrayList<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
 
 		assertThat(authenticationManager.getAccountRequest("testId").getStatus()).isEqualTo(AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION);
+	}
+
+	@Test
+	@DisplayName("Check if getTPPClient returns TPPClient")
+	void getTPPClientTest() {
+
+		Credentials credentials = new Credentials("clientId", "clientSecret");
+		TPPClient tppClient = new TPPClient.TPPClientBuilder()
+				.setClientCredentials(credentials)
+				.setRedirectUri(null)
+				.setSSA(null).build();
+		tppClientRepository.add(tppClient);
+
+		assertThat(authenticationManager.getTPPClient("clientId").getCredentials().getId()).matches("clientId");
 	}
 
 }

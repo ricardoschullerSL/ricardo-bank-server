@@ -80,7 +80,7 @@ public class TemplateController {
 		try {
 			if (isNotNull(username) && isNotNull(accountRequestId)) {
 
-				if (authenticationManager.checkUserCredentials(username, password)) {
+				if (authenticationManager.areUserCredentialsValid(username, password)) {
 					AccountRequest accountRequest = authenticationManager.getAccountRequest(accountRequestId);
 					System.out.println("User authenticated yeah boiii");
 					response.sendRedirect("/authorizeApp/" + accountRequestId);

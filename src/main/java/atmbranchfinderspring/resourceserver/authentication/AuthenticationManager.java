@@ -16,10 +16,10 @@ public interface AuthenticationManager {
 	JWTVerifier getJWTVerifier();
 	boolean isRequestTokenValid(String token);
 	boolean isAccessTokenValid(String token);
-	boolean checkClientCredentials(String clientId, String clientSecret);
-	boolean checkAdminCredentials(String adminId, String adminSecret);
-	boolean checkUserCredentials(String userId, String userSecret);
-	boolean checkAuthorizationCode(String authorizationCode);
+	boolean areClientCredentialsValid(String clientId, String clientSecret);
+	boolean areAdminCredentialsValid(String adminId, String adminSecret);
+	boolean areUserCredentialsValid(String userId, String userSecret);
+	boolean isAuthorizationCodeValid(String authorizationCode);
 	AccountRequest getAccountRequest(String accountRequestId);
 	TPPClient getTPPClient(String clientId);
 }

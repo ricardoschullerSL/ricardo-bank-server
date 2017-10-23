@@ -6,7 +6,6 @@ import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ShellProperties;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +58,7 @@ public class TokenController {
 	@TPPBasicAuthenticated
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
-		if (authenticationManager.checkAuthorizationCode(authorizationCode)) {
+		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
 			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, new ArrayList<AccessToken.Scope>());
 			accessTokenRepository.add(token);
 			response.setStatus(201);

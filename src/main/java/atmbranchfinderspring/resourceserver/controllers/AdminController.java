@@ -4,7 +4,6 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import com.auth0.jwt.JWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +40,7 @@ public class AdminController {
 				String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 				values = credentials.split(":", 2);
 				System.out.println(values[0] + " " + values[1]);
-				if (authenticationManagerImpl.checkAdminCredentials(values[0], values[1])) {
+				if (authenticationManagerImpl.areAdminCredentialsValid(values[0], values[1])) {
 					System.out.println("Creating and returning JWT.");
 					String jwt = JWT.create().withIssuer("Open Banking")
 							.withClaim("software_id", body.get("software_id"))

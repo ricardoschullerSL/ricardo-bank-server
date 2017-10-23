@@ -42,7 +42,7 @@ public class SecurityAspect {
 			    String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 			    values = credentials.split(":", 2);
 			    System.out.println("Authenticating " + values[0]);
-			    if (authenticationManager.checkClientCredentials(values[0], values[1])) {
+			    if (authenticationManager.areClientCredentialsValid(values[0], values[1])) {
 				    joinPoint.proceed();
 			    } else {
 				    response.sendError(403, "Incorrect Client Credentials.");
@@ -70,7 +70,7 @@ public class SecurityAspect {
 				String credentials = new String(Base64.getDecoder().decode(base64Credentials));
 				values = credentials.split(":", 2);
 				System.out.println("Authenticating " + values[0]);
-				if (authenticationManager.checkAdminCredentials(values[0], values[1])) {
+				if (authenticationManager.areAdminCredentialsValid(values[0], values[1])) {
 					joinPoint.proceed();
 				} else {
 					response.sendError(403, "Incorrect Client Credentials.");
