@@ -56,8 +56,12 @@ public class TemplateController {
 
 	@RequestMapping("/authorizeApp/{accountRequestId}/{authorization}")
 	public void commitAuthorization(HttpServletRequest request, HttpServletResponse response,
-	                                @PathVariable String accountRequestId, @PathVariable int authorization) throws IOException, URISyntaxException {
-		AccountRequest accountRequest = accountRequestRepository.get(accountRequestId);
+	                                @PathVariable String accountRequestId,
+	                                @PathVariable int authorization) throws IOException, URISyntaxException {
+		if (authenticationManager.isAccountRequestIdValid(accountRequestId) == false) {
+			response.sendError(500, "Something went wrong...");
+		}
+		AccountRequest accountRequest = authenticationManager.getAccountRequest(accountRequestId);
 		if ( authorization == 1) {
 			accountRequest.setStatus(AccountRequest.AccountRequestStatus.AUTHORIZED);
 			String authorization_code = UUID.randomUUID().toString();
@@ -71,30 +75,34 @@ public class TemplateController {
 
 	@RequestMapping("/authenticate/{accountRequestId}")
 	public void authenticate(HttpServletRequest request, HttpServletResponse response,
-	                                         @ModelAttribute(value="credentials") Credentials credentials, @PathVariable String accountRequestId) throws IOException {
+	                         @ModelAttribute(value="credentials") Credentials credentials,
+	                         @PathVariable String accountRequestId) throws IOException {
+
 		String username = credentials.getId();
 		String password = credentials.getSecret();
 
-		System.out.println("Validating account request id: " + accountRequestId + " for " + username + " " + password);
+		System.out.println("Validating account request id: " + accountRequestId + " for " + username);
 
 		try {
 			if (isNotNull(username) && isNotNull(accountRequestId)) {
 
-				if (authenticationManager.areUserCredentialsValid(username, password)) {
+				if (authenticationManager.areUserCredentialsValid(username, password) && authenticationManager.isAccountRequestIdValid(accountRequestId) ) {
 					AccountRequest accountRequest = authenticationManager.getAccountRequest(accountRequestId);
 					System.out.println("User authenticated yeah boiii");
 					response.sendRedirect("/authorizeApp/" + accountRequestId);
 				} else {
-					response.sendError(403, "Incorrect credentials boiii");
+					response.sendError(403, "Invalid credentials.");
 				}
 			} else {
-				response.sendError(400, "No username found boiii");
+				response.sendError(403, "Invalid credentials.");
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
 			response.sendError(500, "sad boiii");
 		}
 	}
+
+
 	private Boolean isNotNull(Object o) {
 		return o != null;
 	}

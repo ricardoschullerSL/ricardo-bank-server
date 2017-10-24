@@ -20,6 +20,7 @@ public interface AuthenticationManager {
 	boolean areAdminCredentialsValid(String adminId, String adminSecret);
 	boolean areUserCredentialsValid(String userId, String userSecret);
 	boolean isAuthorizationCodeValid(String authorizationCode);
+	boolean isAccountRequestIdValid(String accountRequestId);
 	AccountRequest getAccountRequest(String accountRequestId);
 	TPPClient getTPPClient(String clientId);
 }

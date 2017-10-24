@@ -102,6 +102,10 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    }
     }
 
+    public boolean isAccountRequestIdValid(String accountRequestId) {
+    	return accountRequestRepository.contains(accountRequestId);
+    }
+
     public boolean isAuthorizationCodeValid(String authorizationCode) {
     	if (authorizationCodeRepository.contains(authorizationCode)) {
     		authorizationCodeRepository.delete(authorizationCode);
