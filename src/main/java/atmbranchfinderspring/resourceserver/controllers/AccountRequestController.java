@@ -46,16 +46,15 @@ public class AccountRequestController {
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests")
 	@RequestTokenAuthenticated
 	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingAccountRequest incomingAccountRequest) throws IOException {
-		if(accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
+		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			List<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
 			String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 			String clientId = accessTokenRepository.get(token).getClientId();
 			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId);
 			tppManager.addAccountRequestToClient(clientId, accountRequest);
 			response.setHeader("Content-type", "application/json");
+			response.setStatus(200);
 			mapper.writer().writeValue(response.getWriter(), accountRequest);
-			System.out.println(accountRequestRepository.getAllIds().size());
-
 		} else {
 			response.sendError(400, "Bad Request");
 		}
@@ -66,11 +65,16 @@ public class AccountRequestController {
 	@RequestTokenAuthenticated
 	public void getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
-		String clientId = accessTokenRepository.get(token).getClientId();
-		TPPClient client = tppManager.getTPPClient(clientId);
-		Collection<String> responseObjects = client.getAllAccountRequestIds();
-		response.setHeader("Content-type", "application/json");
-		mapper.writer().writeValue(response.getWriter(), responseObjects);
+		if (accessTokenRepository.contains(token)) {
+			String clientId = accessTokenRepository.get(token).getClientId();
+			TPPClient client = tppManager.getTPPClient(clientId);
+			Collection<String> responseObjects = client.getAllAccountRequestIds();
+			response.setHeader("Content-type", "application/json");
+			mapper.writer().writeValue(response.getWriter(), responseObjects);
+		} else {
+			response.sendError(400);
+		}
+
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = "application/json")

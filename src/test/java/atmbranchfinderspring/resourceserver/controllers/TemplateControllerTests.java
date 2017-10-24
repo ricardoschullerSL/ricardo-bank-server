@@ -2,7 +2,6 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
-import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.mock;
