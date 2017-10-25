@@ -42,27 +42,27 @@ public class AdminControllerTests {
 		adminController = new AdminController(tppManager, authenticationManager, adminRepository);
 		mockMvc = MockMvcBuilders.standaloneSetup(adminController).build();
 	}
-
-	@Test
-	void getJWTTest() throws Exception {
-		Algorithm algorithm = new Algorithm("SHA-256", "Stub") {
-			@Override
-			public void verify(DecodedJWT jwt) throws SignatureVerificationException {
-
-			}
-
-			@Override
-			public byte[] sign(byte[] contentBytes) throws SignatureGenerationException {
-				return new byte[0];
-			}
-		};
-		when(authenticationManager.getEncryptionManager().getAlgorithm()).thenReturn(algorithm);
-		RequestBuilder request = post("/getjwt")
-				.content("{\"software_id\": \"testId\", \"redirect_uri\": \"test.uri\"}")
-				.contentType("application/json");
-
-		mockMvc.perform(request)
-				.andDo(print());
-	}
+//
+//	@Test
+//	void getJWTTest() throws Exception {
+//		Algorithm algorithm = new Algorithm("SHA-256", "Stub") {
+//			@Override
+//			public void verify(DecodedJWT jwt) throws SignatureVerificationException {
+//
+//			}
+//
+//			@Override
+//			public byte[] sign(byte[] contentBytes) throws SignatureGenerationException {
+//				return new byte[0];
+//			}
+//		};
+//		when(authenticationManager.getEncryptionManager().getAlgorithm()).thenReturn(algorithm);
+//		RequestBuilder request = post("/getjwt")
+//				.content("{\"software_id\": \"testId\", \"redirect_uri\": \"test.uri\"}")
+//				.contentType("application/json");
+//
+//		mockMvc.perform(request)
+//				.andDo(print());
+//	}
 
 }
