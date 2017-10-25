@@ -106,4 +106,56 @@ public class AccountRequestControllerTests {
 
 	}
 
+	@Test
+	void failGetAllAccountRequestsTest() throws Exception {
+		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		when(accessTokenRepository.contains(anyString())).thenReturn(false);
+		when(accessTokenRepository.get(anyString())).thenReturn(accessToken);
+
+		TPPClient tppClient = new TPPClient(new Credentials("tppclient", "tppsecret"), "http://testuri.com/", null);
+		tppClient.addAccountRequestResponse(new AccountRequest());
+		tppClient.addAccountRequestResponse(new AccountRequest());
+		when(tppManager.getTPPClient(anyString())).thenReturn(tppClient);
+
+		RequestBuilder request = get("/account-requests")
+				.header("Authorization", "Bearer testtoken");
+
+		mockMvc.perform(request)
+				.andExpect(status().is(400));
+
+	}
+
+
+	@Test
+	void getSingleAccountRequestsTest() throws Exception {
+
+		AccountRequest accountRequest = new AccountRequest();
+		accountRequest.setAccountRequestId("testId");
+		accountRequest.setClientId("testClient");
+		when(accountRequestRepository.contains(anyString())).thenReturn(true);
+		when(accountRequestRepository.get(anyString())).thenReturn(accountRequest);
+
+		RequestBuilder request = get("/account-requests/testId");
+
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(content().contentType("application/json"));
+
+	}
+
+	@Test
+	void failGetSingleAccountRequestsTest() throws Exception {
+
+		AccountRequest accountRequest = new AccountRequest();
+		accountRequest.setAccountRequestId("testId");
+		accountRequest.setClientId("testClient");
+		when(accountRequestRepository.contains(anyString())).thenReturn(false);
+		when(accountRequestRepository.get(anyString())).thenReturn(accountRequest);
+
+		RequestBuilder request = get("/account-requests/testId");
+
+		mockMvc.perform(request)
+				.andExpect(status().is(400));
+
+	}
 }

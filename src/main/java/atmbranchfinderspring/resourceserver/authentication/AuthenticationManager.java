@@ -23,5 +23,7 @@ public interface AuthenticationManager {
 	boolean isAccountRequestIdValid(String accountRequestId);
 	AccountRequest getAccountRequest(String accountRequestId);
 	TPPClient getTPPClient(String clientId);
+	EncryptionManager getEncryptionManager();
+	void addAdmin(String id, String secret);
 }
 

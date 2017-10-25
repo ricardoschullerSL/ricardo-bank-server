@@ -1,75 +1,62 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
+import atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated;
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.repos.AdminRepository;
 import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Map;
 
 @RestController
 public class AdminController {
 
-	private AuthenticationManagerImpl authenticationManagerImpl;
+	private AuthenticationManager authenticationManager;
 	private TPPManager tppManager;
 	private AdminRepository adminRepository;
+	private ObjectMapper mapper;
 
 
 	@Autowired
-	public AdminController(TPPManager tppManager, AuthenticationManagerImpl authenticationManagerImpl, AdminRepository adminRepository) {
+	public AdminController(TPPManager tppManager, AuthenticationManager authenticationManager, AdminRepository adminRepository) {
 		this.tppManager = tppManager;
-		this.authenticationManagerImpl = authenticationManagerImpl;
+		this.authenticationManager = authenticationManager;
 		this.adminRepository = adminRepository;
+		this.mapper = new ObjectMapper();
 	}
 
 
 
 	@RequestMapping(value="/getjwt", method = RequestMethod.POST)
-	public String getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) {
-		try {
-			String[] values;
-			String authorization = request.getHeader("Authorization");
-			if (authorization != null && authorization.startsWith("Basic")) {
-				String base64Credentials = authorization.substring("Basic".length()).trim();
-				String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-				values = credentials.split(":", 2);
-				System.out.println(values[0] + " " + values[1]);
-				if (authenticationManagerImpl.areAdminCredentialsValid(values[0], values[1])) {
-					System.out.println("Creating and returning JWT.");
-					String jwt = JWT.create().withIssuer("Open Banking")
-							.withClaim("software_id", body.get("software_id"))
-							.withClaim("aud","Ricardo Bank")
-							.withClaim("redirect_uri", body.get("redirect_uri"))
-							.withClaim("software_statement","testsoftwarestatement")
-							.withJWTId("jwtId")
-							.sign(authenticationManagerImpl.getEncryptionManager().getPemManagerImpl().getAlgorithm());
+	@AdminBasicAuthenticated
+	public void getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) throws IOException {
 
-					response.setStatus(200);
-					return jwt;
-				} else {
-					response.sendError(403, "Incorrect credentials.");
-				}
-			} else {
-				response.sendError(400, "Bad Request");
-			}
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-		return null;
+		System.out.println(body.get("software_id"));
+		System.out.println("Creating and returning JWT.");
+		String jwt = JWT.create().withIssuer("Open Banking")
+				.withClaim("software_id", body.get("software_id"))
+				.withClaim("aud", "Ricardo Bank")
+				.withClaim("redirect_uri", body.get("redirect_uri"))
+				.withClaim("software_statement", "testsoftwarestatement")
+				.withJWTId("jwtId")
+				.sign(authenticationManager.getEncryptionManager().getAlgorithm());
 
+		response.setStatus(200);
+		mapper.writer().writeValue(response.getWriter(), jwt);
 	}
 
 	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)
-	public void addAdmin(@RequestBody Map<String, String> body, HttpServletResponse response) {
+	@AdminBasicAuthenticated
+	public void addAdmin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) {
 		try {
 			System.out.println(body.get("adminId"));
-			authenticationManagerImpl.addAdmin(body.get("adminId"), body.get("adminSecret"));
+			authenticationManager.addAdmin(body.get("adminId"), body.get("adminSecret"));
 			if (adminRepository.persistData()) {
 				response.setStatus(200);
 			} else {
@@ -82,6 +69,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value="/persistAdminData", method = RequestMethod.POST)
+	@AdminBasicAuthenticated
 	public void persistAdminData(HttpServletResponse response) {
 		try {
 			if (adminRepository.persistData()) {

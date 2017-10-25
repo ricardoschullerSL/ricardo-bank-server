@@ -80,10 +80,15 @@ public class AccountRequestController {
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = "application/json")
 	@RequestTokenAuthenticated
 	public void getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
-		response.setHeader("Content-type", "application/json");
-		System.out.println(accountRequestId);
-		AccountRequest requestResponse = accountRequestRepository.get(accountRequestId);
-		mapper.writer().writeValue(response.getWriter(), requestResponse);
+
+		if (accountRequestRepository.contains(accountRequestId)) {
+			AccountRequest requestResponse = accountRequestRepository.get(accountRequestId);
+			response.setHeader("Content-type", "application/json");
+			mapper.writer().writeValue(response.getWriter(), requestResponse);
+		} else {
+			response.sendError(400);
+		}
+
 	}
 
 

@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
+import atmbranchfinderspring.resourceserver.ResourceServerApplication;
 import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.models.AccessToken;
@@ -34,7 +35,8 @@ public class TokenController {
         this.mapper = new ObjectMapper();
         try {
         	Properties props = new Properties();
-        	props.load(new FileInputStream("src\\main\\resources\\application.properties"));
+        	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        	props.load(loader.getResourceAsStream("application.properties"));
         	this.expirationTime = Long.parseLong(props.getProperty("accesstoken.expirationtime"));
         } catch (IOException e) {
         	e.printStackTrace();
