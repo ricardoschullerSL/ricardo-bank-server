@@ -2,7 +2,6 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,7 +22,6 @@ public class TokenControllerTests {
 	private TokenController tokenController;
 	private AccessTokenRepository accessTokenRepository;
 	private AuthenticationManager authenticationManager;
-	private ObjectMapper mapper = new ObjectMapper();
 
 	private MockMvc mockMvc;
 
@@ -33,6 +31,7 @@ public class TokenControllerTests {
 		accessTokenRepository = mock(AccessTokenRepository.class);
 		tokenController = new TokenController(accessTokenRepository, authenticationManager);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
+		System.out.println(mockMvc == null);
 	}
 
 	@Test
