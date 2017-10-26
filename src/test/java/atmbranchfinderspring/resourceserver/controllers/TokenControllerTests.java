@@ -31,7 +31,7 @@ public class TokenControllerTests {
 	void setup() {
 		authenticationManager = mock(AuthenticationManager.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
-		tokenController = new TokenController(accessTokenRepository, authenticationManager);
+		tokenController = new TokenController(accessTokenRepository, authenticationManager, 1200);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
 	}
 
