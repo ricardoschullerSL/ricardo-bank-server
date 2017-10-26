@@ -23,7 +23,7 @@ public class TokenControllerTests {
 	private TokenController tokenController;
 	private AccessTokenRepository accessTokenRepository;
 	private AuthenticationManager authenticationManager;
-	private ObjectMapper mapper;
+	private ObjectMapper mapper = new ObjectMapper();
 
 	private MockMvc mockMvc;
 
@@ -31,10 +31,8 @@ public class TokenControllerTests {
 	void setup() {
 		authenticationManager = mock(AuthenticationManager.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
-		mapper = new ObjectMapper();
 		tokenController = new TokenController(accessTokenRepository, authenticationManager);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
-
 	}
 
 	@Test
