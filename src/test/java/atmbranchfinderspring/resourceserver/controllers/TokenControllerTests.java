@@ -3,7 +3,6 @@ package atmbranchfinderspring.resourceserver.controllers;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -19,10 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-/**
- * These tests are commented out because for some inexplicable reason there is a NullPointer Exception
- * but only on CircleCI, not locally.
- */
 public class TokenControllerTests {
 
 	private TokenController tokenController;

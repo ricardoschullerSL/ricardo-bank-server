@@ -35,9 +35,9 @@ public class TokenController {
         	Properties props = new Properties();
         	ClassLoader loader = Thread.currentThread().getContextClassLoader();
         	props.load(loader.getResourceAsStream("application.properties"));
-        	this.expirationTime = Long.parseLong(props.getProperty("accesstoken.expirationtime"));
+        	TokenController.expirationTime = Long.parseLong(props.getProperty("accesstoken.expirationtime"));
         } catch (IOException e) {
-        	this.expirationTime = 3600L;
+        	TokenController.expirationTime = 3600L;
         	System.out.println("Couldn't find application.properties on class path. Resorting to default value.");
         }
     }
