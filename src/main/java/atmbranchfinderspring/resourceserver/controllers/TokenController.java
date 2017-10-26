@@ -22,24 +22,16 @@ public class TokenController {
 
     private AccessTokenRepository accessTokenRepository;
     private AuthenticationManager authenticationManager;
-    private static long expirationTime;
+    private static long expirationTime = 3600L;
     private ObjectMapper mapper;
 
 
     @Autowired
-    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager) {
+    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager, long expirationTime) {
         this.accessTokenRepository = accessTokenRepository;
         this.authenticationManager = authenticationManager;
         this.mapper = new ObjectMapper();
-        try {
-        	Properties props = new Properties();
-        	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        	props.load(loader.getResourceAsStream("application.properties"));
-        	TokenController.expirationTime = Long.parseLong(props.getProperty("accesstoken.expirationtime"));
-        } catch (IOException e) {
-        	TokenController.expirationTime = 3600L;
-        	System.out.println("Couldn't find application.properties on class path. Resorting to default value.");
-        }
+        TokenController.setExpirationTime(expirationTime);
     }
 
 	@CrossOrigin(origins = "http://localhost:8081")
