@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 
 	<name>resource-server</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Implementation of the UK Open Banking APIs.</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

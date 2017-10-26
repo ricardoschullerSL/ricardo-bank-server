@@ -2,8 +2,10 @@ package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
+import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  * AuthenticationManager class is the central object in the security of the OAuth2 protocol and Basic Authentication.

@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -119,7 +120,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     	return accountRequestRepository.get(accountRequestId);
     }
 
-    @Override
+	@Override
     public TPPClient getTPPClient(String clientId) {
         return tppClientRepository.get(clientId);
     }

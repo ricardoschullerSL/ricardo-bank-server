@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.managers;
 
+import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
@@ -10,17 +11,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 
 public class TPPManagerTests {
 
 	private TPPManager tppManager;
+	private AuthenticationManager authenticationManager;
 	private TPPClientRepository tppClientRepository;
 
 	@BeforeEach
 	void setup() {
+		authenticationManager = mock(AuthenticationManager.class);
 		tppClientRepository = new TPPClientRepository();
-		tppManager = new TPPManager(tppClientRepository);
+		tppManager = new TPPManager(tppClientRepository, authenticationManager);
 	}
 
 	@AfterEach
