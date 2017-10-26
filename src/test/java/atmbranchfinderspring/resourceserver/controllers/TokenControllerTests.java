@@ -38,11 +38,9 @@ public class TokenControllerTests {
 		accessTokenRepository = mock(AccessTokenRepository.class);
 		tokenController = new TokenController(accessTokenRepository, authenticationManager);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
-		System.out.println(mockMvc == null);
 	}
 
 	@Test
-	@Disabled
 	void getAccessTokenThroughClientCredentialsTest() throws Exception {
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
@@ -57,7 +55,6 @@ public class TokenControllerTests {
 	}
 
 	@Test
-	@Disabled
 	void getAccessTokenThroughAuthorizationCode() throws Exception {
 		when(authenticationManager.isAuthorizationCodeValid(anyString())).thenReturn(true);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
@@ -74,7 +71,6 @@ public class TokenControllerTests {
 	}
 
 	@Test
-	@Disabled
 	void failGetAccessTokenThroughAuthorizationCode() throws Exception {
 		when(authenticationManager.isAuthorizationCodeValid(anyString())).thenReturn(false);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
