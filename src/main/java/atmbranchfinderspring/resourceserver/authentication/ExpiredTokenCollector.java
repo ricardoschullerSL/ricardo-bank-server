@@ -69,10 +69,7 @@ public class ExpiredTokenCollector {
 	}
 
 	public void stopThread() {
-		if (tokenCollectionThread.isAlive()) {
-			System.out.println(LocalDateTime.now().toString() + " Stopping ExpiredTokenCollector thread.");
-			tokenCollectionThread.interrupt();
-		}
+		tokenCollectionThread.interrupt();
 	}
 
 	public Thread getTokenCollectionThread() {
