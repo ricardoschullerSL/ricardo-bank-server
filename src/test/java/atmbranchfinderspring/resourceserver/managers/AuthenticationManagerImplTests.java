@@ -80,22 +80,37 @@ public class AuthenticationManagerImplTests {
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
 
-	// DON'T IMMEDIATELY DELETE IMPROPER ACCESS TOKENS, LET TOKEN COLLECTOR TAKE CARE OF IT.
-//	@Test
-//	@DisplayName("Check if access token repository deletes access token is expired")
-//	void requestTokenDeletionTest() {
-//		AccessToken testToken = new AccessToken("testClient", "Bearer", "test", -100L );
-//		accessTokenRepository.add(testToken);
-//		authenticationManager.isRequestTokenValid(testToken.getAccessToken());
-//		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);
-//	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	void validateAccessTokenTest() {
 		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList(AccessToken.Scope.ACCOUNTS));
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken()));
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect grant.")
+	void validateInvalidGrantAccessTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, null, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect scope.")
+	void validateInvalidScopeAccessTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("Check if AuthenticationManagerImpl validates expired access token")
+	void validateExpiredAccessTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", -100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
 	}
 
 	@Test
@@ -236,6 +251,14 @@ public class AuthenticationManagerImplTests {
 		tppClientRepository.add(tppClient);
 
 		assertThat(authenticationManager.getTPPClient("clientId").getCredentials().getId()).matches("clientId");
+	}
+
+	@Test
+	@DisplayName("Check if isAccountRequestIdValid return correct boolean")
+	void isAccountRequestIdValidTest() {
+		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new ArrayList<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
+		assertThat(authenticationManager.isAccountRequestIdValid("testId")).isEqualTo(true);
+		assertThat(authenticationManager.isAccountRequestIdValid("wrongId")).isEqualTo(false);
 	}
 
 }

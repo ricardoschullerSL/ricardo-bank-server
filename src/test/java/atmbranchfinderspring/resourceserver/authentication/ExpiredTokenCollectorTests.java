@@ -3,13 +3,9 @@ package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,13 +13,6 @@ public class ExpiredTokenCollectorTests {
 
 	private AccessTokenRepository accessTokenRepository;
 	private ExpiredTokenCollector expiredTokenCollector;
-
-	private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-	@Before
-	void setUpStream() {
-		System.setOut(new PrintStream(outputStream));
-	}
 
 	@BeforeEach
 	void setup() {
