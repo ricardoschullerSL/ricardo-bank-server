@@ -114,6 +114,14 @@ public class AuthenticationManagerImplTests {
 	}
 
 	@Test
+	@DisplayName("Check if AuthenticationManagerImpl validates non existing access token")
+	void validateNonExistingAccessTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isAccessTokenValid("wrongtoken")).isEqualTo(false);
+	}
+
+	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates tpp client credentials correctly")
 	void credentialCheckerTest() {
 

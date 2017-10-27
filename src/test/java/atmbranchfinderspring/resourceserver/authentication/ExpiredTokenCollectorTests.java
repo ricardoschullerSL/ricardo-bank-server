@@ -44,6 +44,14 @@ public class ExpiredTokenCollectorTests {
 	}
 
 	@Test
+	void startAndStartThreadTest() throws Exception {
+		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, true);
+		assertThat(expiredTokenCollector.getTokenCollectionThread().isAlive()).isEqualTo(true);
+		expiredTokenCollector.startThread();
+		assertThat(expiredTokenCollector.getTokenCollectionThread().isAlive()).isEqualTo(true);
+	}
+
+	@Test
 	void checkIfItDeletesExpiredTokens() throws Exception {
 		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L));
 		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", -100L));
