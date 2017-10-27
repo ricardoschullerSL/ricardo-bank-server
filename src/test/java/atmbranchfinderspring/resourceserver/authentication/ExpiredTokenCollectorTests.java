@@ -52,6 +52,7 @@ public class ExpiredTokenCollectorTests {
 		assertThat(expiredTokenCollector.getTokenCollectionThread().isAlive()).isEqualTo(true);
 		expiredTokenCollector.stopThread();
 		assertThat(expiredTokenCollector.getTokenCollectionThread().isInterrupted()).isEqualTo(true);
+
 	}
 
 	@Test
