@@ -17,7 +17,7 @@ public class ExpiredTokenCollector {
 	private long sleepTime = 30000L;
 
 	@Autowired
-	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository) {
+	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository, boolean startNow) {
 		this.accessTokenRepository = accessTokenRepository;
 		tokenCollectionThread = new Thread(new Runnable() {
 			@Override
@@ -25,8 +25,10 @@ public class ExpiredTokenCollector {
 				collectExpiredTokens();
 			}
 		});
-		System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector Thread.");
-		tokenCollectionThread.start();
+		if (startNow) {
+			System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector Thread.");
+			tokenCollectionThread.start();
+		}
 	}
 
 	private void collectExpiredTokens() {
