@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.managers;
+package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.authentication.PEMManager;
 import atmbranchfinderspring.resourceserver.authentication.PEMManagerImpl;

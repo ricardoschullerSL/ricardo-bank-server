@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.managers;
+package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;

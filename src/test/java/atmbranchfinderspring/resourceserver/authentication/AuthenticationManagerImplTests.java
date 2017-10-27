@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.managers;
+package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.authentication.*;
 import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.AccessTokenValidator;
