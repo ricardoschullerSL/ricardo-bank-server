@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.controllers.TokenController;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,35 +12,35 @@ import java.util.Collection;
 public class ExpiredTokenCollector {
 
 	private AccessTokenRepository accessTokenRepository;
-	private Thread tokenCollectionThread;
+	private static Thread tokenCollectionThread;
 	private boolean collectorOn = true;
 	private long sleepTime = 30000L;
 
 	@Autowired
 	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository) {
 		this.accessTokenRepository = accessTokenRepository;
-		this.tokenCollectionThread = new Thread(new Runnable() {
+		tokenCollectionThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				collectExpiredTokens();
 			}
 		});
-		System.out.println("Starting ExpiredTokenCollector Thread.");
+		System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector Thread.");
 		tokenCollectionThread.start();
 	}
 
-	public void collectExpiredTokens() {
+	private void collectExpiredTokens() {
 		while(collectorOn) {
 			doRun();
 			try {
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				//Do nothing.
 			}
 		}
 	}
 
-	public void doRun() {
+	private void doRun() {
 		Collection<String> tokenIds = accessTokenRepository.getAllIds();
 
 		if (tokenIds.size() == 0) {
@@ -47,7 +48,7 @@ public class ExpiredTokenCollector {
 		}
 
 		int counter = 0;
-		System.out.println("Starting expired token collection run.");
+		System.out.println(LocalDateTime.now().toString() + " Starting expired token collection run.");
 		for (String tokenId: tokenIds) {
 			if(accessTokenRepository.get(tokenId).getExpirationDate().isBefore(LocalDateTime.now())) {
 				accessTokenRepository.delete(tokenId);
@@ -55,7 +56,7 @@ public class ExpiredTokenCollector {
 			}
 		}
 
-		System.out.print("Run is finished. " + counter + " tokens deleted." );
+		System.out.print(LocalDateTime.now().toString() + " Run is finished. " + counter + " tokens deleted." );
 
 	}
 
@@ -63,15 +64,19 @@ public class ExpiredTokenCollector {
 		if (tokenCollectionThread.isAlive()) {
 			return;
 		}
-		System.out.println(LocalDateTime.now().toString() + "Starting ExpiredTokenCollector thread.");
-		this.tokenCollectionThread.start();
+		System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector thread.");
+		tokenCollectionThread.start();
 	}
 
 	public void stopThread() {
 		if (tokenCollectionThread.isAlive()) {
-			System.out.println(LocalDateTime.now().toString() + "Stopping ExpiredTokenCollector thread.");
+			System.out.println(LocalDateTime.now().toString() + " Stopping ExpiredTokenCollector thread.");
 			tokenCollectionThread.interrupt();
 		}
+	}
+
+	public Thread getTokenCollectionThread() {
+		return ExpiredTokenCollector.tokenCollectionThread;
 	}
 
 	public boolean isCollectorOn() {

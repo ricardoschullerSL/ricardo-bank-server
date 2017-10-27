@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Properties;
 
 
 @RestController
@@ -27,11 +26,10 @@ public class TokenController {
 
 
     @Autowired
-    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager, long expirationTime) {
+    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager) {
         this.accessTokenRepository = accessTokenRepository;
         this.authenticationManager = authenticationManager;
         this.mapper = new ObjectMapper();
-        TokenController.setExpirationTime(expirationTime);
     }
 
 	@CrossOrigin(origins = "http://localhost:8081")
