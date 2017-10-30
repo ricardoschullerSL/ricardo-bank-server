@@ -6,6 +6,8 @@ import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,10 +28,11 @@ public class TokenController {
 
 
     @Autowired
-    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager) {
+    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager, Environment env) {
         this.accessTokenRepository = accessTokenRepository;
         this.authenticationManager = authenticationManager;
         this.mapper = new ObjectMapper();
+        expirationTime = Long.parseLong(env.getProperty("accesstoken.expirationtime"));
     }
 
 	@CrossOrigin(origins = "http://localhost:8081")
@@ -58,7 +61,6 @@ public class TokenController {
 		} else {
 			response.sendError(403);
 		}
-
 	}
 
 	private String getClientIdFromAuthorizationHeader(HttpServletRequest request) {

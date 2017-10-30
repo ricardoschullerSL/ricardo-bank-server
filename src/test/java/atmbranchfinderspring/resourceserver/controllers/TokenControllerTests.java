@@ -4,6 +4,8 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.env.Environment;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,15 +25,18 @@ public class TokenControllerTests {
 	private TokenController tokenController;
 	private AccessTokenRepository accessTokenRepository;
 	private AuthenticationManager authenticationManager;
+	private MockEnvironment env;
 
 	private MockMvc mockMvc;
 
 
 	@BeforeEach
 	void setup() {
+		env = new MockEnvironment();
+		env.setProperty("accesstoken.expirationtime", "60");
 		authenticationManager = mock(AuthenticationManager.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
-		tokenController = new TokenController(accessTokenRepository, authenticationManager);
+		tokenController = new TokenController(accessTokenRepository, authenticationManager, env);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
 	}
 

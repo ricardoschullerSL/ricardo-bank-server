@@ -25,16 +25,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	@Autowired
-	private AccessTokenRepository accessTokenRepository;
 
 	@Bean
 	public SecurityAspect security() {
 		return new SecurityAspect(authenticationManager);
 	}
-
-	@Bean
-	public ExpiredTokenCollector expiredTokenCollector() { return new ExpiredTokenCollector(accessTokenRepository, true);}
 
 	@Bean
 	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf){
