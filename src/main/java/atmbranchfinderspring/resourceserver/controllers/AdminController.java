@@ -36,8 +36,6 @@ public class AdminController {
 	@RequestMapping(value="/getjwt", method = RequestMethod.POST)
 	@AdminBasicAuthenticated
 	public void getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) throws IOException {
-
-		System.out.println(body.get("software_id"));
 		System.out.println("Creating and returning JWT.");
 		String jwt = JWT.create().withIssuer("Open Banking")
 				.withClaim("software_id", body.get("software_id"))
@@ -53,33 +51,32 @@ public class AdminController {
 
 	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)
 	@AdminBasicAuthenticated
-	public void addAdmin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) {
+	public void addAdmin(HttpServletRequest request, HttpServletResponse response,
+	                     @RequestBody Map<String, String> body) throws IOException {
 		try {
+
 			System.out.println(body.get("adminId"));
 			authenticationManager.addAdmin(body.get("adminId"), body.get("adminSecret"));
-			if (adminRepository.persistData()) {
-				response.setStatus(200);
-			} else {
-				adminRepository.delete(body.get("adminId"));
-				response.sendError(500, "Could not persist data.");
-			}
+			adminRepository.persistData();
+			response.setStatus(200);
+
 		} catch (IOException e) {
 			System.out.println(e);
+			response.sendError(500, "Could not persist data.");
 		}
 	}
 
 	@RequestMapping(value="/persistAdminData", method = RequestMethod.POST)
 	@AdminBasicAuthenticated
-	public void persistAdminData(HttpServletResponse response) {
+	public void persistAdminData(HttpServletResponse response) throws IOException {
+
 		try {
-			if (adminRepository.persistData()) {
-				response.setStatus(200);
-				response.getWriter().write("Succesfully saved admin data.");
-			} else {
-				response.sendError(500);
-			}
+			adminRepository.persistData();
+			response.setStatus(200);
+			response.getWriter().write("Succesfully saved admin data.");
 		} catch (IOException e) {
 			System.out.println(e);
+			response.sendError(500);
 		}
 	}
 }

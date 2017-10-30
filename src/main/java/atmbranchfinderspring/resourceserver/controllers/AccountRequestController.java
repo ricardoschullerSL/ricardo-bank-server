@@ -1,11 +1,11 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated;
-import atmbranchfinderspring.resourceserver.authentication.AccountRequestValidator;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.IncomingAccountRequest;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
-import atmbranchfinderspring.resourceserver.models.Permission;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;

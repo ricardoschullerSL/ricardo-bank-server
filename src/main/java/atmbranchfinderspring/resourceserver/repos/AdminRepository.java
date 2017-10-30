@@ -16,15 +16,14 @@ public class AdminRepository implements Repository<Admin>{
         this.admins = new HashMap<>();
     }
 
-    public Boolean persistData () {
+    public void persistData () throws IOException {
 
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(PATH))){
             os.writeObject(admins);
             os.close();
-            return true;
+
         } catch (IOException e) {
-            System.out.println(e);
-            return false;
+            throw e;
         }
     }
 

@@ -1,7 +1,8 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
 
-import atmbranchfinderspring.resourceserver.models.Permission;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

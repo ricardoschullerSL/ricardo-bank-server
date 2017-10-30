@@ -3,6 +3,7 @@ package atmbranchfinderspring.resourceserver.authentication;
 import atmbranchfinderspring.resourceserver.controllers.TokenController;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,6 @@ public class ExpiredTokenCollector {
 	private boolean collectorOn = true;
 	private long sleepTime = 30000L;
 
-	@Autowired
 	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository, boolean startNow) {
 		this.accessTokenRepository = accessTokenRepository;
 		tokenCollectionThread = new Thread(new Runnable() {
@@ -58,7 +58,7 @@ public class ExpiredTokenCollector {
 			}
 		}
 
-		System.out.print(LocalDateTime.now().toString() + " Run is finished. " + counter + " tokens deleted." );
+		System.out.println(LocalDateTime.now().toString() + " Run is finished. " + counter + " tokens deleted." );
 
 	}
 

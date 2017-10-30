@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.models;
+package atmbranchfinderspring.resourceserver.validation.accountrequests;
 
 public enum Permission {
 	ReadAccountsBasic, ReadAccountsDetail, ReadBalances, ReadBeneficiariesBasic, ReadBeneficiariesDetail,

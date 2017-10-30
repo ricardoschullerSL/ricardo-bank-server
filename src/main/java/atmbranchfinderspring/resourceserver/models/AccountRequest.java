@@ -1,5 +1,7 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;

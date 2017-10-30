@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AccountRequestValidator;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.mockito.Matchers.anyString;

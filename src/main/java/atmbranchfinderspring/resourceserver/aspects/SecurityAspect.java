@@ -23,7 +23,6 @@ public class SecurityAspect {
 
 	private AuthenticationManager authenticationManager;
 
-	@Autowired
 	public SecurityAspect(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}

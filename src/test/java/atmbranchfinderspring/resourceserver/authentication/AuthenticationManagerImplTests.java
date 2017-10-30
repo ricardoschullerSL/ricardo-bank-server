@@ -1,8 +1,8 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.authentication.*;
-import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.AccessTokenValidator;
-import atmbranchfinderspring.resourceserver.authentication.accesstokenvalidation.AccessTokenValidatorImpl;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenValidator;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenValidatorImpl;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import org.junit.jupiter.api.AfterEach;

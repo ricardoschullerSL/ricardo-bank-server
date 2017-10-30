@@ -4,7 +4,7 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
 import atmbranchfinderspring.resourceserver.models.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.Credentials;
-import atmbranchfinderspring.resourceserver.models.Permission;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;

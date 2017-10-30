@@ -13,6 +13,7 @@ public class ExpiredTokenCollectorTests {
 
 	private AccessTokenRepository accessTokenRepository;
 	private ExpiredTokenCollector expiredTokenCollector;
+	private long sleepTime = 50L;
 
 	@BeforeEach
 	void setup() {
@@ -58,7 +59,7 @@ public class ExpiredTokenCollectorTests {
 		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L));
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, true);
-		Thread.sleep(500);
+		Thread.sleep(sleepTime);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(0);
 
 	}
@@ -70,7 +71,7 @@ public class ExpiredTokenCollectorTests {
 		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L));
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, true);
-		Thread.sleep(500);
+		Thread.sleep(sleepTime);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(1);
 	}
 
@@ -83,7 +84,7 @@ public class ExpiredTokenCollectorTests {
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, false);
 		expiredTokenCollector.setCollectorOn(false);
 		expiredTokenCollector.startThread();
-		Thread.sleep(500);
+		Thread.sleep(sleepTime);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 	}
 

@@ -1,6 +1,5 @@
-package atmbranchfinderspring.resourceserver.authentication;
+package atmbranchfinderspring.resourceserver.validation.accountrequests;
 
-import atmbranchfinderspring.resourceserver.models.Permission;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
