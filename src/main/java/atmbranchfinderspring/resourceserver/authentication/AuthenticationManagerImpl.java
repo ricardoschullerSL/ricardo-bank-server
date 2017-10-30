@@ -3,6 +3,7 @@ package atmbranchfinderspring.resourceserver.authentication;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.*;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

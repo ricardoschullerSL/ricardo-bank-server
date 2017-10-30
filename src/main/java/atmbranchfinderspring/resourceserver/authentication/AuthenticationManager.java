@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.AccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import com.auth0.jwt.JWTVerifier;
 

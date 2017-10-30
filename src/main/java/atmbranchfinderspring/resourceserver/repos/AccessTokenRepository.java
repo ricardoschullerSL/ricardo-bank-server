@@ -1,6 +1,6 @@
 package atmbranchfinderspring.resourceserver.repos;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

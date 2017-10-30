@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.models;
+package atmbranchfinderspring.resourceserver.validation.accountrequests;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

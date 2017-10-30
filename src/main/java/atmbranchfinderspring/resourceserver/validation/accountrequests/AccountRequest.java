@@ -1,6 +1,6 @@
-package atmbranchfinderspring.resourceserver.models;
+package atmbranchfinderspring.resourceserver.validation.accountrequests;
 
-import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import atmbranchfinderspring.resourceserver.models.ResponseObject;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "account-requests")
-public class AccountRequest implements ResponseObject{
+public class AccountRequest implements ResponseObject {
 
 	@Id
 	@JoinColumn(name="accountRequestId")

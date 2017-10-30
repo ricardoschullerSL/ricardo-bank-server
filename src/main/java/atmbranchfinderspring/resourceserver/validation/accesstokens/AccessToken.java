@@ -1,5 +1,6 @@
-package atmbranchfinderspring.resourceserver.models;
+package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
+import atmbranchfinderspring.resourceserver.models.ResponseObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package atmbranchfinderspring.resourceserver.repos;
 
-import atmbranchfinderspring.resourceserver.models.AccountRequest;
-import atmbranchfinderspring.resourceserver.models.IncomingAccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 
 import java.time.LocalDateTime;

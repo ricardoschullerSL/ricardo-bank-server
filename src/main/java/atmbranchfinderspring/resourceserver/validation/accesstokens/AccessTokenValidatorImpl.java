@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

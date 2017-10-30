@@ -1,7 +1,5 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
-
 public class GrantValidator implements TokenValidator {
 
 	private AccessToken.Grant requiredGrant;

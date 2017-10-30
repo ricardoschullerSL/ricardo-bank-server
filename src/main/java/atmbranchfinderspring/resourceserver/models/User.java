@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 

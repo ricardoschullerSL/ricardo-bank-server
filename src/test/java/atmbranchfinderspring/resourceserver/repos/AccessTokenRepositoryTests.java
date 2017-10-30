@@ -1,7 +1,7 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.models;
 
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Collection;

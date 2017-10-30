@@ -1,7 +1,5 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
-
 import java.time.LocalDateTime;
 
 public class TokenIsNotExpired implements TokenValidator {
