@@ -1,13 +1,11 @@
 package atmbranchfinderspring.resourceserver.annotations;
 
-import atmbranchfinderspring.resourceserver.models.AccessToken;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 /**
  * AccessTokenAuthenticated is an annotation that can be used on (Rest)Controller methods that need to be authenticated

@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.validation.accesstoken.*;
 import atmbranchfinderspring.resourceserver.models.*;
 import atmbranchfinderspring.resourceserver.repos.*;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.*;

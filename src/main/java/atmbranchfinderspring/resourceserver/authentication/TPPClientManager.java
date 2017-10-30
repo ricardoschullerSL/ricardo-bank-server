@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.Client;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 

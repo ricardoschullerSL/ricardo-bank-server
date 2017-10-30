@@ -1,19 +1,13 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.Credentials;
-import atmbranchfinderspring.resourceserver.models.TPPClient;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * TPPController exposes an endpoint where Trusted Third Party clients can register with their signed JWTs.
