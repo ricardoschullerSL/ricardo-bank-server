@@ -1,10 +1,11 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
 import atmbranchfinderspring.resourceserver.models.ResponseObject;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class AccessToken implements ResponseObject {
@@ -29,7 +30,7 @@ public class AccessToken implements ResponseObject {
 	private final String clientId;
 	@JsonIgnore
 	private Grant grant;
-	private List<Scope> scopes;
+	private Set<Permission> permissions;
 
 
 
@@ -41,14 +42,14 @@ public class AccessToken implements ResponseObject {
 		this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
 	}
 
-	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, List<Scope> scopes) {
+	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, Set<Permission> permissions) {
 		this.clientId = clientId;
 		this.tokenType = tokenType;
 		this.accessToken = UUID.randomUUID().toString();
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = issueDate.plusSeconds(expirationTime);
 		this.grant = grant;
-		this.scopes = scopes;
+		this.permissions = permissions;
 	}
 
 	public String getClientId() {return clientId;}
@@ -68,7 +69,7 @@ public class AccessToken implements ResponseObject {
 		return grant;
 	}
 
-	public List<Scope> getScopes() {
-		return scopes;
+	public Set<Permission> getPermissions() {
+		return permissions;
 	}
 }

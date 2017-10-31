@@ -1,16 +1,19 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
+import atmbranchfinderspring.resourceserver.models.Admin;
+import atmbranchfinderspring.resourceserver.models.Credentials;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.models.User;
+import atmbranchfinderspring.resourceserver.repos.*;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenValidator;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenValidatorImpl;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
-import atmbranchfinderspring.resourceserver.models.*;
-import atmbranchfinderspring.resourceserver.repos.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.nio.charset.StandardCharsets;
@@ -18,12 +21,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.TreeSet;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 
 public class AuthenticationManagerImplTests {
@@ -77,7 +79,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates request token")
 	void requestTokenCheckerTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS , Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS , new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
@@ -86,41 +88,41 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	void validateAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(true);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(true);
 	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect grant.")
 	void validateInvalidGrantAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, null, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, null, new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
-	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect scope.")
+	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect permission.")
 	void validateInvalidScopeAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>());
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates expired access token")
 	void validateExpiredAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", -100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		AccessToken testToken = new AccessToken("testClient", "Bearer", -100L, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken())).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(),new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates non existing access token")
 	void validateNonExistingAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, Arrays.asList());
+		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid("wrongtoken")).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid("wrongtoken", new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test

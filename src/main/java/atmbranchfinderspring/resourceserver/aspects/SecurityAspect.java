@@ -1,15 +1,21 @@
 package atmbranchfinderspring.resourceserver.aspects;
 
 
+import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the
@@ -109,6 +115,9 @@ public class SecurityAspect {
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
 	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
+		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
+		Set<Permission> requiredPermission = new TreeSet<Permission>(Arrays.asList(accessTokenAuthenticated.requiredPermission()));
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 		String authorization = request.getHeader("Authorization");
@@ -116,7 +125,7 @@ public class SecurityAspect {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
-				if (authenticationManager.isAccessTokenValid(token)) {
+				if (authenticationManager.isAccessTokenValid(token, requiredPermission)) {
 					joinPoint.proceed();
 				} else {
 					response.sendError(403, "Access token not valid.");

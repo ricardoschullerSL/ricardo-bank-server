@@ -1,8 +1,11 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.auth0.jwt.JWTVerifier;
+
+import java.util.Set;
 
 /**
  * AuthenticationManager class is the central object in the security of the OAuth2 protocol and Basic Authentication.
@@ -29,12 +32,13 @@ public interface AuthenticationManager {
 	boolean isRequestTokenValid(String token);
 
 	/**
-	 * Checks if in coming access token exists in the repository, has the right 'grant' and scopes and is not expired.
+	 * Checks if in coming access token exists in the repository, has the right 'grant', permissions, and is not expired.
 	 * These tokens can be used to access protected resources.
 	 * @param token ID string
+	 * @param requiredPermission Permission needed for endpoint data.
 	 * @return Boolean
 	 */
-	boolean isAccessTokenValid(String token);
+	boolean isAccessTokenValid(String token, Set<Permission> requiredPermission);
 
 	/**
 	 * Checks if incoming TPP client credentials are currently registered in the system.

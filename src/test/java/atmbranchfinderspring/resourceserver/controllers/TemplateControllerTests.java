@@ -1,10 +1,10 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManagerImpl;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

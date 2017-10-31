@@ -1,13 +1,15 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
+import atmbranchfinderspring.resourceserver.authentication.TPPManager;
+import atmbranchfinderspring.resourceserver.models.Credentials;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
-import atmbranchfinderspring.resourceserver.authentication.TPPManager;
-import atmbranchfinderspring.resourceserver.models.*;
-import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
-import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,14 +19,14 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,11 +57,10 @@ public class AccountRequestControllerTests {
 	@Test
 	void postAccountRequestTest() throws Exception {
 		IncomingAccountRequest accountRequest = new IncomingAccountRequest();
-		List<String> permissions = Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail");
+		Set<Permission> permissions = new TreeSet<Permission>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
-		accountRequest.setPermissions(permissions);
-		List<AccessToken.Scope> scopes = Arrays.asList(AccessToken.Scope.ACCOUNTS);
-		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, scopes);
+		accountRequest.setPermissions(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
+		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, permissions);
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
@@ -73,11 +74,10 @@ public class AccountRequestControllerTests {
 	@Test
 	void failedPostAccountRequestTest() throws Exception {
 		IncomingAccountRequest accountRequest = new IncomingAccountRequest();
-		List<String> permissions = Arrays.asList("WrongReadAccountsBasic", "ReadAccountsDetail");
+		Set<Permission> permissions = new TreeSet<>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
-		accountRequest.setPermissions(permissions);
-		List<AccessToken.Scope> scopes = Arrays.asList(AccessToken.Scope.ACCOUNTS);
-		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, scopes);
+		accountRequest.setPermissions(Arrays.asList("wrongPermission"));
+		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, permissions);
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
@@ -90,7 +90,8 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void getAllAccountRequestsTest() throws Exception {
-		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L,
+				AccessToken.Grant.CLIENT_CREDENTIALS,new TreeSet<Permission>(Arrays.asList(Permission.ReadAccountsBasic)));
 		when(accessTokenRepository.contains(anyString())).thenReturn(true);
 		when(accessTokenRepository.get(anyString())).thenReturn(accessToken);
 
@@ -110,7 +111,8 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void failGetAllAccountRequestsTest() throws Exception {
-		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, Arrays.asList(AccessToken.Scope.ACCOUNTS));
+		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L,
+				AccessToken.Grant.CLIENT_CREDENTIALS, new TreeSet<Permission>(Arrays.asList(Permission.ReadAccountsBasic)));
 		when(accessTokenRepository.contains(anyString())).thenReturn(false);
 		when(accessTokenRepository.get(anyString())).thenReturn(accessToken);
 

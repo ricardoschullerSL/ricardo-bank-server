@@ -4,20 +4,17 @@ import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
-
-import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.status;
+import java.util.TreeSet;
 
 
 @RestController
@@ -43,7 +40,7 @@ public class TokenController {
     @TPPBasicAuthenticated
     public void getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
-    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, new ArrayList<AccessToken.Scope>());
+    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, new TreeSet<Permission>());
 	    accessTokenRepository.add(token);
 	    response.setStatus(201);
 	    response.setHeader("Content-type","application/json");
@@ -56,7 +53,7 @@ public class TokenController {
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
 		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
-			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, new ArrayList<AccessToken.Scope>());
+			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>());
 			accessTokenRepository.add(token);
 			response.setStatus(201);
 			response.setHeader("Content-type","application/json");

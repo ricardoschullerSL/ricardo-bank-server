@@ -2,8 +2,6 @@ package atmbranchfinderspring.resourceserver;
 
 import atmbranchfinderspring.resourceserver.aspects.SecurityAspect;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
-import atmbranchfinderspring.resourceserver.authentication.ExpiredTokenCollector;
-import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

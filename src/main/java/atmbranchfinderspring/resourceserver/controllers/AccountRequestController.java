@@ -2,12 +2,12 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

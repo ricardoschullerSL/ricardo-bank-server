@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated
 import atmbranchfinderspring.resourceserver.controllers.ResponseBodyWriter;
 import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.UserRepository;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public class AccountsController {
 	}
 
 	@RequestMapping("/{accountId}")
-	@AccessTokenAuthenticated
+	@AccessTokenAuthenticated(requiredPermission = Permission.ReadAccountsBasic)
 	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null) {
@@ -40,8 +41,8 @@ public class AccountsController {
 	}
 
 	@RequestMapping("/{accountId}/transactions}")
-	@AccessTokenAuthenticated
-	public void getAccountTransactions(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
+	@AccessTokenAuthenticated(requiredPermission =  Permission.ReadTransactionsBasic)
+	public void getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {
 			responseBodyWriter.writeResponse(request, response, user.getAccount().getCurrencyTransactions());

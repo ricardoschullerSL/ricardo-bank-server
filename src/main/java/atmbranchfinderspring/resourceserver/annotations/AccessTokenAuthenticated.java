@@ -1,5 +1,6 @@
 package atmbranchfinderspring.resourceserver.annotations;
 
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -17,4 +18,5 @@ import java.lang.annotation.Target;
 @Target(value= {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface AccessTokenAuthenticated {
+	Permission[] requiredPermission();
 }

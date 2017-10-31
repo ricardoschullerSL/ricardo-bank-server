@@ -2,15 +2,14 @@ package atmbranchfinderspring.resourceserver.repos;
 
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
 import java.net.URISyntaxException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TPPClientRepositoryTests {
 

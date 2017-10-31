@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import com.fasterxml.jackson.databind.ObjectMapper;

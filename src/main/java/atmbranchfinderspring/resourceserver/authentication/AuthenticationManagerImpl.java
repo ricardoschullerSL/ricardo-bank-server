@@ -1,15 +1,19 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.models.*;
+import atmbranchfinderspring.resourceserver.models.Admin;
+import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.*;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.*;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -61,8 +65,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	    return accessTokenValidator.accessTokenIsValid(token, validatorList);
     }
 
-	public boolean isAccessTokenValid(String token) {
-		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.AUTHORIZATION_CODE), new ScopeValidator(AccessToken.Scope.ACCOUNTS));
+	public boolean isAccessTokenValid(String token, Set<Permission> possiblePermissions) {
+		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.AUTHORIZATION_CODE), new PermissionValidator(possiblePermissions));
 		return accessTokenValidator.accessTokenIsValid(token, validatorList);
 	}
 

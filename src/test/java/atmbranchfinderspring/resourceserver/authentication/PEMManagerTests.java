@@ -1,7 +1,5 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.authentication.PEMManager;
-import atmbranchfinderspring.resourceserver.authentication.PEMManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
 
 public class PEMManagerTests {
