@@ -3,7 +3,9 @@ package atmbranchfinderspring.resourceserver.controllers;
 import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Set;
 import java.util.TreeSet;
 
 
@@ -22,14 +25,17 @@ import java.util.TreeSet;
 public class TokenController {
 
     private AccessTokenRepository accessTokenRepository;
+    private AuthorizationCodeRepository authorizationCodeRepository;
     private AuthenticationManager authenticationManager;
     private static long expirationTime = 3600L;
     private ObjectMapper mapper;
 
 
     @Autowired
-    public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager, Environment env) {
+    public TokenController(AccessTokenRepository accessTokenRepository, AuthorizationCodeRepository authorizationCodeRepository,
+                           AuthenticationManager authenticationManager, Environment env) {
         this.accessTokenRepository = accessTokenRepository;
+        this.authorizationCodeRepository = authorizationCodeRepository;
         this.authenticationManager = authenticationManager;
         this.mapper = new ObjectMapper();
         expirationTime = Long.parseLong(env.getProperty("accesstoken.expirationtime"));
@@ -53,7 +59,8 @@ public class TokenController {
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
 		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
-			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, new TreeSet<Permission>());
+			Set<Permission> permissions = authenticationManager.getAccountRequest(authorizationCodeRepository.get(authorizationCode)).getPermissions();
+			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, permissions);
 			accessTokenRepository.add(token);
 			response.setStatus(201);
 			response.setHeader("Content-type","application/json");

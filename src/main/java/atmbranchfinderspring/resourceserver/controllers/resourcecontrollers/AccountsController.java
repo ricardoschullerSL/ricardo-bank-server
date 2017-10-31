@@ -30,7 +30,7 @@ public class AccountsController {
 	}
 
 	@RequestMapping("/{accountId}")
-	@AccessTokenAuthenticated(requiredPermission = Permission.ReadAccountsBasic)
+	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadAccountsBasic, Permission.ReadAccountsDetail})
 	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null) {
@@ -41,7 +41,7 @@ public class AccountsController {
 	}
 
 	@RequestMapping("/{accountId}/transactions}")
-	@AccessTokenAuthenticated(requiredPermission =  Permission.ReadTransactionsBasic)
+	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadTransactionsBasic, Permission.ReadAccountsDetail})
 	public void getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {

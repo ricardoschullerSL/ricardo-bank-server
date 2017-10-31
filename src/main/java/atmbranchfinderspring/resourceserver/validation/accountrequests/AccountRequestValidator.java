@@ -3,7 +3,9 @@ package atmbranchfinderspring.resourceserver.validation.accountrequests;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * AccountRequestValidator is a helper object used to check if the permission scopes requested by the incoming account-request
@@ -33,8 +35,8 @@ public class AccountRequestValidator {
 		return false;
 	}
 
-	public List<Permission> convertPermissions(List<String> permissionsList) {
-		List<Permission> permissions = new ArrayList<>();
+	public Set<Permission> convertPermissions(List<String> permissionsList) {
+		Set<Permission> permissions = new HashSet<>();
 		for (String permission: permissionsList) {
 			permissions.add(Permission.valueOf(permission));
 		}

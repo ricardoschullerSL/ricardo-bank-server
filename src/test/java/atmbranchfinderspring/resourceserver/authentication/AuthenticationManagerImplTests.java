@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -236,7 +237,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if isAuthorizationCodeValid checks if repo contains the string and deletes it")
 	void checkAuthorizationCodeTest() {
-		authorizationCodeRepository.add("testAuthCode");
+		authorizationCodeRepository.add("testAuthCode", "testAccountRequestId");
 
 		assertThat(authenticationManager.isAuthorizationCodeValid("testAuthCode")).isEqualTo(true);
 		assertThat(authorizationCodeRepository.getAllIds().size()).isEqualTo(0);
@@ -246,7 +247,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if getAccountRequest returns account request")
 	void getAccountRequestTest() {
-		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new ArrayList<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
+		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
 
 		assertThat(authenticationManager.getAccountRequest("testId").getStatus()).isEqualTo(AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION);
 	}
@@ -268,7 +269,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if isAccountRequestIdValid return correct boolean")
 	void isAccountRequestIdValidTest() {
-		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new ArrayList<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
+		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<>() ,LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
 		assertThat(authenticationManager.isAccountRequestIdValid("testId")).isEqualTo(true);
 		assertThat(authenticationManager.isAccountRequestIdValid("wrongId")).isEqualTo(false);
 	}

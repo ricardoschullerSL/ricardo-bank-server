@@ -19,10 +19,6 @@ public class AccessToken implements ResponseObject {
 		CLIENT_CREDENTIALS, AUTHORIZATION_CODE
 	}
 
-	public enum Scope {
-		ACCOUNTS
-	}
-
 	private final String accessToken;
 	private final String tokenType;
 	private final LocalDateTime issueDate;

@@ -5,6 +5,7 @@ import atmbranchfinderspring.resourceserver.models.ResponseObject;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "account-requests")
@@ -21,7 +22,7 @@ public class AccountRequest implements ResponseObject {
     private LocalDateTime expirationDateTime;
     @Column(nullable = false)
     @ElementCollection(targetClass = Permission.class)
-    private List<Permission> permissions;
+    private Set<Permission> permissions;
     @Column
     private LocalDateTime transactionFromDateTime;
     @Column
@@ -36,7 +37,7 @@ public class AccountRequest implements ResponseObject {
     public AccountRequest() {}
 
     public AccountRequest(String accountRequestId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
-                          List<Permission> permissions, LocalDateTime transactionFromDateTime,
+                          Set<Permission> permissions, LocalDateTime transactionFromDateTime,
                           LocalDateTime transactionToDateTime, AccountRequestStatus status) {
         this.accountRequestId = accountRequestId;
         this.creationDateTime = creationDateTime;
@@ -47,7 +48,8 @@ public class AccountRequest implements ResponseObject {
         this.status = status;
     }
 
-    public AccountRequest(IncomingAccountRequest incomingAccountRequest, List<Permission> permissions, String clientId, AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
+    public AccountRequest(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId,
+                          AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
         this.accountRequestId = incomingAccountRequest.getId();
         this.transactionFromDateTime = incomingAccountRequest.getTransactionFromDateTime();
         this.transactionToDateTime = incomingAccountRequest.getTransactionToDateTime();
@@ -70,7 +72,7 @@ public class AccountRequest implements ResponseObject {
         return expirationDateTime;
     }
 
-    public List<Permission> getPermissions() {
+    public Set<Permission> getPermissions() {
         return permissions;
     }
 
@@ -110,7 +112,7 @@ public class AccountRequest implements ResponseObject {
 		this.expirationDateTime = expirationDateTime;
 	}
 
-	public void setPermissions(List<Permission> permissions) {
+	public void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
 	}
 

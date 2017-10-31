@@ -1,40 +1,36 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @org.springframework.stereotype.Repository
-public class AuthorizationCodeRepository implements Repository<String>{
+public class AuthorizationCodeRepository{
 
-	private List<String> authorizationCodes;
+	private Map<String, String> authorizationCodes;
 
 	public AuthorizationCodeRepository() {
-		this.authorizationCodes = new ArrayList<>();
+		this.authorizationCodes = new HashMap<>();
 	}
 
-	@Override
-	public void add(String entity) {
-		authorizationCodes.add(entity);
+
+	public void add(String authorizationCode, String accountRequestId) {
+		authorizationCodes.put(authorizationCode, accountRequestId);
 	}
 
-	@Override
-	public String get(String id) {
-		return null;
+	public String get(String authorizationCode) {
+		return authorizationCodes.get(authorizationCode);
 	}
 
-	@Override
+
 	public Collection<String> getAllIds() {
-		return authorizationCodes;
+		return authorizationCodes.keySet();
 	}
 
-	@Override
-	public boolean contains(String id) {
-		return authorizationCodes.contains(id);
+
+	public boolean contains(String authorizationCode) {
+		return authorizationCodes.keySet().contains(authorizationCode);
 	}
 
-	@Override
 	public void delete(String entity) {
 		authorizationCodes.remove(entity);
 	}

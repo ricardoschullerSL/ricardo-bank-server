@@ -2,6 +2,9 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
@@ -10,6 +13,8 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -23,6 +28,7 @@ public class TokenControllerTests {
 
 	private TokenController tokenController;
 	private AccessTokenRepository accessTokenRepository;
+	private AuthorizationCodeRepository authorizationCodeRepository;
 	private AuthenticationManager authenticationManager;
 	private MockEnvironment env;
 
@@ -34,8 +40,9 @@ public class TokenControllerTests {
 		env = new MockEnvironment();
 		env.setProperty("accesstoken.expirationtime", "60");
 		authenticationManager = mock(AuthenticationManager.class);
+		authorizationCodeRepository = mock(AuthorizationCodeRepository.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
-		tokenController = new TokenController(accessTokenRepository, authenticationManager, env);
+		tokenController = new TokenController(accessTokenRepository, authorizationCodeRepository, authenticationManager, env);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
 	}
 
@@ -56,6 +63,11 @@ public class TokenControllerTests {
 	@Test
 	void getAccessTokenThroughAuthorizationCode() throws Exception {
 		when(authenticationManager.isAuthorizationCodeValid(anyString())).thenReturn(true);
+		AccountRequest accountRequest = new AccountRequest();
+		Set<Permission> permissions = new HashSet<>();
+		permissions.add(Permission.ReadAccountsBasic);
+		accountRequest.setPermissions(permissions);
+		when(authenticationManager.getAccountRequest(anyString())).thenReturn(accountRequest);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
 		RequestBuilder request = post("/token/access-token/1234")

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +51,7 @@ public class IncomingAccountRequestValidatorTests {
 	@DisplayName("convertPermissions converts String list to Permission list")
 	void convertPermissionsTest() {
 		List<String> stringArray = new ArrayList<String>(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
-		List<Permission> permissionArray = accountRequestValidator.convertPermissions(stringArray);
+		Set<Permission> permissionArray = accountRequestValidator.convertPermissions(stringArray);
 		assertThat(permissionArray.size()).isEqualTo(2);
 	}
 }

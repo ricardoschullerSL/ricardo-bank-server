@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -50,7 +51,7 @@ public class TemplateController {
 	@RequestMapping("/authorizeApp/{accountRequestId}")
 	public String authorize(@PathVariable String accountRequestId, Model model) {
 		AccountRequest accountRequest = accountRequestRepository.get(accountRequestId);
-		List<Permission> permissions = accountRequest.getPermissions();
+		Set<Permission> permissions = accountRequest.getPermissions();
 		model.addAttribute("permissions", permissions);
 		model.addAttribute("accountRequestId", accountRequestId);
 		return "Authorize";
@@ -62,12 +63,13 @@ public class TemplateController {
 	                                @PathVariable int authorization) throws IOException, URISyntaxException {
 		if (authenticationManager.isAccountRequestIdValid(accountRequestId) == false) {
 			response.sendError(500, "Something went wrong...");
+			return;
 		}
 		AccountRequest accountRequest = authenticationManager.getAccountRequest(accountRequestId);
 		if ( authorization == 1) {
 			accountRequest.setStatus(AccountRequest.AccountRequestStatus.AUTHORIZED);
 			String authorization_code = UUID.randomUUID().toString();
-			authorizationCodeRepository.add(authorization_code);
+			authorizationCodeRepository.add(authorization_code, accountRequestId);
 			response.sendRedirect( authenticationManager.getTPPClient(accountRequest.getClientId()).getRedirectUri() + "/" + authorization_code);
 		} else {
 			accountRequest.setStatus(AccountRequest.AccountRequestStatus.REJECTED);

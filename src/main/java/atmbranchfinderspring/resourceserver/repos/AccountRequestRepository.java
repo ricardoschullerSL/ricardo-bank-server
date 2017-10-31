@@ -7,7 +7,7 @@ import atmbranchfinderspring.resourceserver.validation.accountrequests.Permissio
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -21,7 +21,7 @@ public class AccountRequestRepository implements Repository<AccountRequest>{
         accountRequests = new HashMap<>();
     }
 
-    public AccountRequest createAccountRequestResponse(IncomingAccountRequest incomingAccountRequest, List<Permission> permissions, String clientId) {
+    public AccountRequest createAccountRequestResponse(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId) {
         String randomId = UUID.randomUUID().toString();
         incomingAccountRequest.setId(randomId);
         LocalDateTime now = LocalDateTime.now();
