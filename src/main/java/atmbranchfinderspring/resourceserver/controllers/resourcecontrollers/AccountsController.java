@@ -33,7 +33,7 @@ public class AccountsController {
 	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null) {
-			responseBodyWriter.writeResponse(response, user.getAccount());
+			responseBodyWriter.writeResponse(request, response, user.getAccount());
 		} else {
 			response.sendError(400);
 		}
@@ -44,7 +44,7 @@ public class AccountsController {
 	public void getAccountTransactions(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {
-			responseBodyWriter.writeResponse(response, user.getAccount().getCurrencyTransactions());
+			responseBodyWriter.writeResponse(request, response, user.getAccount().getCurrencyTransactions());
 		} else {
 			response.sendError(400);
 		}

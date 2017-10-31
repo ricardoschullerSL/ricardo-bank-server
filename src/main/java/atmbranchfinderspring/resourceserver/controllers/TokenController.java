@@ -2,12 +2,12 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
-import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.status;
 
 
 @RestController

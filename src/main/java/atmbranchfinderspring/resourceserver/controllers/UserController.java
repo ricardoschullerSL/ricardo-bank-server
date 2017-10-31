@@ -59,7 +59,7 @@ public class UserController {
 	public void getAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println(userRepository.findAll().size());
 //		mapper.writer().writeValue(response.getWriter(), userRepository.findAll());
-		responseBodyWriter.writeResponse(response, userRepository.findAll());
+		responseBodyWriter.writeResponse(request, response, userRepository.findAll());
 	}
 
 	@PostMapping(path="/update")
