@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface AccessTokenValidator {
 
-	boolean accessTokenIsValid(String token, List<TokenValidator> validators);
+	boolean accessTokenIsValid(AccessToken token, List<TokenValidator> validators);
 }

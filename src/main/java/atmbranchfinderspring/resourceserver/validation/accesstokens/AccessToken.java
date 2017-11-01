@@ -24,28 +24,30 @@ public class AccessToken implements ResponseObject {
 	private final LocalDateTime issueDate;
 	private final LocalDateTime expirationDate;
 	private final String clientId;
+	private final String accountRequestId;
 	@JsonIgnore
 	private Grant grant;
-	private Set<Permission> permissions;
 
 
 
-	public AccessToken(String clientId, String tokenType, String customToken, Long expirationTime) {
+
+	public AccessToken(String clientId, String tokenType, String customToken, Long expirationTime, String accountRequestId) {
 		this.tokenType = tokenType;
 		this.accessToken = customToken;
 		this.clientId = clientId;
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
+		this.accountRequestId = accountRequestId;
 	}
 
-	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, Set<Permission> permissions) {
+	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, String accountRequestId) {
 		this.clientId = clientId;
 		this.tokenType = tokenType;
 		this.accessToken = UUID.randomUUID().toString();
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = issueDate.plusSeconds(expirationTime);
 		this.grant = grant;
-		this.permissions = permissions;
+		this.accountRequestId = accountRequestId;
 	}
 
 	public String getClientId() {return clientId;}
@@ -65,7 +67,5 @@ public class AccessToken implements ResponseObject {
 		return grant;
 	}
 
-	public Set<Permission> getPermissions() {
-		return permissions;
-	}
+	public String getAccountRequestId() {return accountRequestId;}
 }

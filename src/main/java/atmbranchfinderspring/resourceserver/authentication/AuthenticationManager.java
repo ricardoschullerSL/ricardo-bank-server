@@ -88,6 +88,13 @@ public interface AuthenticationManager {
 	AccountRequest getAccountRequest(String accountRequestId);
 
 	/**
+	 * Exchange authorization code for AccountRequest.
+	 * @param authorizationCode
+	 * @return
+	 */
+	AccountRequest getAccountRequestFromAuthorizationCode(String authorizationCode);
+
+	/**
 	 * Gets the Third Party Provider client associated with clientId
 	 * @param clientId Third Party Provider client ID
 	 * @return TPPClient

@@ -12,10 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the
@@ -55,7 +52,7 @@ public class SecurityAspect {
 			    response.sendError(400, "No Authorization headers.");
 		    }
 	    } catch (Throwable e) {
-		    System.out.println(e);
+		    e.printStackTrace();
 		    response.sendError(500);
 	    }
     }
@@ -117,7 +114,7 @@ public class SecurityAspect {
 		Object[] args = joinPoint.getArgs();
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
-		Set<Permission> requiredPermission = new TreeSet<Permission>(Arrays.asList(accessTokenAuthenticated.requiredPermission()));
+		Set<Permission> requiredPermission = new HashSet<Permission>(Arrays.asList(accessTokenAuthenticated.requiredPermission()));
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 		String authorization = request.getHeader("Authorization");

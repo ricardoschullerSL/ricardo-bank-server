@@ -61,14 +61,26 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     public boolean isRequestTokenValid(String token) {
-	    List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.CLIENT_CREDENTIALS));
-	    return accessTokenValidator.accessTokenIsValid(token, validatorList);
+	    try {
+		    AccessToken accessToken = accessTokenRepository.get(token);
+		    List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.CLIENT_CREDENTIALS));
+		    return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
+	    } catch (NullPointerException e) {
+		    return false;
+	    }
     }
 
-	public boolean isAccessTokenValid(String token, Set<Permission> possiblePermissions) {
-		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.AUTHORIZATION_CODE), new PermissionValidator(possiblePermissions));
-		return accessTokenValidator.accessTokenIsValid(token, validatorList);
+	public boolean isAccessTokenValid(String token, Set<Permission> requiredPermissions) {
+		try {
+			AccessToken accessToken = accessTokenRepository.get(token);
+			AccountRequest accountRequest = accountRequestRepository.get(accessToken.getAccountRequestId());
+			List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.AUTHORIZATION_CODE), new PermissionValidator(requiredPermissions, accountRequest.getPermissions()));
+			return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
+		} catch (NullPointerException e) {
+			return false;
+		}
 	}
+
 
 
 	public boolean areClientCredentialsValid(String clientId, String clientSecret) {
@@ -112,16 +124,21 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     }
 
     public boolean isAuthorizationCodeValid(String authorizationCode) {
-    	if (authorizationCodeRepository.contains(authorizationCode)) {
-    		authorizationCodeRepository.delete(authorizationCode);
-    		return true;
-	    } else {
-    		return false;
-	    }
+    	return authorizationCodeRepository.contains(authorizationCode);
     }
 
     public AccountRequest getAccountRequest(String accountRequestId) {
     	return accountRequestRepository.get(accountRequestId);
+    }
+
+    public AccountRequest getAccountRequestFromAuthorizationCode(String authorizationCode) {
+    	if (authorizationCodeRepository.contains(authorizationCode)) {
+    		String accountRequestId = authorizationCodeRepository.get(authorizationCode);
+    		authorizationCodeRepository.delete(authorizationCode);
+    		return accountRequestRepository.get(accountRequestId);
+	    } else {
+    		return null;
+	    }
     }
 
 	@Override

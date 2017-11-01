@@ -54,9 +54,9 @@ public class ExpiredTokenCollectorTests {
 
 	@Test
 	void checkIfItDeletesExpiredTokens() throws Exception {
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", -100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", -100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L, "testId"));
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, true);
 		Thread.sleep(sleepTime);
@@ -66,9 +66,9 @@ public class ExpiredTokenCollectorTests {
 
 	@Test
 	void checkIfItDoesntDeleteNonExpiredTokens() throws Exception {
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", +100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", +100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L, "testId"));
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, true);
 		Thread.sleep(sleepTime);
@@ -77,9 +77,9 @@ public class ExpiredTokenCollectorTests {
 
 	@Test
 	void checkIfItDoesntRunWhenCollectorOnFlagIsFalse() throws Exception {
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", +100L));
-		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token1", -100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token2", +100L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", "Bearer", "token3", -100L, "testId"));
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(3);
 		expiredTokenCollector = new ExpiredTokenCollector(accessTokenRepository, false);
 		expiredTokenCollector.setCollectorOn(false);

@@ -46,7 +46,7 @@ public class TokenController {
     @TPPBasicAuthenticated
     public void getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
-    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, new TreeSet<Permission>());
+    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, null);
 	    accessTokenRepository.add(token);
 	    response.setStatus(201);
 	    response.setHeader("Content-type","application/json");
@@ -59,8 +59,9 @@ public class TokenController {
 	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
 		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
-			Set<Permission> permissions = authenticationManager.getAccountRequest(authorizationCodeRepository.get(authorizationCode)).getPermissions();
-			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, permissions);
+			AccountRequest accountRequest = authenticationManager.getAccountRequestFromAuthorizationCode(authorizationCode);
+			String accountRequestId = accountRequest.getAccountRequestId();
+			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, accountRequestId );
 			accessTokenRepository.add(token);
 			response.setStatus(201);
 			response.setHeader("Content-type","application/json");

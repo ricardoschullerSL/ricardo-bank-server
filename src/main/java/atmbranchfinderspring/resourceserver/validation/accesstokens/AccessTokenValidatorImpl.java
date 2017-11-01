@@ -9,25 +9,16 @@ import java.util.List;
 @Component
 public class AccessTokenValidatorImpl implements AccessTokenValidator {
 
-	private AccessTokenRepository accessTokenRepository;
-
 	@Autowired
-	public AccessTokenValidatorImpl(AccessTokenRepository accessTokenRepository) {
-		this.accessTokenRepository = accessTokenRepository;
-	}
+	public AccessTokenValidatorImpl(AccessTokenRepository accessTokenRepository) {}
 
-	public boolean accessTokenIsValid(String token, List<TokenValidator> validators) {
-		if (accessTokenRepository.contains(token)) {
-			AccessToken accessToken = accessTokenRepository.get(token);
-			for (TokenValidator validator : validators) {
-				if (validator.validate(accessToken) == false) {
-					System.out.println("Token invalid:" + validator.errorMessage());
-					return false;
-				}
+	public boolean accessTokenIsValid(AccessToken token, List<TokenValidator> validators) {
+		for (TokenValidator validator : validators) {
+			if (validator.validate(token) == false) {
+				System.out.println("Token invalid:" + validator.errorMessage());
+				return false;
 			}
-			return true;
-		} else {
-			return false;
 		}
+		return true;
 	}
 }

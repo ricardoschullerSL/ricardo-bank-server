@@ -6,20 +6,21 @@ import java.util.Set;
 
 public class PermissionValidator implements TokenValidator {
 
-	private Set<Permission> requiredPermission;
+	private Set<Permission> requiredPermissions;
+	private Set<Permission> setPermissions;
 
-	public PermissionValidator(Set<Permission> permissions) {
-		this.requiredPermission =  permissions;
+	public PermissionValidator(Set<Permission> requiredPermissions, Set<Permission> setPermissions) {
+		this.requiredPermissions = requiredPermissions;
+		this.setPermissions = setPermissions;
 	}
 
 	@Override
 	public boolean validate(AccessToken token) {
-		Set<Permission> tokenPermissions = token.getPermissions();
-		tokenPermissions.retainAll(requiredPermission);
-		return tokenPermissions.size() > 0;
+		setPermissions.retainAll(requiredPermissions);
+		return setPermissions.size() > 0;
 	}
 
 	public String errorMessage() {
-		return "Incorrect token permission.";
+		return "Insufficient permissions.";
 	}
 }

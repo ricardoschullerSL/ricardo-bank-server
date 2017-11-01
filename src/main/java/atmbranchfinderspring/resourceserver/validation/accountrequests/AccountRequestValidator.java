@@ -2,7 +2,7 @@ package atmbranchfinderspring.resourceserver.validation.accountrequests;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,11 +14,11 @@ import java.util.Set;
 
 @Component
 public class AccountRequestValidator {
-
 	private static final Permission[] allPermissions = Permission.values();
+	private static final EnumSet<Permission> PERMISSIONS = EnumSet.allOf(Permission.class);
 
 	public Boolean checkPermissionList(List<String> permissionArray) {
-		for(String permission: permissionArray) {
+		for (String permission: permissionArray) {
 			if (checkPermission(permission) == false) {
 				return false;
 			}

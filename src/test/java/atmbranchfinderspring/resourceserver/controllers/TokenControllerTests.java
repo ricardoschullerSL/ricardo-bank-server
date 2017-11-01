@@ -67,7 +67,7 @@ public class TokenControllerTests {
 		Set<Permission> permissions = new HashSet<>();
 		permissions.add(Permission.ReadAccountsBasic);
 		accountRequest.setPermissions(permissions);
-		when(authenticationManager.getAccountRequest(anyString())).thenReturn(accountRequest);
+		when(authenticationManager.getAccountRequestFromAuthorizationCode(anyString())).thenReturn(accountRequest);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
 		RequestBuilder request = post("/token/access-token/1234")
