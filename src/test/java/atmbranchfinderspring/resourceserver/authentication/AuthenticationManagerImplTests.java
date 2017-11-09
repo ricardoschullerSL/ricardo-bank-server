@@ -85,6 +85,14 @@ public class AuthenticationManagerImplTests {
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
 
+	@Test
+	@DisplayName("Check if isRequestTokenValid returns false when token can't be found")
+	void nullRequestTokenTest() {
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
+		accessTokenRepository.add(testToken);
+		assertThat(authenticationManager.isRequestTokenValid("wrongToken")).isEqualTo(false);
+	}
+
 
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
