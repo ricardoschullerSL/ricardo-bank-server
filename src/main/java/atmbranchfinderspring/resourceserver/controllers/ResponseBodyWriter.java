@@ -9,6 +9,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ResponseBodyWriter takes in the Data object and writes it to the correct JSON schema according to the Open Banking
+ * spec. It's important to know that the writer immediately flushes the message, meaning the response is sent immediately
+ * so make sure the response is ready when {@code writeResponse()} is called.
+ */
+
 @Component
 public class ResponseBodyWriter {
 

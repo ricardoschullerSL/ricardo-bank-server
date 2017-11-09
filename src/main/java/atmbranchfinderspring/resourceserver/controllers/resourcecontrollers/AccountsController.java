@@ -29,11 +29,12 @@ public class AccountsController {
 		this.responseBodyWriter = responseBodyWriter;
 	}
 
-	@RequestMapping("/{accountId}")
+	@RequestMapping(value = "/{accountId}")
 	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadAccountsBasic, Permission.ReadAccountsDetail})
 	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null) {
+			response.setContentType("application/json");
 			responseBodyWriter.writeResponse(request, response, user.getAccount());
 		} else {
 			response.sendError(400);
@@ -45,6 +46,7 @@ public class AccountsController {
 	public void getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {
+			response.setContentType("application/json");
 			responseBodyWriter.writeResponse(request, response, user.getAccount().getCurrencyTransactions());
 		} else {
 			response.sendError(400);

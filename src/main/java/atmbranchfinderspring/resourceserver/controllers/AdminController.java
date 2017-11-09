@@ -48,8 +48,8 @@ public class AdminController {
 				.withJWTId("jwtId")
 				.sign(authenticationManager.getEncryptionManager().getAlgorithm());
 
-		response.setStatus(200);
 		mapper.writer().writeValue(response.getWriter(), jwt);
+		response.setStatus(200);
 	}
 
 	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)
