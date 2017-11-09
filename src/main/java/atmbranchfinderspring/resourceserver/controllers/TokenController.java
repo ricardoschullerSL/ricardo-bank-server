@@ -5,8 +5,8 @@ import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenBuilder;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 @RestController
@@ -46,7 +45,15 @@ public class TokenController {
     @TPPBasicAuthenticated
     public void getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
-    	AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.CLIENT_CREDENTIALS, null);
+
+    	AccessToken token = new AccessTokenBuilder()
+			    .setClientId(clientId)
+			    .setTokenType(AccessToken.TokenType.REQUEST)
+			    .setIssueDate(LocalDateTime.now())
+			    .setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+			    .setGrant(AccessToken.Grant.CLIENT_CREDENTIALS)
+			    .setAccountRequestId(null)
+			    .build();
 	    accessTokenRepository.add(token);
 	    response.setStatus(201);
 	    response.setHeader("Content-type","application/json");
@@ -61,7 +68,7 @@ public class TokenController {
 		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
 			AccountRequest accountRequest = authenticationManager.getAccountRequestFromAuthorizationCode(authorizationCode);
 			String accountRequestId = accountRequest.getAccountRequestId();
-			AccessToken token = new AccessToken(clientId, "Bearer", expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, accountRequestId );
+			AccessToken token = new AccessToken(clientId, AccessToken.TokenType.REFRESH, expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, accountRequestId );
 			accessTokenRepository.add(token);
 			response.setStatus(201);
 			response.setHeader("Content-type","application/json");

@@ -60,7 +60,7 @@ public class AccountRequestControllerTests {
 		Set<Permission> permissions = new TreeSet<Permission>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
 		accountRequest.setPermissions(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
-		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
+		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
@@ -77,7 +77,7 @@ public class AccountRequestControllerTests {
 		Set<Permission> permissions = new TreeSet<>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
 		accountRequest.setPermissions(Arrays.asList("wrongPermission"));
-		AccessToken accessToken = new AccessToken("testClientId","Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
+		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
@@ -90,7 +90,7 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void getAllAccountRequestsTest() throws Exception {
-		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L,
+		AccessToken accessToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L,
 				AccessToken.Grant.CLIENT_CREDENTIALS, "testId");
 		when(accessTokenRepository.contains(anyString())).thenReturn(true);
 		when(accessTokenRepository.get(anyString())).thenReturn(accessToken);
@@ -111,7 +111,7 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void failGetAllAccountRequestsTest() throws Exception {
-		AccessToken accessToken = new AccessToken("testClient", "Bearer", 100L,
+		AccessToken accessToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L,
 				AccessToken.Grant.CLIENT_CREDENTIALS, "testId");
 		when(accessTokenRepository.contains(anyString())).thenReturn(false);
 		when(accessTokenRepository.get(anyString())).thenReturn(accessToken);

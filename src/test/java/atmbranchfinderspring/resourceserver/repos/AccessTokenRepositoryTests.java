@@ -15,8 +15,8 @@ public class AccessTokenRepositoryTests {
 	@BeforeEach
 	void setup() {
 		accessTokenRepository = new AccessTokenRepository();
-		accessTokenRepository.add(new AccessToken("testClient","testToken", "abc", 10L, "testId"));
-		accessTokenRepository.add(new AccessToken("testClient","testToken", "def", 10L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", AccessToken.TokenType.TEST, "abc", 10L, "testId"));
+		accessTokenRepository.add(new AccessToken("testClient", AccessToken.TokenType.TEST, "def", 10L, "testId"));
 	}
 
 	@AfterEach
@@ -49,7 +49,7 @@ public class AccessTokenRepositoryTests {
 	@Test
 	void addAddsToken() {
 		int size = accessTokenRepository.getAllIds().size();
-		AccessToken token = new AccessToken("testClient2","testToken","token", 10L, "testId");
+		AccessToken token = new AccessToken("testClient2", AccessToken.TokenType.TEST,"token", 10L, "testId");
 		accessTokenRepository.add(token);
 		assertThat(accessTokenRepository.getAllIds().size()).isEqualTo(size + 1);
 	}

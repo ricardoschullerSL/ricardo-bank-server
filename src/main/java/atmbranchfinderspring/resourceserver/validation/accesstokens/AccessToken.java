@@ -19,8 +19,12 @@ public class AccessToken implements ResponseObject {
 		CLIENT_CREDENTIALS, AUTHORIZATION_CODE
 	}
 
+	public enum TokenType {
+		REFRESH, BEARER, REQUEST, TEST
+	}
+
 	private final String accessToken;
-	private final String tokenType;
+	private final TokenType tokenType;
 	private final LocalDateTime issueDate;
 	private final LocalDateTime expirationDate;
 	private final String clientId;
@@ -29,9 +33,7 @@ public class AccessToken implements ResponseObject {
 	private Grant grant;
 
 
-
-
-	public AccessToken(String clientId, String tokenType, String customToken, Long expirationTime, String accountRequestId) {
+	public AccessToken(String clientId, TokenType tokenType, String customToken, Long expirationTime, String accountRequestId) {
 		this.tokenType = tokenType;
 		this.accessToken = customToken;
 		this.clientId = clientId;
@@ -40,7 +42,7 @@ public class AccessToken implements ResponseObject {
 		this.accountRequestId = accountRequestId;
 	}
 
-	public AccessToken(String clientId, String tokenType, Long expirationTime, Grant grant, String accountRequestId) {
+	public AccessToken(String clientId, TokenType tokenType, Long expirationTime, Grant grant, String accountRequestId) {
 		this.clientId = clientId;
 		this.tokenType = tokenType;
 		this.accessToken = UUID.randomUUID().toString();
@@ -50,11 +52,22 @@ public class AccessToken implements ResponseObject {
 		this.accountRequestId = accountRequestId;
 	}
 
+	public AccessToken(String accessToken, String clientId, TokenType tokenType, LocalDateTime issueDate,
+	                   LocalDateTime expirationDate, Grant grant, String accountRequestId) {
+		this.accessToken = accessToken;
+		this.clientId = clientId;
+		this.tokenType = tokenType;
+		this.issueDate = issueDate;
+		this.expirationDate = expirationDate;
+		this.grant = grant;
+		this.accountRequestId = accountRequestId;
+	}
+
 	public String getClientId() {return clientId;}
 	public String getAccessToken() {
 		return accessToken;
 	}
-	public String getTokenType() { return tokenType; }
+	public TokenType getTokenType() { return tokenType; }
 	public LocalDateTime getIssueDate() {
 		return issueDate;
 	}
@@ -68,4 +81,5 @@ public class AccessToken implements ResponseObject {
 	}
 
 	public String getAccountRequestId() {return accountRequestId;}
+
 }

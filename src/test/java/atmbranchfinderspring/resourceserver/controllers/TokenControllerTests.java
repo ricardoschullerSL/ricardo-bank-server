@@ -57,7 +57,7 @@ public class TokenControllerTests {
 		mockMvc.perform(request)
 				.andExpect(status().is(201))
 				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json("{\"tokenType\":\"Bearer\", \"clientId\":\"testClient\"}"));
+				.andExpect(content().json("{\"tokenType\":\"REQUEST\", \"clientId\":\"testClient\"}"));
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class TokenControllerTests {
 		mockMvc.perform(request)
 				.andExpect(status().is(201))
 				.andExpect(content().contentType("application/json"))
-				.andExpect(content().json("{\"tokenType\":\"Bearer\", \"clientId\":\"testClient\"}"));
+				.andExpect(content().json("{\"tokenType\":\"REFRESH\", \"clientId\":\"testClient\"}"));
 
 	}
 

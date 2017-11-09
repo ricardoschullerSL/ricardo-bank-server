@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @org.springframework.stereotype.Repository
-public class AuthorizationCodeRepository{
+public class AuthorizationCodeRepository {
 
 	private Map<String, String> authorizationCodes;
 

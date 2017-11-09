@@ -80,7 +80,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates request token")
 	void requestTokenCheckerTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}
@@ -89,7 +89,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token")
 	void validateAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
 		AccountRequest accountRequest = new AccountRequest();
 		accountRequest.setPermissions(new HashSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
@@ -101,7 +101,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect grant.")
 	void validateInvalidGrantAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, null, "testid");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, null, "testid");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
@@ -109,7 +109,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates access token with incorrect permission.")
 	void validateInvalidScopeAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
@@ -117,7 +117,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates expired access token")
 	void validateExpiredAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", -100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, -100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(),new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
@@ -125,7 +125,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates non existing access token")
 	void validateNonExistingAccessTokenTest() {
-		AccessToken testToken = new AccessToken("testClient", "Bearer", 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isAccessTokenValid("wrongtoken", new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
@@ -250,7 +250,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if getAccountRequest returns account request")
 	void getAccountRequestTest() {
-		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
+		accountRequestRepository.add(new AccountRequest("testId","testClient", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<Permission>(),LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
 
 		assertThat(authenticationManager.getAccountRequest("testId").getStatus()).isEqualTo(AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION);
 	}
@@ -272,7 +272,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if isAccountRequestIdValid return correct boolean")
 	void isAccountRequestIdValidTest() {
-		accountRequestRepository.add(new AccountRequest("testId", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<>() ,LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
+		accountRequestRepository.add(new AccountRequest("testId","testClient", LocalDateTime.now(), LocalDateTime.now().plusDays(1L), new HashSet<>() ,LocalDateTime.now(), LocalDateTime.now().plusDays(1L), AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION  ));
 		assertThat(authenticationManager.isAccountRequestIdValid("testId")).isEqualTo(true);
 		assertThat(authenticationManager.isAccountRequestIdValid("wrongId")).isEqualTo(false);
 	}

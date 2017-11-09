@@ -35,10 +35,11 @@ public class AccountRequest implements ResponseObject {
 
     public AccountRequest() {}
 
-    public AccountRequest(String accountRequestId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
+    public AccountRequest(String accountRequestId, String clientId, LocalDateTime creationDateTime, LocalDateTime expirationDateTime,
                           Set<Permission> permissions, LocalDateTime transactionFromDateTime,
                           LocalDateTime transactionToDateTime, AccountRequestStatus status) {
         this.accountRequestId = accountRequestId;
+        this.clientId = clientId;
         this.creationDateTime = creationDateTime;
         this.expirationDateTime = expirationDateTime;
         this.permissions = permissions;
