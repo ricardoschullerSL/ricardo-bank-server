@@ -277,4 +277,15 @@ public class AuthenticationManagerImplTests {
 		assertThat(authenticationManager.isAccountRequestIdValid("wrongId")).isEqualTo(false);
 	}
 
+	@Test
+	@DisplayName("Check if getAccountRequestFromAuthorizationCode returns Account Request")
+	void getAccountRequestFromAuthorizationCodeTest() {
+		authorizationCodeRepository.add("testCode", "testId");
+		accountRequestRepository.add(new AccountRequest("testId", "testClient", null, null, null, null, null, AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION));
+		AccountRequest accountRequest = authenticationManager.getAccountRequestFromAuthorizationCode("testCode");
+		assertThat(accountRequest.getClientId()).isEqualTo("testClient");
+		AccountRequest wrongRequest = authenticationManager.getAccountRequestFromAuthorizationCode("wrongCode");
+		assertThat(wrongRequest).isNull();
+	}
+
 }
