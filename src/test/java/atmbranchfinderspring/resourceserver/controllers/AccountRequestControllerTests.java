@@ -6,10 +6,7 @@ import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import atmbranchfinderspring.resourceserver.validation.accountrequests.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,16 +53,18 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void postAccountRequestTest() throws Exception {
+		IncomingRequestBody requestBody = new IncomingRequestBody();
 		IncomingAccountRequest accountRequest = new IncomingAccountRequest();
 		Set<Permission> permissions = new TreeSet<Permission>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
 		accountRequest.setPermissions(Arrays.asList("ReadAccountsBasic", "ReadAccountsDetail"));
+		requestBody.setData(accountRequest);
 		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
 				.contentType("application/json")
-				.content(mapper.writeValueAsString(accountRequest));
+				.content(mapper.writeValueAsString(requestBody));
 
 		mockMvc.perform(request)
 				.andExpect(status().isOk());
@@ -73,16 +72,18 @@ public class AccountRequestControllerTests {
 
 	@Test
 	void failedPostAccountRequestTest() throws Exception {
+		IncomingRequestBody requestBody = new IncomingRequestBody();
 		IncomingAccountRequest accountRequest = new IncomingAccountRequest();
 		Set<Permission> permissions = new TreeSet<>(Arrays.asList(Permission.ReadAccountsBasic, Permission.ReadAccountsDetail));
 		accountRequest.setId("testAccountRequestId");
 		accountRequest.setPermissions(Arrays.asList("wrongPermission"));
+		requestBody.setData(accountRequest);
 		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
 		RequestBuilder request = post("/account-requests")
 				.header("Authorization", "Bearer testtoken")
 				.contentType("application/json")
-				.content(mapper.writeValueAsString(accountRequest));
+				.content(mapper.writeValueAsString(requestBody));
 
 		mockMvc.perform(request)
 				.andExpect(status().is(400));
