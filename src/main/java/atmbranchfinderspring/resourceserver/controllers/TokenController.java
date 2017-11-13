@@ -9,6 +9,7 @@ import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRe
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class TokenController {
 	@CrossOrigin(origins = "http://localhost:8081")
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = MediaType.APPLICATION_JSON_VALUE)
     @TPPBasicAuthenticated
+	@ResponseStatus(value = HttpStatus.CREATED)
     public AccessToken getAccessTokenClientCredentialGrant(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String clientId = getClientIdFromAuthorizationHeader(request);
     	AccessToken token = new AccessTokenBuilder()
@@ -51,36 +53,30 @@ public class TokenController {
 			    .setAccountRequestId(null)
 			    .build();
 	    accessTokenRepository.add(token);
-	    response.setStatus(201);
 	    return token;
     }
 
 	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/access-token/{authorizationCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@TPPBasicAuthenticated
-	public void getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
-		String clientId = getClientIdFromAuthorizationHeader(request);
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public AccessToken getAccessTokenAuthorizationCodeGrant(HttpServletRequest request, HttpServletResponse response, @PathVariable String authorizationCode) throws IOException {
 		if (authenticationManager.isAuthorizationCodeValid(authorizationCode)) {
+			String clientId = getClientIdFromAuthorizationHeader(request);
 			AccountRequest accountRequest = authenticationManager.getAccountRequestFromAuthorizationCode(authorizationCode);
 			String accountRequestId = accountRequest.getAccountRequestId();
 			AccessToken token = new AccessToken(clientId, AccessToken.TokenType.REFRESH, expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, accountRequestId );
 			accessTokenRepository.add(token);
-			response.setStatus(201);
-			response.setHeader("Content-type","application/json");
-			mapper.writer().writeValue(response.getWriter(), token); //Important this happens last, writeValue flushes the message.
+			return token;
 		} else {
 			response.sendError(403);
+			return null;
 		}
 	}
 
 	private String getClientIdFromAuthorizationHeader(HttpServletRequest request) {
 		String credentials = request.getHeader("Authorization").substring("Basic".length()).trim();
 		return new String(Base64.getDecoder().decode(credentials)).split(":")[0];
-	}
-
-	@RequestMapping(method = RequestMethod.POST, value = "/test")
-	public AccessToken getTestToken() {
-    	return new AccessTokenBuilder().setClientId("test").build();
 	}
 
 	public static long getExpirationTime() {

@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,7 @@ public class TPPController {
 
 	@CrossOrigin(origins = "http://localhost:8081")
     @PostMapping(value="/register", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(value = HttpStatus.CREATED)
     public Credentials registerTPPClient(@RequestBody String clientJwt, HttpServletResponse response) throws IOException {
         Credentials credentials = tppManager.registerTPPClientAndReturnCredentials(clientJwt);
         if (credentials == null) {

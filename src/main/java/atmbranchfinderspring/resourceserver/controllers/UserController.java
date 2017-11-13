@@ -40,7 +40,7 @@ public class UserController {
 
 	@GetMapping(path="/add")
 	@AdminBasicAuthenticated
-	public void addNewUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String username,
+	public String addNewUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String username,
 	                         @RequestParam String password, @RequestParam int accountId) throws IOException {
 		Account account = new Account(accountId);
 		User user = new User();
@@ -51,7 +51,7 @@ public class UserController {
 		user.setSalt(salt);
 		user.setAccount(account);
 		userRepository.save(user);
-		response.getWriter().write( "Saved");
+		return "Saved.";
 	}
 
 	@GetMapping(path="/all", produces = "application/json")

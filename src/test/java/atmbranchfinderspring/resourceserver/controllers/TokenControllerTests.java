@@ -76,7 +76,7 @@ public class TokenControllerTests {
 
 		mockMvc.perform(request)
 				.andExpect(status().is(201))
-				.andExpect(content().contentType("application/json"))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 				.andExpect(content().json("{\"tokenType\":\"REFRESH\", \"clientId\":\"testClient\"}"));
 
 	}

@@ -8,6 +8,7 @@ import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +41,9 @@ public class AccountRequestController {
 	}
 
 	@CrossOrigin(origins = "http://localhost:8081")
-	@RequestMapping(method = RequestMethod.POST, value = "/account-requests")
+	@RequestMapping(method = RequestMethod.POST, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@RequestTokenAuthenticated
-	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
+	public AccountRequest postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
 		IncomingAccountRequest incomingAccountRequest = incomingRequestBody.getData();
 		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			Set<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
@@ -50,16 +51,15 @@ public class AccountRequestController {
 			String clientId = accessTokenRepository.get(token).getClientId();
 			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId);
 			tppManager.addAccountRequestToClient(clientId, accountRequest);
-			response.setHeader("Content-type", "application/json");
-			response.setStatus(200);
-			mapper.writer().writeValue(response.getWriter(), accountRequest);
+			return accountRequest;
 		} else {
 			response.sendError(400, "Bad Request");
+			return null;
 		}
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value= "/account-requests")
+	@RequestMapping(method = RequestMethod.GET, value = "/account-requests")
 	@RequestTokenAuthenticated
 	public void getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
@@ -72,7 +72,6 @@ public class AccountRequestController {
 		} else {
 			response.sendError(400);
 		}
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = "application/json")
@@ -86,8 +85,5 @@ public class AccountRequestController {
 		} else {
 			response.sendError(400);
 		}
-
 	}
-
-
 }
