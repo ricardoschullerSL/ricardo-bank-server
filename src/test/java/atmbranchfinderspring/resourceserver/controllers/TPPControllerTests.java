@@ -36,8 +36,7 @@ public class TPPControllerTests {
 		when(tppManager.registerTPPClientAndReturnCredentials("testJwt")).thenReturn(credentials);
 
 		RequestBuilder request = post("/tpp/register")
-				.content("testJwt")
-				.accept("application/jwt");
+				.content("testJwt");
 
 		mockMvc.perform(request)
 				.andExpect(status().isCreated())

@@ -5,8 +5,10 @@ import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AuthorizationCodeRepository;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -28,7 +30,6 @@ public class TokenControllerTests {
 
 	private TokenController tokenController;
 	private AccessTokenRepository accessTokenRepository;
-	private AuthorizationCodeRepository authorizationCodeRepository;
 	private AuthenticationManager authenticationManager;
 	private MockEnvironment env;
 
@@ -40,9 +41,8 @@ public class TokenControllerTests {
 		env = new MockEnvironment();
 		env.setProperty("accesstoken.expirationtime", "60");
 		authenticationManager = mock(AuthenticationManager.class);
-		authorizationCodeRepository = mock(AuthorizationCodeRepository.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
-		tokenController = new TokenController(accessTokenRepository, authorizationCodeRepository, authenticationManager, env);
+		tokenController = new TokenController(accessTokenRepository, authenticationManager, env);
 		mockMvc = MockMvcBuilders.standaloneSetup(tokenController).build();
 	}
 
@@ -56,7 +56,7 @@ public class TokenControllerTests {
 
 		mockMvc.perform(request)
 				.andExpect(status().is(201))
-				.andExpect(content().contentType("application/json"))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 				.andExpect(content().json("{\"tokenType\":\"REQUEST\", \"clientId\":\"testClient\"}"));
 	}
 

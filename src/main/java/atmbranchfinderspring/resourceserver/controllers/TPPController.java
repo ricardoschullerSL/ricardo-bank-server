@@ -4,6 +4,7 @@ import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.Credentials;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,15 +34,15 @@ public class TPPController {
 
 
 	@CrossOrigin(origins = "http://localhost:8081")
-    @RequestMapping(value="/register", produces = "application/jwt", method = RequestMethod.POST)
-    public void registerTPPClient(@RequestBody String clientJwt, HttpServletResponse response) throws IOException {
+    @PostMapping(value="/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Credentials registerTPPClient(@RequestBody String clientJwt, HttpServletResponse response) throws IOException {
         Credentials credentials = tppManager.registerTPPClientAndReturnCredentials(clientJwt);
         if (credentials == null) {
 	        response.sendError(400, "Bad JWT");
+	        return null;
         } else {
-	        String responseString = mapper.writeValueAsString(credentials);
-	        response.getWriter().write(responseString);
 	        response.setStatus(201);
+	        return credentials;
         }
     }
 }

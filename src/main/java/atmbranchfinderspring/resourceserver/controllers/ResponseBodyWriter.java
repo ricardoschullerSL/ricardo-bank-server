@@ -35,6 +35,7 @@ public class ResponseBodyWriter {
 		responseBody.put("Risk", "{}");
 		responseBody.put("Links", links);
 		responseBody.put("Meta", "{}");
+		response.setContentType("application/json");
 		mapper.writer().writeValue(response.getWriter(), responseBody);
 	}
 }

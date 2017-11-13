@@ -38,7 +38,7 @@ public class AdminController {
 
 	@RequestMapping(value="/getjwt", method = RequestMethod.POST)
 	@AdminBasicAuthenticated
-	public void getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) throws IOException {
+	public String getJWT(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> body) throws IOException {
 		System.out.println("Creating and returning JWT.");
 		String jwt = JWT.create().withIssuer("Open Banking")
 				.withClaim("software_id", body.get("software_id"))
@@ -47,9 +47,7 @@ public class AdminController {
 				.withClaim("software_statement", "testsoftwarestatement")
 				.withJWTId("jwtId")
 				.sign(authenticationManager.getEncryptionManager().getAlgorithm());
-
-		mapper.writer().writeValue(response.getWriter(), jwt);
-		response.setStatus(200);
+		return jwt;
 	}
 
 	@RequestMapping(value="/addAdmin", method = RequestMethod.POST)

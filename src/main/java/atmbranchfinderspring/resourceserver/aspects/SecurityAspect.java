@@ -4,9 +4,11 @@ package atmbranchfinderspring.resourceserver.aspects;
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +31,8 @@ public class SecurityAspect {
 		this.authenticationManager = authenticationManager;
 	}
 
-    @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
-    public void doTPPBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+    @Before("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
+    public void doTPPBasicAuthentication(JoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -44,7 +46,7 @@ public class SecurityAspect {
 			    values = credentials.split(":", 2);
 			    System.out.println("Authenticating " + values[0]);
 			    if (authenticationManager.areClientCredentialsValid(values[0], values[1])) {
-				    joinPoint.proceed();
+				    // continue
 			    } else {
 				    response.sendError(403, "Incorrect Client Credentials.");
 			    }
@@ -57,8 +59,8 @@ public class SecurityAspect {
 	    }
     }
 
-	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
-	public void doAdminBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
+	public void doAdminBasicAuthentication(JoinPoint joinPoint) throws IOException {
 		String[] values;
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
@@ -72,7 +74,7 @@ public class SecurityAspect {
 				values = credentials.split(":", 2);
 				System.out.println("Authenticating " + values[0]);
 				if (authenticationManager.areAdminCredentialsValid(values[0], values[1])) {
-					joinPoint.proceed();
+					//continue
 				} else {
 					response.sendError(403, "Incorrect Client Credentials.");
 				}
@@ -85,8 +87,8 @@ public class SecurityAspect {
 		}
 	}
 
-	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
-	public void RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
+	public void RequestTokenAuthentication(JoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -96,7 +98,7 @@ public class SecurityAspect {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
 				if (authenticationManager.isRequestTokenValid(token)) {
-					joinPoint.proceed();
+					//continue
 				} else {
 					response.sendError(403, "Access token not valid.");
 				}
@@ -109,8 +111,8 @@ public class SecurityAspect {
 		}
 	}
 
-	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
-	public void AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
+	public void AccessTokenAuthentication(JoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
@@ -123,7 +125,7 @@ public class SecurityAspect {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
 				if (authenticationManager.isAccessTokenValid(token, requiredPermission)) {
-					joinPoint.proceed();
+					//continue
 				} else {
 					response.sendError(403, "Access token not valid.");
 				}
