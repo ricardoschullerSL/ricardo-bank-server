@@ -28,22 +28,22 @@ public class AccountRequestController {
 	private AccountRequestValidator accountRequestValidator;
 	private AccessTokenRepository accessTokenRepository;
 	private TPPManager tppManager;
-	private ObjectMapper mapper;
+	private ResponseBodyWriter responseBodyWriter;
 
 	@Autowired
 	public AccountRequestController(AccountRequestRepository accountRequestRepository, AccountRequestValidator accountRequestValidator, AccessTokenRepository accessTokenRepository,
-	                                TPPManager tppManager) {
+	                                TPPManager tppManager, ResponseBodyWriter responseBodyWriter) {
 		this.accountRequestRepository = accountRequestRepository;
 		this.accountRequestValidator = accountRequestValidator;
 		this.accessTokenRepository = accessTokenRepository;
 		this.tppManager = tppManager;
-		this.mapper = new ObjectMapper();
+		this.responseBodyWriter = responseBodyWriter;
 	}
 
 	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@RequestTokenAuthenticated
-	public AccountRequest postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
+	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
 		IncomingAccountRequest incomingAccountRequest = incomingRequestBody.getData();
 		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			Set<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
@@ -51,39 +51,36 @@ public class AccountRequestController {
 			String clientId = accessTokenRepository.get(token).getClientId();
 			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId);
 			tppManager.addAccountRequestToClient(clientId, accountRequest);
-			return accountRequest;
+			response.setStatus(201);
+			responseBodyWriter.writeResponse(request,response,accountRequest);
 		} else {
 			response.sendError(400, "Bad Request");
-			return null;
 		}
-
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/account-requests")
+	@RequestMapping(method = RequestMethod.GET, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@RequestTokenAuthenticated
-	public void getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public Collection<String> getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 		if (accessTokenRepository.contains(token)) {
 			String clientId = accessTokenRepository.get(token).getClientId();
 			TPPClient client = tppManager.getTPPClient(clientId);
 			Collection<String> responseObjects = client.getAllAccountRequestIds();
-			response.setHeader("Content-type", "application/json");
-			mapper.writer().writeValue(response.getWriter(), responseObjects);
+			return responseObjects;
 		} else {
 			response.sendError(400);
+			return null;
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = "application/json")
+	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@RequestTokenAuthenticated
-	public void getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
-
+	public AccountRequest getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
 		if (accountRequestRepository.contains(accountRequestId)) {
-			AccountRequest requestResponse = accountRequestRepository.get(accountRequestId);
-			response.setHeader("Content-type", "application/json");
-			mapper.writer().writeValue(response.getWriter(), requestResponse);
+			return accountRequestRepository.get(accountRequestId);
 		} else {
 			response.sendError(400);
+			return null;
 		}
 	}
 }

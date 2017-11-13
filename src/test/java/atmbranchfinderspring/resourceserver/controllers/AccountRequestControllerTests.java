@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -38,6 +39,7 @@ public class AccountRequestControllerTests {
 	private AccountRequestValidator accountRequestValidator;
 	private AccessTokenRepository accessTokenRepository;
 	private TPPManager tppManager;
+	private ResponseBodyWriter responseBodyWriter;
 
 
 	@BeforeEach
@@ -46,7 +48,8 @@ public class AccountRequestControllerTests {
 		accountRequestRepository = mock(AccountRequestRepository.class);
 		tppManager = mock(TPPManager.class);
 		accountRequestValidator = new AccountRequestValidator();
-		accountRequestController = new AccountRequestController(accountRequestRepository, accountRequestValidator, accessTokenRepository, tppManager);
+		responseBodyWriter = new ResponseBodyWriter(new ObjectMapper());
+		accountRequestController = new AccountRequestController(accountRequestRepository, accountRequestValidator, accessTokenRepository, tppManager, responseBodyWriter);
 		mockMvc = MockMvcBuilders.standaloneSetup(accountRequestController).build();
 	}
 
@@ -67,7 +70,7 @@ public class AccountRequestControllerTests {
 				.content(mapper.writeValueAsString(requestBody));
 
 		mockMvc.perform(request)
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 	}
 
 	@Test
@@ -106,7 +109,7 @@ public class AccountRequestControllerTests {
 
 		mockMvc.perform(request)
 				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 
 	}
 
@@ -144,7 +147,7 @@ public class AccountRequestControllerTests {
 
 		mockMvc.perform(request)
 				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/json"));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 
 	}
 

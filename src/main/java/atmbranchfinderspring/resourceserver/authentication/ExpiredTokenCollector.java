@@ -18,22 +18,14 @@ public class ExpiredTokenCollector {
 	@Autowired
 	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository) {
 		this.accessTokenRepository = accessTokenRepository;
-		tokenCollectionThread = new Thread(new Runnable() {
-			@Override
-			public void run() { collectExpiredTokens();}
-		});
+		tokenCollectionThread = new Thread(() -> collectExpiredTokens());
 		System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector Thread.");
 		tokenCollectionThread.start();
 	}
 
 	public ExpiredTokenCollector(AccessTokenRepository accessTokenRepository, boolean startNow) {
 		this.accessTokenRepository = accessTokenRepository;
-		tokenCollectionThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				collectExpiredTokens();
-			}
-		});
+		tokenCollectionThread = new Thread(() -> collectExpiredTokens());
 		if (startNow) {
 			System.out.println(LocalDateTime.now().toString() + " Starting ExpiredTokenCollector Thread.");
 			tokenCollectionThread.start();
