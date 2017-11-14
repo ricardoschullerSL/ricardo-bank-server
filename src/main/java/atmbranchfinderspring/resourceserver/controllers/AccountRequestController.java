@@ -6,7 +6,6 @@ import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

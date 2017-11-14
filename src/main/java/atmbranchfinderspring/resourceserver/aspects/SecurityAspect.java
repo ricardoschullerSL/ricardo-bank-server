@@ -2,43 +2,54 @@ package atmbranchfinderspring.resourceserver.aspects;
 
 
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
+import atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated;
+import atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated;
+import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the
  * (Rest)Controller method.
  */
 
+
 @Aspect
+@Component
 public class SecurityAspect {
 
 
 	private AuthenticationManager authenticationManager;
+	public static final String SERVER_ERROR_MESSAGE = "Something went wrong";
+	public static final String INVALID_AUTHORIZATION_HEADER_MESSAGE = "Invalid authorization header.";
+	public static final String INVALID_ACCESS_TOKEN_MESSAGE = "Invalid access token.";
+	public static final String INCORRECT_CREDENTIALS_MESSAGE = "Incorrect credentials.";
 
 	public SecurityAspect(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}
 
-    @Before("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
-    public void doTPPBasicAuthentication(JoinPoint joinPoint) throws IOException {
+    @Around("@annotation(atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated)")
+    public Object doTPPBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 	    String[] values;
 	    String authorization = request.getHeader("Authorization");
-	    System.out.println("SecurityAspect aspect started.");
 	    try {
 		    if (authorization != null && authorization.startsWith("Basic")) {
 			    String base64Credentials = authorization.substring("Basic".length()).trim();
@@ -46,27 +57,27 @@ public class SecurityAspect {
 			    values = credentials.split(":", 2);
 			    System.out.println("Authenticating " + values[0]);
 			    if (authenticationManager.areClientCredentialsValid(values[0], values[1])) {
-				    // continue
+				    return joinPoint.proceed();
 			    } else {
-				    response.sendError(403, "Incorrect Client Credentials.");
+				    response.sendError(403, INCORRECT_CREDENTIALS_MESSAGE);
 			    }
 		    } else {
-			    response.sendError(400, "No Authorization headers.");
+			    response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
 		    }
 	    } catch (Throwable e) {
 		    e.printStackTrace();
-		    response.sendError(500);
+		    response.sendError(500, SERVER_ERROR_MESSAGE);
 	    }
+	    return null;
     }
 
-	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
-	public void doAdminBasicAuthentication(JoinPoint joinPoint) throws IOException {
+	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated)")
+	public Object doAdminBasicAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		String[] values;
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 		String authorization = request.getHeader("Authorization");
-		System.out.println("SecurityAspect aspect started.");
 		try {
 			if (authorization != null && authorization.startsWith("Basic")) {
 				String base64Credentials = authorization.substring("Basic".length()).trim();
@@ -74,21 +85,22 @@ public class SecurityAspect {
 				values = credentials.split(":", 2);
 				System.out.println("Authenticating " + values[0]);
 				if (authenticationManager.areAdminCredentialsValid(values[0], values[1])) {
-					//continue
+					return joinPoint.proceed();
 				} else {
-					response.sendError(403, "Incorrect Client Credentials.");
+					response.sendError(403, INCORRECT_CREDENTIALS_MESSAGE);
 				}
 			} else {
-				response.sendError(400, "No Authorization headers.");
+				response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
-			response.sendError(500);
+			response.sendError(500, SERVER_ERROR_MESSAGE);
 		}
+		return null;
 	}
 
-	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
-	public void RequestTokenAuthentication(JoinPoint joinPoint) throws IOException {
+	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
+	public Object RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -98,21 +110,22 @@ public class SecurityAspect {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
 				if (authenticationManager.isRequestTokenValid(token)) {
-					//continue
+					return joinPoint.proceed();
 				} else {
-					response.sendError(403, "Access token not valid.");
+					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);
 				}
 			} else {
-				response.sendError(400, "No Authorization headers.");
+				response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
 			}
-		} catch (Throwable e) {
-			System.out.println(e);
-			response.sendError(500);
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+			response.sendError(500, SERVER_ERROR_MESSAGE);
 		}
+		return null;
 	}
 
-	@Before("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
-	public void AccessTokenAuthentication(JoinPoint joinPoint) throws IOException {
+	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
+	public Object AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
@@ -120,22 +133,23 @@ public class SecurityAspect {
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 		String authorization = request.getHeader("Authorization");
+
 		try {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
 				if (authenticationManager.isAccessTokenValid(token, requiredPermission)) {
-					//continue
+					return joinPoint.proceed();
 				} else {
-					response.sendError(403, "Access token not valid.");
+					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);
 				}
 			} else {
-				response.sendError(400, "No Authorization headers.");
+				response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
 			}
 		} catch (Throwable e) {
 			System.out.println(e);
-			response.sendError(500);
+			response.sendError(500, SERVER_ERROR_MESSAGE);
 		}
+		return null;
 	}
-
 }
