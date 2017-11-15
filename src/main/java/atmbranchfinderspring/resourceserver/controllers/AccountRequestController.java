@@ -1,10 +1,11 @@
 package atmbranchfinderspring.resourceserver.controllers;
 
-import atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated;
+import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.TPPManager;
 import atmbranchfinderspring.resourceserver.models.TPPClient;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,14 +42,14 @@ public class AccountRequestController {
 
 	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@RequestTokenAuthenticated
+	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
 	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
 		IncomingAccountRequest incomingAccountRequest = incomingRequestBody.getData();
 		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			Set<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
 			String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 			String clientId = accessTokenRepository.get(token).getClientId();
-			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId);
+			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId, 1001);
 			tppManager.addAccountRequestToClient(clientId, accountRequest);
 			response.setStatus(201);
 			responseBodyWriter.writeResponse(request,response,accountRequest);
@@ -58,7 +59,7 @@ public class AccountRequestController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@RequestTokenAuthenticated
+	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
 	public Collection<String> getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 		if (accessTokenRepository.contains(token)) {
@@ -73,7 +74,7 @@ public class AccountRequestController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@RequestTokenAuthenticated
+	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
 	public AccountRequest getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
 		if (accountRequestRepository.contains(accountRequestId)) {
 			return accountRequestRepository.get(accountRequestId);

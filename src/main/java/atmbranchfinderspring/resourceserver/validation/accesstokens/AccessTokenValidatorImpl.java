@@ -1,6 +1,5 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
-import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public class AccessTokenValidatorImpl implements AccessTokenValidator {
 
 	@Autowired
-	public AccessTokenValidatorImpl(AccessTokenRepository accessTokenRepository) {}
+	public AccessTokenValidatorImpl() {}
 
 	public boolean accessTokenIsValid(AccessToken token, List<TokenValidator> validators) {
 		for (TokenValidator validator : validators) {

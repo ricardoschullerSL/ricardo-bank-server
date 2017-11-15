@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -44,7 +43,7 @@ public class AuthenticationManagerImplTests {
 	@BeforeEach
 	void setup() {
 		accessTokenRepository = new AccessTokenRepository();
-		accessTokenValidator = new AccessTokenValidatorImpl(accessTokenRepository);
+		accessTokenValidator = new AccessTokenValidatorImpl();
 		tppClientRepository = new TPPClientRepository();
 		encryptionManager = mock(EncryptionManager.class);
 		adminRepository = mock(AdminRepository.class);

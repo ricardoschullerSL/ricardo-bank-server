@@ -26,14 +26,12 @@ public class UserController {
 
 	private EncryptionManager encryptionManager;
 	private UserRepository userRepository;
-	private ObjectMapper mapper;
 	private ResponseBodyWriter responseBodyWriter;
 
 	@Autowired
 	public UserController(EncryptionManager encryptionManager, UserRepository userRepository, ResponseBodyWriter responseBodyWriter) {
 		this.encryptionManager = encryptionManager;
 		this.userRepository = userRepository;
-		this.mapper = new ObjectMapper();
 		this.responseBodyWriter = responseBodyWriter;
 	}
 
@@ -56,8 +54,8 @@ public class UserController {
 
 	@GetMapping(path="/all", produces = "application/json")
 	@AdminBasicAuthenticated
-	public void getAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		responseBodyWriter.writeResponse(request, response, userRepository.findAll());
+	public Map<String,Object> getAllUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		return responseBodyWriter.writeResponse(request, userRepository.findAll());
 	}
 
 	@PostMapping(path="/update")

@@ -1,6 +1,12 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
 public interface TokenValidator {
-	boolean validate(AccessToken token);
-	String errorMessage();
+
+	default boolean validate(AccessToken token) {
+		return false;
+	}
+
+	default String errorMessage() {
+		return "Invalid token.";
+	}
 }

@@ -21,15 +21,15 @@ public class AccountRequestRepository implements Repository<AccountRequest>{
         accountRequests = new HashMap<>();
     }
 
-    public AccountRequest createAccountRequestResponse(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId) {
+    public AccountRequest createAccountRequestResponse(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId, int accountId) {
         String randomId = UUID.randomUUID().toString();
         incomingAccountRequest.setId(randomId);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusSeconds(expirationTime);
-        AccountRequest response = new AccountRequest(incomingAccountRequest, permissions, clientId, AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION,
+        AccountRequest accountRequest = new AccountRequest(incomingAccountRequest, permissions, clientId, accountId, AccountRequest.AccountRequestStatus.AWAITINGAUTHORIZATION,
                 now, expiration);
-        accountRequests.put(response.getAccountRequestId(), response);
-        return response;
+        accountRequests.put(accountRequest.getAccountRequestId(), accountRequest);
+        return accountRequest;
     }
 
 

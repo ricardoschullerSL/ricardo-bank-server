@@ -1,4 +1,4 @@
-package atmbranchfinderspring.resourceserver.authentication;
+package atmbranchfinderspring.resourceserver.validation;
 
 
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequestValidator;

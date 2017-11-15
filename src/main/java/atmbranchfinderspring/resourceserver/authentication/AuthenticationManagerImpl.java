@@ -11,6 +11,7 @@ import com.auth0.jwt.JWTVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +82,35 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 		}
 	}
 
+	public boolean isAccessTokenValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
+	                                  AccessToken.Grant grant, AccessToken.TokenType requiredTokenType) {
+		try {
+			switch (requiredTokenType) {
 
+				case REQUEST: return isRequestTokenValid(token);
+				case REFRESH: return accessTokenIsValid(request, token, requiredPermissions, grant, requiredTokenType);
+				default: return false;
+			}
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	private boolean accessTokenIsValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
+	                                   AccessToken.Grant grant, AccessToken.TokenType requiredTokenType) {
+
+		String[] urlArray = request.getRequestURI().split("/");
+		int accountId = Integer.parseInt(urlArray[2]);
+		System.out.println(accountId);
+		AccessToken accessToken = accessTokenRepository.get(token);
+		AccountRequest accountRequest = accountRequestRepository.get(accessToken.getAccountRequestId());
+		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(),
+				new GrantValidator(grant),
+				new PermissionValidator(requiredPermissions, accountRequest.getPermissions()),
+				new AccountRequestAuthorizationValidator(accountRequest, accountId),
+				new TokenTypeValidator(requiredTokenType));
+		return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
+	}
 
 	public boolean areClientCredentialsValid(String clientId, String clientSecret) {
         TPPClient client = (TPPClient) tppClientRepository.get(clientId);
@@ -145,4 +174,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     public TPPClient getTPPClient(String clientId) {
         return tppClientRepository.get(clientId);
     }
+
+
+
 }

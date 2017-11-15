@@ -2,22 +2,30 @@ package atmbranchfinderspring.resourceserver.controllers.resourcecontrollers;
 
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.controllers.ResponseBodyWriter;
+import atmbranchfinderspring.resourceserver.models.Account;
+import atmbranchfinderspring.resourceserver.models.CurrencyTransaction;
 import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.UserRepository;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * AccountsController is the main entry point for TPPs to access protected resources.
  */
 
-@Controller
+@RestController
 @RequestMapping("/accounts")
 public class AccountsController {
 
@@ -29,28 +37,23 @@ public class AccountsController {
 		this.responseBodyWriter = responseBodyWriter;
 	}
 
-	@RequestMapping(value = "/{accountId}")
-	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadAccountsBasic, Permission.ReadAccountsDetail})
-	public void getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
+	@RequestMapping(value = "/{accountId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadAccountsBasic, Permission.ReadAccountsDetail},
+			grant = AccessToken.Grant.AUTHORIZATION_CODE, tokenType = AccessToken.TokenType.REFRESH)
+	public Map<String,Object> getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
-		if (user != null) {
-			response.setContentType("application/json");
-			responseBodyWriter.writeResponse(request, response, user.getAccount());
-		} else {
-			response.sendError(400);
-		}
+		return responseBodyWriter.writeResponse(request, user.getAccount());
 	}
 
 	@RequestMapping("/{accountId}/transactions}")
-	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadTransactionsBasic, Permission.ReadAccountsDetail})
-	public void getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
+	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadTransactionsBasic, Permission.ReadAccountsDetail},
+			grant = AccessToken.Grant.AUTHORIZATION_CODE, tokenType = AccessToken.TokenType.ACCESS)
+	public Map<String, Object> getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {
-			response.setContentType("application/json");
-			responseBodyWriter.writeResponse(request, response, user.getAccount().getCurrencyTransactions());
+			return responseBodyWriter.writeResponse(request, user.getAccount().getCurrencyTransactions());
 		} else {
-			response.sendError(400);
+			return null;
 		}
 	}
-
 }

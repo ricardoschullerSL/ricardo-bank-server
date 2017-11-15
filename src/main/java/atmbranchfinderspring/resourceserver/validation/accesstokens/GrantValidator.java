@@ -8,10 +8,12 @@ public class GrantValidator implements TokenValidator {
 		this.requiredGrant = requiredGrant;
 	}
 
+	@Override
 	public boolean validate(AccessToken token) {
 		return token.getGrant() == requiredGrant;
 	}
 
+	@Override
 	public String errorMessage() {
 		return "Incorrect token grant";
 	}

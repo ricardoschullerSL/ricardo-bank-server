@@ -1,11 +1,9 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
 import atmbranchfinderspring.resourceserver.models.ResponseObject;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 public class AccessToken implements ResponseObject {
@@ -20,7 +18,7 @@ public class AccessToken implements ResponseObject {
 	}
 
 	public enum TokenType {
-		REFRESH, BEARER, REQUEST, TEST
+		ACCESS, REFRESH, BEARER, REQUEST, TEST
 	}
 
 	private final String accessToken;

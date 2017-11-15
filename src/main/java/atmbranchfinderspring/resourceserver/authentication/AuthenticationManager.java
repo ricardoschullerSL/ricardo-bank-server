@@ -1,10 +1,12 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
 import atmbranchfinderspring.resourceserver.models.TPPClient;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import com.auth0.jwt.JWTVerifier;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
@@ -40,6 +42,8 @@ public interface AuthenticationManager {
 	 */
 	boolean isAccessTokenValid(String token, Set<Permission> requiredPermission);
 
+	boolean isAccessTokenValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
+	                           AccessToken.Grant requiredGrant, AccessToken.TokenType requiredTokenType);
 	/**
 	 * Checks if incoming TPP client credentials are currently registered in the system.
 	 * @param clientId client ID

@@ -24,6 +24,19 @@ public class ResponseBodyWriter {
 		this.mapper = mapper;
 	}
 
+
+	public Map<String, Object> writeResponse(HttpServletRequest request, Object o) {
+		Map<String, Object> responseBody = new HashMap<>();
+		Map<String, Object> links = new HashMap<>();
+		links.put("Self", request.getRequestURI());
+		responseBody.put("Data", o);
+		responseBody.put("Risk", "{}");
+		responseBody.put("Links", links);
+		responseBody.put("Meta", "{}");
+		return responseBody;
+	}
+
+	@Deprecated
 	public void writeResponse(HttpServletRequest request, HttpServletResponse response, Object o) throws IOException, RuntimeException {
 		if (response == null) {
 			throw new RuntimeException("HttpServletResponse object in ResponseBodyWriter is null.");

@@ -20,6 +20,7 @@ public class PermissionValidator implements TokenValidator {
 		return setPermissions.size() > 0;
 	}
 
+	@Override
 	public String errorMessage() {
 		return "Insufficient permissions.";
 	}

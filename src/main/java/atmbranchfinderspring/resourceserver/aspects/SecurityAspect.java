@@ -2,25 +2,19 @@ package atmbranchfinderspring.resourceserver.aspects;
 
 
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
-import atmbranchfinderspring.resourceserver.annotations.AdminBasicAuthenticated;
-import atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated;
-import atmbranchfinderspring.resourceserver.annotations.TPPBasicAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.*;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the
@@ -99,6 +93,7 @@ public class SecurityAspect {
 		return null;
 	}
 
+	@Deprecated
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
 	public Object RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
@@ -130,15 +125,16 @@ public class SecurityAspect {
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
 		Set<Permission> requiredPermission = new HashSet<Permission>(Arrays.asList(accessTokenAuthenticated.requiredPermission()));
+		AccessToken.Grant requiredGrant = accessTokenAuthenticated.grant();
+		AccessToken.TokenType requiredTokenType = accessTokenAuthenticated.tokenType();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
 		String authorization = request.getHeader("Authorization");
-
 		try {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
-				if (authenticationManager.isAccessTokenValid(token, requiredPermission)) {
+				if (authenticationManager.isAccessTokenValid(request, token, requiredPermission, requiredGrant, requiredTokenType)) {
 					return joinPoint.proceed();
 				} else {
 					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);

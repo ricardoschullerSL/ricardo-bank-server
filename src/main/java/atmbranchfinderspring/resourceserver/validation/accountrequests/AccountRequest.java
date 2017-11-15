@@ -16,6 +16,8 @@ public class AccountRequest implements ResponseObject {
     @Column(nullable = false)
 	private String clientId;
     @Column(nullable = false)
+    private int accountId;
+    @Column(nullable = false)
     private LocalDateTime creationDateTime;
     @Column(nullable = false)
     private LocalDateTime expirationDateTime;
@@ -48,13 +50,14 @@ public class AccountRequest implements ResponseObject {
         this.status = status;
     }
 
-    public AccountRequest(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId,
+    public AccountRequest(IncomingAccountRequest incomingAccountRequest, Set<Permission> permissions, String clientId, int accountId,
                           AccountRequestStatus status, LocalDateTime creationDateTime, LocalDateTime expirationDateTime) {
         this.accountRequestId = incomingAccountRequest.getId();
         this.transactionFromDateTime = incomingAccountRequest.getTransactionFromDateTime();
         this.transactionToDateTime = incomingAccountRequest.getTransactionToDateTime();
         this.permissions = permissions;
         this.clientId = clientId;
+        this.accountId = accountId;
         this.status = status;
         this.creationDateTime = creationDateTime;
         this.expirationDateTime = expirationDateTime;
@@ -99,6 +102,10 @@ public class AccountRequest implements ResponseObject {
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
+
+	public int getAccountId() { return accountId; }
+
+	public void setAccountId(int accountId) { this.accountId = accountId; }
 
 	public void setAccountRequestId(String accountRequestId) {
 		this.accountRequestId = accountRequestId;

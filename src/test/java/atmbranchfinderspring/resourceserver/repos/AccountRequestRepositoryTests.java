@@ -93,7 +93,7 @@ public class AccountRequestRepositoryTests {
 				LocalDateTime.now().plusSeconds(100L));
 		Set<Permission> permissions = new HashSet<Permission>(){{add(Permission.ReadAccountsBasic);}};
 		AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest,
-				permissions, "testClient");
+				permissions, "testClient", 1001);
 		assertThat(accountRequest.getPermissions()).isEqualTo(permissions);
 		assertThat(accountRequest.getClientId()).isEqualTo("testClient");
 	}

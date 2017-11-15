@@ -1,7 +1,9 @@
 package atmbranchfinderspring.resourceserver.annotations;
 
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,5 +18,10 @@ import java.lang.annotation.Target;
 @Target(value= {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface AccessTokenAuthenticated {
+	@NotNull
 	Permission[] requiredPermission();
+	@NotNull
+	AccessToken.Grant grant();
+	@NotNull
+	AccessToken.TokenType tokenType();
 }
