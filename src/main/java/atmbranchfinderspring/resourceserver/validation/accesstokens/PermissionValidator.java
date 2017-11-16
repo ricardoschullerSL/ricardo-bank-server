@@ -14,10 +14,17 @@ public class PermissionValidator implements TokenValidator {
 		this.setPermissions = setPermissions;
 	}
 
+	/**
+	 * PermissionValidator checks for the union of the set of required permissions, and the permissions given by the
+	 * {@link atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest}. If the required set size
+	 * is equal to 0, no permissions are required so return true, else check if the union set size is greater than 0.
+	 *
+	 * @return boolean
+	 */
 	@Override
 	public boolean validate(AccessToken token) {
 		setPermissions.retainAll(requiredPermissions);
-		return setPermissions.size() > 0;
+		return requiredPermissions.size() == 0 ? true : setPermissions.size() > 0;
 	}
 
 	@Override

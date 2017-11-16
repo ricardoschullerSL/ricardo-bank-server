@@ -6,5 +6,6 @@ atmbranchfinderspring.resourceserver.controllers
 atmbranchfinderspring.resourceserver.controllers.resourcecontrollers
 atmbranchfinderspring.resourceserver.models
 atmbranchfinderspring.resourceserver.repos
+atmbranchfinderspring.resourceserver.validation
 atmbranchfinderspring.resourceserver.validation.accesstokens
 atmbranchfinderspring.resourceserver.validation.accountrequests

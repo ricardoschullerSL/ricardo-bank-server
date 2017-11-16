@@ -6,12 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Access token is used to authenticate software clients.
+ * Highly advisable that these are immutable.
+ */
 public class AccessToken implements ResponseObject {
-
-	/**
-	 * Access token is used to authenticate software clients.
-	 * Highly advisable that these are immutable.
-	 */
 
 	public enum Grant {
 		CLIENT_CREDENTIALS, AUTHORIZATION_CODE

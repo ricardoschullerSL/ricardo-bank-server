@@ -1,5 +1,10 @@
 package atmbranchfinderspring.resourceserver.validation.accesstokens;
 
+/**
+ * GrantValidator checks if the token has the correct grant. *
+ */
+
+@Deprecated
 public class GrantValidator implements TokenValidator {
 
 	private AccessToken.Grant requiredGrant;
