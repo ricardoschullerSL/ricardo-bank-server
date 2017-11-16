@@ -43,7 +43,7 @@ public interface AuthenticationManager {
 	boolean isAccessTokenValid(String token, Set<Permission> requiredPermission);
 
 	boolean isAccessTokenValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
-	                           AccessToken.Grant requiredGrant, AccessToken.TokenType requiredTokenType);
+	                           AccessToken.TokenType requiredTokenType);
 	/**
 	 * Checks if incoming TPP client credentials are currently registered in the system.
 	 * @param clientId client ID

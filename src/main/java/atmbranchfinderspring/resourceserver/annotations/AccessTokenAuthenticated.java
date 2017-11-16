@@ -21,7 +21,5 @@ public @interface AccessTokenAuthenticated {
 	@NotNull
 	Permission[] requiredPermission();
 	@NotNull
-	AccessToken.Grant grant();
-	@NotNull
 	AccessToken.TokenType tokenType();
 }

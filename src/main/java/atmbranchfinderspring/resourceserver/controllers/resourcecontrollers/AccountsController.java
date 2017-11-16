@@ -39,7 +39,7 @@ public class AccountsController {
 
 	@RequestMapping(value = "/{accountId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadAccountsBasic, Permission.ReadAccountsDetail},
-			grant = AccessToken.Grant.AUTHORIZATION_CODE, tokenType = AccessToken.TokenType.REFRESH)
+			tokenType = AccessToken.TokenType.ACCESS)
 	public Map<String,Object> getAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		return responseBodyWriter.writeResponse(request, user.getAccount());
@@ -47,7 +47,7 @@ public class AccountsController {
 
 	@RequestMapping("/{accountId}/transactions}")
 	@AccessTokenAuthenticated(requiredPermission = {Permission.ReadTransactionsBasic, Permission.ReadAccountsDetail},
-			grant = AccessToken.Grant.AUTHORIZATION_CODE, tokenType = AccessToken.TokenType.ACCESS)
+			tokenType = AccessToken.TokenType.ACCESS)
 	public Map<String, Object> getAccountTransactionsBasic(HttpServletRequest request, HttpServletResponse response, @PathVariable int accountId) throws IOException {
 		User user = userRepository.findByAccountAccountId(accountId);
 		if (user != null && user.getAccount() != null) {

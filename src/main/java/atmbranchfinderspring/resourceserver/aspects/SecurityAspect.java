@@ -93,39 +93,12 @@ public class SecurityAspect {
 		return null;
 	}
 
-	@Deprecated
-	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
-	public Object RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
-		Object[] args = joinPoint.getArgs();
-		HttpServletRequest request = (HttpServletRequest) args[0];
-		HttpServletResponse response = (HttpServletResponse) args[1];
-		String authorization = request.getHeader("Authorization");
-		try {
-			if (authorization != null && authorization.startsWith("Bearer")) {
-				String token = authorization.substring("Bearer".length()).trim();
-				System.out.println("Checking access token");
-				if (authenticationManager.isRequestTokenValid(token)) {
-					return joinPoint.proceed();
-				} else {
-					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);
-				}
-			} else {
-				response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
-			}
-		} catch (Throwable throwable) {
-			throwable.printStackTrace();
-			response.sendError(500, SERVER_ERROR_MESSAGE);
-		}
-		return null;
-	}
-
 	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated)")
 	public Object AccessTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
 		Object[] args = joinPoint.getArgs();
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		AccessTokenAuthenticated accessTokenAuthenticated = signature.getMethod().getAnnotation(AccessTokenAuthenticated.class);
 		Set<Permission> requiredPermission = new HashSet<Permission>(Arrays.asList(accessTokenAuthenticated.requiredPermission()));
-		AccessToken.Grant requiredGrant = accessTokenAuthenticated.grant();
 		AccessToken.TokenType requiredTokenType = accessTokenAuthenticated.tokenType();
 		HttpServletRequest request = (HttpServletRequest) args[0];
 		HttpServletResponse response = (HttpServletResponse) args[1];
@@ -134,7 +107,7 @@ public class SecurityAspect {
 			if (authorization != null && authorization.startsWith("Bearer")) {
 				String token = authorization.substring("Bearer".length()).trim();
 				System.out.println("Checking access token");
-				if (authenticationManager.isAccessTokenValid(request, token, requiredPermission, requiredGrant, requiredTokenType)) {
+				if (authenticationManager.isAccessTokenValid(request, token, requiredPermission, requiredTokenType)) {
 					return joinPoint.proceed();
 				} else {
 					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);
@@ -148,4 +121,30 @@ public class SecurityAspect {
 		}
 		return null;
 	}
+
+//	@Deprecated
+//	@Around("@annotation(atmbranchfinderspring.resourceserver.annotations.RequestTokenAuthenticated)")
+//	public Object RequestTokenAuthentication(ProceedingJoinPoint joinPoint) throws IOException {
+//		Object[] args = joinPoint.getArgs();
+//		HttpServletRequest request = (HttpServletRequest) args[0];
+//		HttpServletResponse response = (HttpServletResponse) args[1];
+//		String authorization = request.getHeader("Authorization");
+//		try {
+//			if (authorization != null && authorization.startsWith("Bearer")) {
+//				String token = authorization.substring("Bearer".length()).trim();
+//				System.out.println("Checking access token");
+//				if (authenticationManager.isRequestTokenValid(token)) {
+//					return joinPoint.proceed();
+//				} else {
+//					response.sendError(403, INVALID_ACCESS_TOKEN_MESSAGE);
+//				}
+//			} else {
+//				response.sendError(400, INVALID_AUTHORIZATION_HEADER_MESSAGE);
+//			}
+//		} catch (Throwable throwable) {
+//			throwable.printStackTrace();
+//			response.sendError(500, SERVER_ERROR_MESSAGE);
+//		}
+//		return null;
+//	}
 }

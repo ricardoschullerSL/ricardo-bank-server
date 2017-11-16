@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Default implementation of the AuthenticationManager interface
@@ -64,13 +65,18 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     public boolean isRequestTokenValid(String token) {
 	    try {
 		    AccessToken accessToken = accessTokenRepository.get(token);
-		    List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(), new GrantValidator(AccessToken.Grant.CLIENT_CREDENTIALS));
+		    List<TokenValidator> validatorList = Arrays.asList(
+		    		new TokenIsNotExpired(),
+				    new GrantValidator(AccessToken.Grant.CLIENT_CREDENTIALS),
+				    new TokenTypeValidator(AccessToken.TokenType.REQUEST)
+		    );
 		    return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
 	    } catch (NullPointerException e) {
 		    return false;
 	    }
     }
 
+    @Deprecated
 	public boolean isAccessTokenValid(String token, Set<Permission> requiredPermissions) {
 		try {
 			AccessToken accessToken = accessTokenRepository.get(token);
@@ -83,12 +89,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	}
 
 	public boolean isAccessTokenValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
-	                                  AccessToken.Grant grant, AccessToken.TokenType requiredTokenType) {
+	                                  AccessToken.TokenType requiredTokenType) {
 		try {
 			switch (requiredTokenType) {
-
+				case ACCESS: return accessTokenIsValid(request, token, requiredPermissions, requiredTokenType);
 				case REQUEST: return isRequestTokenValid(token);
-				case REFRESH: return accessTokenIsValid(request, token, requiredPermissions, grant, requiredTokenType);
+				case REFRESH: return refreshTokenIsValid(request, token);
 				default: return false;
 			}
 		} catch (NullPointerException e) {
@@ -97,19 +103,24 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	}
 
 	private boolean accessTokenIsValid(HttpServletRequest request, String token, Set<Permission> requiredPermissions,
-	                                   AccessToken.Grant grant, AccessToken.TokenType requiredTokenType) {
+	                                  AccessToken.TokenType requiredTokenType) {
 
 		String[] urlArray = request.getRequestURI().split("/");
 		int accountId = Integer.parseInt(urlArray[2]);
-		System.out.println(accountId);
 		AccessToken accessToken = accessTokenRepository.get(token);
 		AccountRequest accountRequest = accountRequestRepository.get(accessToken.getAccountRequestId());
 		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(),
-				new GrantValidator(grant),
 				new PermissionValidator(requiredPermissions, accountRequest.getPermissions()),
 				new AccountRequestAuthorizationValidator(accountRequest, accountId),
 				new TokenTypeValidator(requiredTokenType));
 		return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
+	}
+
+	private boolean refreshTokenIsValid(HttpServletRequest request, String token) {
+    	AccessToken accessToken = accessTokenRepository.get(token);
+    	List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(),
+			    new TokenTypeValidator(AccessToken.TokenType.REFRESH));
+    	return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
 	}
 
 	public boolean areClientCredentialsValid(String clientId, String clientSecret) {

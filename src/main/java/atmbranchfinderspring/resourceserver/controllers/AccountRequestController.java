@@ -42,7 +42,7 @@ public class AccountRequestController {
 
 	@CrossOrigin(origins = "http://localhost:8081")
 	@RequestMapping(method = RequestMethod.POST, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
+	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
 	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
 		IncomingAccountRequest incomingAccountRequest = incomingRequestBody.getData();
 		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
@@ -59,7 +59,7 @@ public class AccountRequestController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
+	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
 	public Collection<String> getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 		if (accessTokenRepository.contains(token)) {
@@ -74,7 +74,7 @@ public class AccountRequestController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@AccessTokenAuthenticated(requiredPermission = {}, grant = AccessToken.Grant.CLIENT_CREDENTIALS, tokenType = AccessToken.TokenType.REQUEST)
+	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
 	public AccountRequest getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
 		if (accountRequestRepository.contains(accountRequestId)) {
 			return accountRequestRepository.get(accountRequestId);

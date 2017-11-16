@@ -47,6 +47,7 @@ public class AdminController {
 				.withClaim("software_statement", "testsoftwarestatement")
 				.withJWTId("jwtId")
 				.sign(authenticationManager.getEncryptionManager().getAlgorithm());
+
 		return jwt;
 	}
 

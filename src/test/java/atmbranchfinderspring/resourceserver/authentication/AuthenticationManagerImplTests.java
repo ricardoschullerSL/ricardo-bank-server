@@ -79,7 +79,7 @@ public class AuthenticationManagerImplTests {
 	@Test
 	@DisplayName("Check if AuthenticationManagerImpl validates request token")
 	void requestTokenCheckerTest() {
-		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
+		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.REQUEST, 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
 		accessTokenRepository.add(testToken);
 		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
 	}

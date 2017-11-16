@@ -65,9 +65,41 @@ public class TokenController {
 			String clientId = getClientIdFromAuthorizationHeader(request);
 			AccountRequest accountRequest = authenticationManager.getAccountRequestFromAuthorizationCode(authorizationCode);
 			String accountRequestId = accountRequest.getAccountRequestId();
-			AccessToken token = new AccessToken(clientId, AccessToken.TokenType.REFRESH, expirationTime, AccessToken.Grant.AUTHORIZATION_CODE, accountRequestId );
+			AccessToken token = new AccessTokenBuilder()
+					.setClientId(clientId)
+					.setTokenType(AccessToken.TokenType.REFRESH)
+					.setIssueDate(LocalDateTime.now())
+					.setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+					.setGrant(AccessToken.Grant.AUTHORIZATION_CODE)
+					.setAccountRequestId(accountRequestId)
+					.build();
 			accessTokenRepository.add(token);
 			return token;
+		} else {
+			response.sendError(403);
+			return null;
+		}
+	}
+
+	@CrossOrigin(origins = "http://localhost:8081")
+	@RequestMapping(method = RequestMethod.POST, value = "/access-token/refresh/{token}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@TPPBasicAuthenticated
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public AccessToken getAccessTokenFromRefreshToken(HttpServletRequest request, HttpServletResponse response, @PathVariable String token) throws IOException {
+    	System.out.println("Incoming refresh token request: " + token);
+    	String clientId = getClientIdFromAuthorizationHeader(request);
+		AccessToken refreshToken = accessTokenRepository.get(token);
+		if (refreshToken != null && refreshToken.getClientId().equals(clientId)) {
+			AccessToken accessToken = new AccessTokenBuilder()
+					.setClientId(clientId)
+					.setTokenType(AccessToken.TokenType.ACCESS)
+					.setIssueDate(LocalDateTime.now())
+					.setGrant(AccessToken.Grant.AUTHORIZATION_CODE)
+					.setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+					.setAccountRequestId(refreshToken.getAccountRequestId())
+					.build();
+			accessTokenRepository.add(accessToken);
+			return accessToken;
 		} else {
 			response.sendError(403);
 			return null;

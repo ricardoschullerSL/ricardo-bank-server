@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+
+/**
+ * ExpiredTokenCollector is a helper object that spawns a seperate Thread where it periodically goes through
+ * the AccessTokenRepository to check if any access token are expired. If they are expired, it deletes them.
+ */
+
 @Component
 public class ExpiredTokenCollector {
 
