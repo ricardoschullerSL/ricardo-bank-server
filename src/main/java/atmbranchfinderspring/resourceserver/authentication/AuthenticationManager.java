@@ -99,6 +99,13 @@ public interface AuthenticationManager {
 	AccountRequest getAccountRequestFromAuthorizationCode(String authorizationCode);
 
 	/**
+	 * Return accountId from token.
+	 * @param token
+	 * @return
+	 */
+	int getAccountIdFromToken(String token);
+
+	/**
 	 * Gets the Third Party Provider client associated with clientId
 	 * @param clientId Third Party Provider client ID
 	 * @return TPPClient
