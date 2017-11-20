@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Default implementation of the AuthenticationManager interface
@@ -106,7 +105,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	                                  AccessToken.TokenType requiredTokenType) {
 
 		String[] urlArray = request.getRequestURI().split("/");
-		int accountId = Integer.parseInt(urlArray[2]);
+		int accountId = Integer.parseInt(urlArray[4]);
 		AccessToken accessToken = accessTokenRepository.get(token);
 		AccountRequest accountRequest = accountRequestRepository.get(accessToken.getAccountRequestId());
 		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(),
@@ -178,6 +177,17 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     		return accountRequestRepository.get(accountRequestId);
 	    } else {
     		return null;
+	    }
+    }
+
+    public int getAccountIdFromToken(String token) {
+    	if (accessTokenRepository.contains(token)) {
+    		AccessToken accessToken = accessTokenRepository.get(token);
+    		AccountRequest accountRequest = accountRequestRepository.get(accessToken.getAccountRequestId());
+    		return accountRequest.getAccountId();
+	    }
+	    else {
+    		return 0;
 	    }
     }
 

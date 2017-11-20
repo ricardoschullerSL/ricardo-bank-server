@@ -3,15 +3,17 @@
 ![Build passing](https://circleci.com/gh/ricardoschullerSL/ricardo-bank-server.svg?style=shield&circle-token=:-circle-token)
 [![codecov](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server/branch/master/graph/badge.svg)](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server)
 
-Under construction.
+Under construction. Currently on v0.10.0 BETA.
+Javadocs can be found at : http://ricardoschullerSL.github.io/ricardo-bank-server
+---
 
 Just a hacky implementation of the Open Banking APIs so a phone app can be tested against it.
 
-It saves users to a MySQL database. Third Party Providers (TPPs) can dynamically register by presenting a correct software statement.
+It saves and retrieves user account info from a MySQL database. Third Party Providers (TPPs) can dynamically register by presenting a correct software statement.
 This will return client credentials that can be used to retrieve access/refresh tokens.
 
 To get it working you need a `resources` folder in `main` with `application.properties` , `ec256-key-pair.pem`, and `keystore.p12`.
-The `ec256-key-pair.pem` is used to sign and encrypt/decrypt JWTs. 
+The `ec256-key-pair.pem` is used to sign and verify JWTs. 
 `keystore.p12` is a SSL certificate used for HTTPS. 
 
 In `application.properties` add these lines:
@@ -37,7 +39,7 @@ Entries in `{}` need to be filled in.
 
 ### Consuming the endpoints
 
-For a TPP to get client credentials, it needs to present a valid JWT to the `/tpp/register` endpoint, which will send a JSON back with:
+For a TPP to get client credentials, it needs to POST a valid JWT to the `/tpp/register` endpoint, which will send a JSON back with
 ```json
 {
     "id": "clientid",
@@ -50,7 +52,7 @@ and create an `AccountRequest` object with the agreed upon permissions.
 ```json
 {
     "Data": {
-    "Permissions":["ReadAccountBasic", "ReadAccountDetail"]
+    "Permissions":["ReadAccountBasic", "ReadAccountDetail"],
     "ExpirationDateTime": "0000",
     "TransactionFromDateTime": "0000",
     "TransactionToDateTime": "0000"

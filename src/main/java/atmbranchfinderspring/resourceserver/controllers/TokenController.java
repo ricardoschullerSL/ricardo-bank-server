@@ -21,8 +21,7 @@ import java.util.Base64;
 
 
 @RestController
-@RequestMapping("/token")
-public class TokenController {
+public class TokenController extends OpenBankingBaseController {
 
     private AccessTokenRepository accessTokenRepository;
     private AuthenticationManager authenticationManager;
@@ -38,7 +37,7 @@ public class TokenController {
         expirationTime = Long.parseLong(env.getProperty("accesstoken.expirationtime"));
     }
 
-	@CrossOrigin(origins = "http://localhost:8081")
+	@CrossOrigin
     @RequestMapping(method = RequestMethod.POST, value = "/access-token", produces = MediaType.APPLICATION_JSON_VALUE)
     @TPPBasicAuthenticated
 	@ResponseStatus(value = HttpStatus.CREATED)
@@ -56,7 +55,7 @@ public class TokenController {
 	    return token;
     }
 
-	@CrossOrigin(origins = "http://localhost:8081")
+	@CrossOrigin
 	@RequestMapping(method = RequestMethod.POST, value = "/access-token/{authorizationCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@TPPBasicAuthenticated
 	@ResponseStatus(value = HttpStatus.CREATED)
@@ -81,7 +80,7 @@ public class TokenController {
 		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:8081")
+	@CrossOrigin
 	@RequestMapping(method = RequestMethod.POST, value = "/access-token/refresh/{token}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@TPPBasicAuthenticated
 	@ResponseStatus(value = HttpStatus.CREATED)

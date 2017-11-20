@@ -17,8 +17,7 @@ import java.io.IOException;
  */
 
 @RestController
-@RequestMapping("/tpp")
-public class TPPController {
+public class TPPController extends OpenBankingBaseController {
 
 
     private TPPManager tppManager;
@@ -35,7 +34,7 @@ public class TPPController {
 
 
 	@CrossOrigin(origins = "http://localhost:8081")
-    @PostMapping(value="/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/tpp/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(value = HttpStatus.CREATED)
     public Credentials registerTPPClient(@RequestBody String clientJwt, HttpServletResponse response) throws IOException {
         Credentials credentials = tppManager.registerTPPClientAndReturnCredentials(clientJwt);

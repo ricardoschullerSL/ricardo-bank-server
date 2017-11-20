@@ -1,11 +1,14 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 
+
+import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@org.springframework.stereotype.Repository
+@Component
 public class AuthorizationCodeRepository {
 
 	private Map<String, String> authorizationCodes;

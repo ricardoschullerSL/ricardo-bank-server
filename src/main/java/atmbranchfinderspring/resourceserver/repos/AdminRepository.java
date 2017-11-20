@@ -1,12 +1,13 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 import atmbranchfinderspring.resourceserver.models.Admin;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 
-@org.springframework.stereotype.Repository
+@Component
 public class AdminRepository implements Repository<Admin>{
 
     private HashMap<String, Admin> admins;

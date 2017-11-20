@@ -3,7 +3,7 @@ package atmbranchfinderspring.resourceserver.aspects;
 
 import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
-import atmbranchfinderspring.resourceserver.validation.accesstokens.*;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -14,7 +14,10 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Security Aspect class implements methods that check incoming requests, based on the annotation used on the

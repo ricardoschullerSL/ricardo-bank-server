@@ -5,7 +5,6 @@ import atmbranchfinderspring.resourceserver.authentication.EncryptionManager;
 import atmbranchfinderspring.resourceserver.models.Account;
 import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
