@@ -20,6 +20,7 @@ public class TPPControllerTests {
 	private ObjectMapper mapper;
 	private TPPManager tppManager;
 	private MockMvc mockMvc;
+	private String baseUrl = "/open-banking/v1.1";
 
 	@BeforeEach
 	void setup() {
@@ -35,7 +36,7 @@ public class TPPControllerTests {
 		Credentials credentials = new Credentials("testId","testSecret");
 		when(tppManager.registerTPPClientAndReturnCredentials("testJwt")).thenReturn(credentials);
 
-		RequestBuilder request = post("/tpp/register")
+		RequestBuilder request = post(baseUrl + "/tpp/register")
 				.content("testJwt");
 
 		mockMvc.perform(request)
@@ -49,7 +50,7 @@ public class TPPControllerTests {
 		Credentials credentials = new Credentials("testId","testSecret");
 		when(tppManager.registerTPPClientAndReturnCredentials("testJwt")).thenReturn(null);
 
-		RequestBuilder request = post("/tpp/register")
+		RequestBuilder request = post(baseUrl + "/tpp/register")
 				.content("testJwt")
 				.accept("application/jwt");
 

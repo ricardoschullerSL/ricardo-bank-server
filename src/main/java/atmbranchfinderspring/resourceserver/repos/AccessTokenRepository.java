@@ -1,12 +1,12 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-@org.springframework.stereotype.Repository
+@Component
 public class AccessTokenRepository implements Repository<AccessToken> {
 
     private ConcurrentHashMap<String, AccessToken> accessTokens;

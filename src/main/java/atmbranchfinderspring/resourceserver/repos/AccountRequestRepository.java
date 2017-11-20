@@ -3,6 +3,7 @@ package atmbranchfinderspring.resourceserver.repos;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.IncomingAccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -10,8 +11,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
-
-@org.springframework.stereotype.Repository
+@Component
 public class AccountRequestRepository implements Repository<AccountRequest>{
 
     private long expirationTime = 31 * 24 * 60 * 60 * 1000;

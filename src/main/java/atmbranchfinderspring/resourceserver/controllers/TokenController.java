@@ -21,8 +21,7 @@ import java.util.Base64;
 
 
 @RestController
-@RequestMapping("/token")
-public class TokenController {
+public class TokenController extends OpenBankingBaseController {
 
     private AccessTokenRepository accessTokenRepository;
     private AuthenticationManager authenticationManager;

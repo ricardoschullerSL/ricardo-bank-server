@@ -1,11 +1,12 @@
 package atmbranchfinderspring.resourceserver.repos;
 
 import atmbranchfinderspring.resourceserver.models.TPPClient;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-@org.springframework.stereotype.Repository
+@Component
 public class TPPClientRepository implements Repository<TPPClient> {
 
 

@@ -1,12 +1,7 @@
 package atmbranchfinderspring.resourceserver.authentication;
 
-import atmbranchfinderspring.resourceserver.annotations.AccessTokenAuthenticated;
 import atmbranchfinderspring.resourceserver.aspects.SecurityAspect;
-import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
-import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

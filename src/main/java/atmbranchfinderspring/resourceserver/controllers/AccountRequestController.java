@@ -22,7 +22,7 @@ import java.util.Set;
  */
 
 @RestController
-public class AccountRequestController {
+public class AccountRequestController extends OpenBankingBaseController {
 
 	private AccountRequestRepository accountRequestRepository;
 	private AccountRequestValidator accountRequestValidator;

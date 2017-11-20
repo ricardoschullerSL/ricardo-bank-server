@@ -14,7 +14,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -33,8 +36,8 @@ public class AccountRequestControllerTests {
 
 	private MockMvc mockMvc;
 	private AccountRequestController accountRequestController;
+	private String baseUrl = "/open-banking/v1.1";
 	private ObjectMapper mapper = new ObjectMapper();
-
 	private AccountRequestRepository accountRequestRepository;
 	private AccountRequestValidator accountRequestValidator;
 	private AccessTokenRepository accessTokenRepository;
@@ -50,7 +53,9 @@ public class AccountRequestControllerTests {
 		accountRequestValidator = new AccountRequestValidator();
 		responseBodyWriter = new ResponseBodyWriter(new ObjectMapper());
 		accountRequestController = new AccountRequestController(accountRequestRepository, accountRequestValidator, accessTokenRepository, tppManager, responseBodyWriter);
-		mockMvc = MockMvcBuilders.standaloneSetup(accountRequestController).build();
+
+		mockMvc = MockMvcBuilders.standaloneSetup(accountRequestController)
+				.build();
 	}
 
 
@@ -64,7 +69,7 @@ public class AccountRequestControllerTests {
 		requestBody.setData(accountRequest);
 		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
-		RequestBuilder request = post("/account-requests")
+		RequestBuilder request = post(baseUrl + "/account-requests")
 				.header("Authorization", "Bearer testtoken")
 				.contentType("application/json")
 				.content(mapper.writeValueAsString(requestBody));
@@ -83,7 +88,7 @@ public class AccountRequestControllerTests {
 		requestBody.setData(accountRequest);
 		AccessToken accessToken = new AccessToken("testClientId", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.CLIENT_CREDENTIALS, accountRequest.getId());
 		when(accessTokenRepository.get("testtoken")).thenReturn(accessToken);
-		RequestBuilder request = post("/account-requests")
+		RequestBuilder request = post(baseUrl + "/account-requests")
 				.header("Authorization", "Bearer testtoken")
 				.contentType("application/json")
 				.content(mapper.writeValueAsString(requestBody));
@@ -104,7 +109,7 @@ public class AccountRequestControllerTests {
 		tppClient.addAccountRequestResponse(new AccountRequest());
 		when(tppManager.getTPPClient(anyString())).thenReturn(tppClient);
 
-		RequestBuilder request = get("/account-requests")
+		RequestBuilder request = get(baseUrl + "/account-requests")
 				.header("Authorization", "Bearer testtoken");
 
 		mockMvc.perform(request)
@@ -125,7 +130,7 @@ public class AccountRequestControllerTests {
 		tppClient.addAccountRequestResponse(new AccountRequest());
 		when(tppManager.getTPPClient(anyString())).thenReturn(tppClient);
 
-		RequestBuilder request = get("/account-requests")
+		RequestBuilder request = get(baseUrl + "/account-requests")
 				.header("Authorization", "Bearer testtoken");
 
 		mockMvc.perform(request)
@@ -143,7 +148,7 @@ public class AccountRequestControllerTests {
 		when(accountRequestRepository.contains(anyString())).thenReturn(true);
 		when(accountRequestRepository.get(anyString())).thenReturn(accountRequest);
 
-		RequestBuilder request = get("/account-requests/testId");
+		RequestBuilder request = get(baseUrl + "/account-requests/testId");
 
 		mockMvc.perform(request)
 				.andExpect(status().isOk())
@@ -160,7 +165,7 @@ public class AccountRequestControllerTests {
 		when(accountRequestRepository.contains(anyString())).thenReturn(false);
 		when(accountRequestRepository.get(anyString())).thenReturn(accountRequest);
 
-		RequestBuilder request = get("/account-requests/testId");
+		RequestBuilder request = get(baseUrl + "/account-requests/testId");
 
 		mockMvc.perform(request)
 				.andExpect(status().is(400));

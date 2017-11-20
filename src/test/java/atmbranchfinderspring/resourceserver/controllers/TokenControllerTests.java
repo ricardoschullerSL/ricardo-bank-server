@@ -30,7 +30,7 @@ public class TokenControllerTests {
 	private AccessTokenRepository accessTokenRepository;
 	private AuthenticationManager authenticationManager;
 	private MockEnvironment env;
-
+	private String baseUrl = "/open-banking/v1.1";
 	private MockMvc mockMvc;
 
 
@@ -48,7 +48,7 @@ public class TokenControllerTests {
 	void getAccessTokenThroughClientCredentialsTest() throws Exception {
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
-		RequestBuilder request = post("/token/access-token")
+		RequestBuilder request = post(baseUrl + "/access-token")
 				.header("Authorization", authorization)
 				.content(json);
 
@@ -68,7 +68,7 @@ public class TokenControllerTests {
 		when(authenticationManager.getAccountRequestFromAuthorizationCode(anyString())).thenReturn(accountRequest);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
-		RequestBuilder request = post("/token/access-token/1234")
+		RequestBuilder request = post(baseUrl + "/access-token/1234")
 				.header("Authorization", authorization)
 				.content(json);
 
@@ -84,7 +84,7 @@ public class TokenControllerTests {
 		when(authenticationManager.isAuthorizationCodeValid(anyString())).thenReturn(false);
 		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
 		String json = "{\"permissions\":[\"ReadAccountsBasic\",\"ReadAccountsDetail\"],\"redirect_uri\":\"http://google.com/\" }";
-		RequestBuilder request = post("/token/access-token/1234")
+		RequestBuilder request = post(baseUrl + "/access-token/1234")
 				.header("Authorization", authorization)
 				.content(json);
 
