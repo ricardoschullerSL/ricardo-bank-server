@@ -36,7 +36,7 @@ public class TPPControllerTests {
 		Credentials credentials = new Credentials("testId","testSecret");
 		when(tppManager.registerTPPClientAndReturnCredentials("testJwt")).thenReturn(credentials);
 
-		RequestBuilder request = post(baseUrl + "/tpp/register")
+		RequestBuilder request = post(baseUrl + "/register")
 				.content("testJwt");
 
 		mockMvc.perform(request)
@@ -50,7 +50,7 @@ public class TPPControllerTests {
 		Credentials credentials = new Credentials("testId","testSecret");
 		when(tppManager.registerTPPClientAndReturnCredentials("testJwt")).thenReturn(null);
 
-		RequestBuilder request = post(baseUrl + "/tpp/register")
+		RequestBuilder request = post(baseUrl + "/register")
 				.content("testJwt")
 				.accept("application/jwt");
 
