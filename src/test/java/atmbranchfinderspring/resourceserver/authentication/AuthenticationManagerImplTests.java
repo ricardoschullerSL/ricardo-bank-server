@@ -15,12 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -81,7 +84,7 @@ public class AuthenticationManagerImplTests {
 	void requestTokenCheckerTest() {
 		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.REQUEST, 100L, AccessToken.Grant.CLIENT_CREDENTIALS , "testid");
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isRequestTokenValid(testToken.getAccessToken())).isEqualTo(true);
+		assertThat(authenticationManager.isRequestTokenValid(testToken.getTokenString())).isEqualTo(true);
 	}
 
 	@Test
@@ -102,7 +105,7 @@ public class AuthenticationManagerImplTests {
 		accountRequest.setPermissions(new HashSet<Permission>(){{add(Permission.ReadAccountsBasic);}});
 		accountRequest.setAccountRequestId("testId");
 		accountRequestRepository.add(accountRequest);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new HashSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(true);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getTokenString(), new HashSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(true);
 	}
 
 	@Test
@@ -110,7 +113,7 @@ public class AuthenticationManagerImplTests {
 	void validateInvalidGrantAccessTokenTest() {
 		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, null, "testid");
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getTokenString(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
@@ -118,7 +121,7 @@ public class AuthenticationManagerImplTests {
 	void validateInvalidScopeAccessTokenTest() {
 		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, 100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getTokenString(), new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
@@ -126,7 +129,7 @@ public class AuthenticationManagerImplTests {
 	void validateExpiredAccessTokenTest() {
 		AccessToken testToken = new AccessToken("testClient", AccessToken.TokenType.BEARER, -100L, AccessToken.Grant.AUTHORIZATION_CODE, "testId");
 		accessTokenRepository.add(testToken);
-		assertThat(authenticationManager.isAccessTokenValid(testToken.getAccessToken(),new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
+		assertThat(authenticationManager.isAccessTokenValid(testToken.getTokenString(),new TreeSet<Permission>(){{add(Permission.ReadAccountsBasic);}})).isEqualTo(false);
 	}
 
 	@Test
@@ -293,6 +296,100 @@ public class AuthenticationManagerImplTests {
 		assertThat(accountRequest.getClientId()).isEqualTo("testClient");
 		AccountRequest wrongRequest = authenticationManager.getAccountRequestFromAuthorizationCode("wrongCode");
 		assertThat(wrongRequest).isNull();
+	}
+
+	@Test
+	@DisplayName("Check if getAccountIdFromToken returns accountId from a token.")
+	void getAccountIdFromTokenTest() {
+		accessTokenRepository.add(new AccessToken("testToken","testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, "testAccountRequestId"));
+		AccountRequest accountRequest = new AccountRequest();
+		accountRequest.setAccountRequestId("testAccountRequestId");
+		accountRequest.setAccountId(1001);
+		accountRequestRepository.add(accountRequest);
+		assertThat(authenticationManager.getAccountIdFromToken("testToken")).isEqualTo(1001);
+	}
+
+	@Test
+	@DisplayName("Check if getAccountIdFromToken returns 0 from a wrong token.")
+	void getAccountIdFromWrongTokenTest() {
+		accessTokenRepository.add(new AccessToken("testToken","testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, "testAccountRequestId"));
+		AccountRequest accountRequest = new AccountRequest();
+		accountRequest.setAccountRequestId("testAccountRequestId");
+		accountRequest.setAccountId(1001);
+		accountRequestRepository.add(accountRequest);
+		assertThat(authenticationManager.getAccountIdFromToken("wrongToken")).isEqualTo(0);
+	}
+
+	@Test
+	@DisplayName("New isAccessTokenValid test validates access tokens")
+	void newIsAccessTokenValidTest() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/open-banking/v1.1/accounts/1001");
+		String token = "testToken";
+		Set<Permission> requiredPermissions = new HashSet<Permission>();
+		requiredPermissions.add(Permission.ReadAccountsBasic);
+		AccessToken.TokenType requiredTokenType = AccessToken.TokenType.ACCESS;
+		accessTokenRepository.add(new AccessToken(token,"testClient", AccessToken.TokenType.ACCESS, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, "testId"));
+		AccountRequest accountRequest = new AccountRequest();
+		accountRequest.setAccountId(1001);
+		accountRequest.setClientId("testClient");
+		accountRequest.setAccountRequestId("testId");
+		accountRequest.setStatus(AccountRequest.AccountRequestStatus.AUTHORIZED);
+		Set<Permission> permissions = new HashSet<>();
+		permissions.add(Permission.ReadAccountsBasic);
+		accountRequest.setPermissions(permissions);
+		accountRequestRepository.add(accountRequest);
+		assertThat(authenticationManager.isAccessTokenValid(request,token, requiredPermissions, requiredTokenType)).isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("New isAccessTokenValid validates request tokens")
+	void newIsRequestTokenValidTest() {
+		HttpServletRequest request = new MockHttpServletRequest();
+		String token = "testToken";
+		Set<Permission> requiredPermissions = new HashSet<Permission>();
+		AccessToken.TokenType requiredTokenType = AccessToken.TokenType.REQUEST;
+		AccessToken accessToken = new AccessToken(token,"testClient", AccessToken.TokenType.REQUEST, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.CLIENT_CREDENTIALS, null);
+		accessTokenRepository.add(accessToken);
+		assertThat(authenticationManager.isAccessTokenValid(request, token, requiredPermissions, requiredTokenType)).isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("New isAccessTokenValid validates refresh tokens")
+	void newIsRefreshTokenValidTest() {
+		HttpServletRequest request = new MockHttpServletRequest();
+		String token = "testToken";
+		Set<Permission> requiredPermissions = new HashSet<Permission>();
+		AccessToken.TokenType requiredTokenType = AccessToken.TokenType.REFRESH;
+		AccessToken accessToken = new AccessToken(token,"testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, null);
+		accessTokenRepository.add(accessToken);
+		assertThat(authenticationManager.isAccessTokenValid(request,token, requiredPermissions, requiredTokenType)).isEqualTo(true);
+	}
+
+	@Test
+	@DisplayName("Test if isAccessTokenValid returns false by default")
+	void isAccessTokenValidReturnsFalseByDefault() {
+		HttpServletRequest request = new MockHttpServletRequest();
+		String token = "testToken";
+		Set<Permission> requiredPermissions = new HashSet<Permission>();
+		AccessToken.TokenType requiredTokenType = AccessToken.TokenType.TEST;
+		AccessToken accessToken = new AccessToken(token,"testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, null);
+		accessTokenRepository.add(accessToken);
+		assertThat(authenticationManager.isAccessTokenValid(request,token, requiredPermissions, requiredTokenType)).isEqualTo(false);
+
+	}
+
+	@Test
+	@DisplayName("Test if isAccessTokenValid returns false it catches NullPointerException.")
+	void isAccessTokenValidReturnsFalseWhenCatchingNullPointerException() {
+		HttpServletRequest request = new MockHttpServletRequest();
+		String token = "testToken";
+		Set<Permission> requiredPermissions = new HashSet<Permission>();
+		AccessToken.TokenType requiredTokenType = null;
+		AccessToken accessToken = new AccessToken(token,"testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(100L), AccessToken.Grant.AUTHORIZATION_CODE, null);
+		accessTokenRepository.add(accessToken);
+		assertThat(authenticationManager.isAccessTokenValid(request,token, requiredPermissions, requiredTokenType)).isEqualTo(false);
+
 	}
 
 }

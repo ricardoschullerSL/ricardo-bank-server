@@ -24,7 +24,7 @@ public class AccessTokenRepository implements Repository<AccessToken> {
     }
 
     public void add(AccessToken entity) {
-        accessTokens.put(entity.getAccessToken(), entity);
+        accessTokens.put(entity.getTokenString(), entity);
     }
 
     public Collection<String> getAllIds() {
@@ -32,7 +32,7 @@ public class AccessTokenRepository implements Repository<AccessToken> {
     }
 
     public void delete(AccessToken entity) {
-        accessTokens.remove(entity.getAccessToken());
+        accessTokens.remove(entity.getTokenString());
     }
 
     public void delete(String token) { accessTokens.remove(token); }

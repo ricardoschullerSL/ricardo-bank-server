@@ -111,7 +111,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 		List<TokenValidator> validatorList = Arrays.asList(new TokenIsNotExpired(),
 				new PermissionValidator(requiredPermissions, accountRequest.getPermissions()),
 				new AccountRequestAuthorizationValidator(accountRequest, accountId),
-				new TokenTypeValidator(requiredTokenType));
+				new TokenTypeValidator(requiredTokenType)
+		);
 		return accessTokenValidator.accessTokenIsValid(accessToken, validatorList);
 	}
 
