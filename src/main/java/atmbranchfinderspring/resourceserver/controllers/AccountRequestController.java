@@ -8,6 +8,7 @@ import atmbranchfinderspring.resourceserver.repos.AccountRequestRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,10 +42,11 @@ public class AccountRequestController extends OpenBankingBaseController {
 		this.responseBodyWriter = responseBodyWriter;
 	}
 
-	@CrossOrigin(origins = "http://localhost:8081")
-	@RequestMapping(method = RequestMethod.POST, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@CrossOrigin
+	@PostMapping(value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
-	public void postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
+	@ResponseStatus(HttpStatus.CREATED)
+	public Map<String, Object> postAccountRequest(HttpServletRequest request, HttpServletResponse response, @RequestBody IncomingRequestBody incomingRequestBody) throws IOException, NullPointerException {
 		IncomingAccountRequest incomingAccountRequest = incomingRequestBody.getData();
 		if (accountRequestValidator.checkPermissionList(incomingAccountRequest.getPermissions())) {
 			Set<Permission> permissions = accountRequestValidator.convertPermissions(incomingAccountRequest.getPermissions());
@@ -51,33 +54,35 @@ public class AccountRequestController extends OpenBankingBaseController {
 			String clientId = accessTokenRepository.get(token).getClientId();
 			AccountRequest accountRequest = accountRequestRepository.createAccountRequestResponse(incomingAccountRequest, permissions, clientId, 1001);
 			tppManager.addAccountRequestToClient(clientId, accountRequest);
-			response.setStatus(201);
-			responseBodyWriter.writeResponse(request,response,accountRequest);
+			return responseBodyWriter.writeResponse(request, accountRequest);
 		} else {
 			response.sendError(400, "Bad Request");
+			return null;
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@CrossOrigin
+	@GetMapping(value = "/account-requests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
-	public Collection<String> getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public Map<String, Object> getAllAccountRequests(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String token = request.getHeader("Authorization").substring("Bearer".length()).trim();
 		if (accessTokenRepository.contains(token)) {
 			String clientId = accessTokenRepository.get(token).getClientId();
 			TPPClient client = tppManager.getTPPClient(clientId);
 			Collection<String> responseObjects = client.getAllAccountRequestIds();
-			return responseObjects;
+			return responseBodyWriter.writeResponse(request, responseObjects);
 		} else {
 			response.sendError(400);
 			return null;
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/account-requests/{accountRequestId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@CrossOrigin
+	@GetMapping(value = "/account-requests/{accountRequestId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@AccessTokenAuthenticated(requiredPermission = {}, tokenType = AccessToken.TokenType.REQUEST)
-	public AccountRequest getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
+	public Map<String, Object> getAccountRequest(HttpServletRequest request, HttpServletResponse response, @PathVariable("accountRequestId") String accountRequestId) throws IOException {
 		if (accountRequestRepository.contains(accountRequestId)) {
-			return accountRequestRepository.get(accountRequestId);
+			return responseBodyWriter.writeResponse(request, accountRequestRepository.get(accountRequestId));
 		} else {
 			response.sendError(400);
 			return null;

@@ -3,7 +3,7 @@
 ![Build passing](https://circleci.com/gh/ricardoschullerSL/ricardo-bank-server.svg?style=shield&circle-token=:-circle-token)
 [![codecov](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server/branch/master/graph/badge.svg)](https://codecov.io/gh/ricardoschullerSL/ricardo-bank-server)
 
-Under construction. Currently on v0.10.0 BETA.
+Under construction. Currently on v0.11.0 BETA.
 Javadocs can be found at : http://ricardoschullerSL.github.io/ricardo-bank-server
 
 
