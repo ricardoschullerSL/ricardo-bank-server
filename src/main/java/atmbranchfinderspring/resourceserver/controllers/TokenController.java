@@ -6,7 +6,6 @@ import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessTokenBuilder;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -25,16 +24,16 @@ public class TokenController extends OpenBankingBaseController {
 
     private AccessTokenRepository accessTokenRepository;
     private AuthenticationManager authenticationManager;
-    private static long expirationTime = 3600L;
-    private ObjectMapper mapper;
+    private static long refreshTokenExpirationTime = 3600L;
+    private static long accessTokenExpirationTime = 600L;
 
 
     @Autowired
     public TokenController(AccessTokenRepository accessTokenRepository, AuthenticationManager authenticationManager, Environment env) {
         this.accessTokenRepository = accessTokenRepository;
         this.authenticationManager = authenticationManager;
-        this.mapper = new ObjectMapper();
-        expirationTime = Long.parseLong(env.getProperty("accesstoken.expirationtime"));
+        accessTokenExpirationTime = Long.parseLong(env.getProperty("accesstoken.expirationtime"));
+        refreshTokenExpirationTime = Long.parseLong(env.getProperty("refreshtoken.expirationtime"));
     }
 
 	@CrossOrigin
@@ -47,7 +46,7 @@ public class TokenController extends OpenBankingBaseController {
 			    .setClientId(clientId)
 			    .setTokenType(AccessToken.TokenType.REQUEST)
 			    .setIssueDate(LocalDateTime.now())
-			    .setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+			    .setExpirationDate(LocalDateTime.now().plusSeconds(accessTokenExpirationTime))
 			    .setGrant(AccessToken.Grant.CLIENT_CREDENTIALS)
 			    .setAccountRequestId(null)
 			    .build();
@@ -68,7 +67,7 @@ public class TokenController extends OpenBankingBaseController {
 					.setClientId(clientId)
 					.setTokenType(AccessToken.TokenType.REFRESH)
 					.setIssueDate(LocalDateTime.now())
-					.setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+					.setExpirationDate(LocalDateTime.now().plusSeconds(refreshTokenExpirationTime))
 					.setGrant(AccessToken.Grant.AUTHORIZATION_CODE)
 					.setAccountRequestId(accountRequestId)
 					.build();
@@ -85,7 +84,6 @@ public class TokenController extends OpenBankingBaseController {
 	@TPPBasicAuthenticated
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public AccessToken getAccessTokenFromRefreshToken(HttpServletRequest request, HttpServletResponse response, @PathVariable String token) throws IOException {
-    	System.out.println("Incoming refresh token request: " + token);
     	String clientId = getClientIdFromAuthorizationHeader(request);
 		AccessToken refreshToken = accessTokenRepository.get(token);
 		if (refreshToken != null && refreshToken.getClientId().equals(clientId)) {
@@ -94,7 +92,7 @@ public class TokenController extends OpenBankingBaseController {
 					.setTokenType(AccessToken.TokenType.ACCESS)
 					.setIssueDate(LocalDateTime.now())
 					.setGrant(AccessToken.Grant.AUTHORIZATION_CODE)
-					.setExpirationDate(LocalDateTime.now().plusSeconds(expirationTime))
+					.setExpirationDate(LocalDateTime.now().plusSeconds(accessTokenExpirationTime))
 					.setAccountRequestId(refreshToken.getAccountRequestId())
 					.build();
 			accessTokenRepository.add(accessToken);
@@ -110,11 +108,5 @@ public class TokenController extends OpenBankingBaseController {
 		return new String(Base64.getDecoder().decode(credentials)).split(":")[0];
 	}
 
-	public static long getExpirationTime() {
-		return expirationTime;
-	}
 
-	public static void setExpirationTime(long expirationTime) {
-		TokenController.expirationTime = expirationTime;
-	}
 }

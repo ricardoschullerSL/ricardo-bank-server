@@ -20,7 +20,7 @@ public class AccessToken implements ResponseObject {
 		ACCESS, REFRESH, BEARER, REQUEST, TEST
 	}
 
-	private final String accessToken;
+	private final String tokenString;
 	private final TokenType tokenType;
 	private final LocalDateTime issueDate;
 	private final LocalDateTime expirationDate;
@@ -32,7 +32,7 @@ public class AccessToken implements ResponseObject {
 
 	public AccessToken(String clientId, TokenType tokenType, String customToken, Long expirationTime, String accountRequestId) {
 		this.tokenType = tokenType;
-		this.accessToken = customToken;
+		this.tokenString = customToken;
 		this.clientId = clientId;
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = LocalDateTime.now().plusSeconds(expirationTime);
@@ -42,16 +42,16 @@ public class AccessToken implements ResponseObject {
 	public AccessToken(String clientId, TokenType tokenType, Long expirationTime, Grant grant, String accountRequestId) {
 		this.clientId = clientId;
 		this.tokenType = tokenType;
-		this.accessToken = UUID.randomUUID().toString();
+		this.tokenString = UUID.randomUUID().toString();
 		this.issueDate = LocalDateTime.now();
 		this.expirationDate = issueDate.plusSeconds(expirationTime);
 		this.grant = grant;
 		this.accountRequestId = accountRequestId;
 	}
 
-	public AccessToken(String accessToken, String clientId, TokenType tokenType, LocalDateTime issueDate,
+	public AccessToken(String tokenString, String clientId, TokenType tokenType, LocalDateTime issueDate,
 	                   LocalDateTime expirationDate, Grant grant, String accountRequestId) {
-		this.accessToken = accessToken;
+		this.tokenString = tokenString;
 		this.clientId = clientId;
 		this.tokenType = tokenType;
 		this.issueDate = issueDate;
@@ -61,8 +61,8 @@ public class AccessToken implements ResponseObject {
 	}
 
 	public String getClientId() {return clientId;}
-	public String getAccessToken() {
-		return accessToken;
+	public String getTokenString() {
+		return tokenString;
 	}
 	public TokenType getTokenType() { return tokenType; }
 	public LocalDateTime getIssueDate() {

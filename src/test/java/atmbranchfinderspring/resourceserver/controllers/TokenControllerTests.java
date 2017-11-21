@@ -2,6 +2,7 @@ package atmbranchfinderspring.resourceserver.controllers;
 
 import atmbranchfinderspring.resourceserver.authentication.AuthenticationManager;
 import atmbranchfinderspring.resourceserver.repos.AccessTokenRepository;
+import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.AccountRequest;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +40,7 @@ public class TokenControllerTests {
 	void setup() {
 		env = new MockEnvironment();
 		env.setProperty("accesstoken.expirationtime", "60");
+		env.setProperty("refreshtoken.expirationtime", "60");
 		authenticationManager = mock(AuthenticationManager.class);
 		accessTokenRepository = mock(AccessTokenRepository.class);
 		tokenController = new TokenController(accessTokenRepository, authenticationManager, env);
@@ -87,6 +90,33 @@ public class TokenControllerTests {
 		RequestBuilder request = post(baseUrl + "/access-token/1234")
 				.header("Authorization", authorization)
 				.content(json);
+
+		mockMvc.perform(request)
+				.andExpect(status().is(403));
+	}
+
+	@Test
+	void getAccessTokenFromRefreshTokenTest() throws Exception {
+		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
+		AccessToken accessToken = new AccessToken("abcd1234", "testClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(60L), AccessToken.Grant.CLIENT_CREDENTIALS,"testAccountRequestId");
+		when(accessTokenRepository.get("abcd1234")).thenReturn(accessToken);
+		RequestBuilder request = post(baseUrl + "/access-token/refresh/abcd1234")
+				.header("Authorization", authorization);
+
+		mockMvc.perform(request)
+				.andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(content().json("{\"tokenType\":\"ACCESS\", \"clientId\":\"testClient\"}"));
+
+	}
+
+	@Test
+	void getAccessTokenFromRefreshTokenWithWrongClientIdTest() throws Exception {
+		String authorization = "Basic " + Base64.getEncoder().encodeToString("testClient:testSecret".getBytes());
+		AccessToken accessToken = new AccessToken("abcd1234", "wrongClient", AccessToken.TokenType.REFRESH, LocalDateTime.now(), LocalDateTime.now().plusSeconds(60L), AccessToken.Grant.CLIENT_CREDENTIALS,"testAccountRequestId");
+		when(accessTokenRepository.get("abcd1234")).thenReturn(accessToken);
+		RequestBuilder request = post(baseUrl + "/access-token/refresh/abcd1234")
+				.header("Authorization", authorization);
 
 		mockMvc.perform(request)
 				.andExpect(status().is(403));

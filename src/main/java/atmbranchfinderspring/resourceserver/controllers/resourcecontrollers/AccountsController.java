@@ -8,6 +8,7 @@ import atmbranchfinderspring.resourceserver.models.User;
 import atmbranchfinderspring.resourceserver.repos.UserRepository;
 import atmbranchfinderspring.resourceserver.validation.accesstokens.AccessToken;
 import atmbranchfinderspring.resourceserver.validation.accountrequests.Permission;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class AccountsController extends OpenBankingBaseController {
 	private AuthenticationManager authenticationManager;
 	private ResponseBodyWriter responseBodyWriter;
 
+	@Autowired
 	public AccountsController(UserRepository userRepository, AuthenticationManager authenticationManager, ResponseBodyWriter responseBodyWriter) {
 		this.userRepository = userRepository;
 		this.authenticationManager = authenticationManager;
